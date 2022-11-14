@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+
+{% block content %} 
+
+<h1>fdff {{name}}</h1>
+
+
+
+<form action="add" method='POST'>
+    {% csrf_token %}
+    Enter Patient Name: <input type="text" name="name" value="{{name}}"><br>
+    Enter Patient Weight: <input type="text" name="weight" value="{{weight}}"><br>
+    <input type="submit">
+
+</form>
+
+{% endblock %}
