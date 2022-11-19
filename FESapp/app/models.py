@@ -4,7 +4,7 @@ from django.db import models
 class Patient(models.Model):
     name = models.CharField(max_length=100)
     weight = models.IntegerField()
-    intvalTime =  models.models.IntegerField(_("Interval Time"), default=14)
+    intvalTime =  models.IntegerField(default=14)
     
     
     
