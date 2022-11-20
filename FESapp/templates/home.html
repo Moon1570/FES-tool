@@ -7,11 +7,11 @@
 
 
 
-<form action="add" method='POST'>
+<form action="calc" method='POST'>
     {% csrf_token %}
     Enter Patient Name: <input type="text" name="name" value="{{name}}"><br>
-    Enter Patient Weight: <input type="text" name="weight" value="{{weight}}"><br>
-    Interval time: <input type="text" name="weight" value="14"><br>
+    Enter Patient Weight: <input type="number" name="weight" value=""><br>
+    Interval time: <input type="number" name="intervalTime" value=""><br>
 
     <input type="submit">
 
