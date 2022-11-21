@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
+from app import functions
 
 
 # Create your views here.
@@ -11,14 +12,13 @@ def calc(request):
     #get name from request
     name = request.POST.get('name')
     weight = int(request.POST.get('weight'))
-    print(weight)
     intervalTime = int(request.POST.get('intervalTime'))
 
     #print to console
-    print(name)
-    print(weight)
-    print(intervalTime)
+    print("Printing - " + name, weight, intervalTime)
+
+    BSA = functions.calcBSA(weight)
+    
 
 
-
-    return JsonResponse({'name':name, 'weight':weight, 'intervalTime':intervalTime})
+    return JsonResponse({'name':name, 'weight':weight, 'BSA': BSA, 'intervalTime':intervalTime})
