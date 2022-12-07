@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 from app import functions
+from app import generateFigure
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -82,12 +83,13 @@ def calc(request):
     N_t = sol.y[1]
     T_t = sol.y[2]
 
-
+    print(t)
+    chart = generateFigure.get_plot(T_t)
 
     
 
 
-    return JsonResponse({'name':name, 'weight':weight, 'BSA': BSA, 'intervalTime':intervalTime, 'plot':plot})
+    return render(request, 'result.html', {'name':name, 'weight':weight, 'BSA':BSA, 'chart':chart})
 
 ##Martins Model
     #Initializing Variables
