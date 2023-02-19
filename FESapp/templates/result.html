@@ -5,9 +5,19 @@
 
 <h1>name : {{name}}</h1>
 <p>BSA : {{BSA}}</p>
-
-    {% if chart %}
-        <img src="data:image/png;base64, {{chart|safe}}" />
+    {% if toxPlot %}
+        <img src="data:image/png;base64, {{toxPlot|safe}}" />
     {% endif %}
+
+    <br>
+    {% if noCellPlot %}
+        <img src="data:image/png;base64, {{noCellPlot|safe}}" />
+    {% endif %}
+
+    <br>
+    {% if dosePlot %}
+        <img src="data:image/png;base64, {{dosePlot|safe}}" />
+    {% endif %}
+
 
 {% endblock %}

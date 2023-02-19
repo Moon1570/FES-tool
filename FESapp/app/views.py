@@ -11,6 +11,10 @@ from scipy.integrate import odeint
 from scipy.integrate import solve_ivp
 from numpy import log as ln
 
+#declear a list
+dose = [None] * 121
+
+
 C_0 = 0
 N_0 = 10** 10
 tau_g = 150
@@ -23,17 +27,21 @@ D_max = 50
 #C_th = 4.1 * 10 **3 #Is this the Concentration Threshold C_cum?
 T_max = 100
 C_th = 10
+t = int(0)
 
 def dSdt(t, S):
     C_t, N_t, T_t = S
         
 
     if int(t)%15 == 0 or (int(t)+1)%15 ==0 or t==0:
-    # print("true", t, int(t))
+        print("true", t, int(t))
+        dose[int(t)] = 40
         D_t = 40
     else:
     #  print("false", t, int(t))
         D_t = 0
+        dose[int(t)] = 0
+
         
     if C_t>=C_th:
         H_ct_cth = 1
@@ -42,6 +50,7 @@ def dSdt(t, S):
         
     C_eff = (C_t-C_th)*H_ct_cth
 
+   # print(D_t, t)
     
    # return [ 40-.27*C_t,
    #         ((1/tau_g)*ln((ln(rho_g/N_0))/ln(rho_g/(2*N_0)))*N_t*ln(rho_g/N_t)) - (K_eff*C_eff* N_t),
@@ -83,13 +92,17 @@ def calc(request):
     N_t = sol.y[1]
     T_t = sol.y[2]
 
-    print(t)
-    chart = generateFigure.get_plot(T_t)
+    #print(t)
+    toxPlot = generateFigure.get_plot(T_t, "Toxicity Vs Days", "Day", "Toxicity")
 
-    
+    noCellPlot = generateFigure.get_plot(N_t, "No of cells Vs Days", "Day", "Cells")
+
+    dose
+
+    dosePlot = generateFigure.get_plot(dose, "Dose Vs Days", "Day", "Dose")
 
 
-    return render(request, 'result.html', {'name':name, 'weight':weight, 'BSA':BSA, 'chart':chart})
+    return render(request, 'result.html', {'name':name, 'weight':weight, 'BSA':BSA, 'toxPlot':toxPlot, 'noCellPlot':noCellPlot, 'dosePlot':dosePlot})
 
 ##Martins Model
     #Initializing Variables

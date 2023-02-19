@@ -13,11 +13,13 @@ def get_graph():
     buffer.close()
     return graph
 
-def get_plot(y):
+def get_plot(y, title, xAxisName, yAxisName):
     plt.switch_backend('AGG')
     plt.figure(figsize=(10, 5))
-    plt.title('Moon')
+    plt.title(title)
     plt.plot(y)
+    plt.xlabel(xAxisName)
+    plt.ylabel(yAxisName)
     plt.tight_layout()
     graph = get_graph()
     return graph
