@@ -32,15 +32,23 @@ t = int(0)
 def dSdt(t, S):
     C_t, N_t, T_t = S
         
-
+    flag = {}
     if int(t)%15 == 0 or (int(t)+1)%15 ==0 or t==0:
-        print("true", t, int(t))
         dose[int(t)] = 40
-        D_t = 40
+        if flag.get(int(t)) == None:
+            flag[int(t)] = 1
+            D_t = dose[int(t)]
+            #print("true", t, int(t), C_t, N_t, T_t, dose[int(t)])
+        else:
+            D_t = 0
+        print("true", t, int(t), C_t, N_t, T_t, D_t)
+
     else:
     #  print("false", t, int(t))
-        D_t = 0
         dose[int(t)] = 0
+        D_t = dose[int(t)]
+        print(t, int(t), C_t, N_t, T_t, D_t)
+
 
         
     if C_t>=C_th:
@@ -92,12 +100,12 @@ def calc(request):
     N_t = sol.y[1]
     T_t = sol.y[2]
 
-    #print(t)
+    logNT = np.log10(N_t)
+    print(logNT)
     toxPlot = generateFigure.get_plot(T_t, "Toxicity Vs Days", "Day", "Toxicity")
 
-    noCellPlot = generateFigure.get_plot(N_t, "No of cells Vs Days", "Day", "Cells")
+    noCellPlot = generateFigure.get_plot(logNT, "No of cells Vs Days", "Day", "Cells")
 
-    dose
 
     dosePlot = generateFigure.get_plot(dose, "Dose Vs Days", "Day", "Dose")
 
