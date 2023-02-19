@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from app import functions
+from app import functions, fes1
 from app import generateFigure
 
 import numpy as np
@@ -10,7 +10,8 @@ import scipy as sp
 from scipy.integrate import odeint
 from scipy.integrate import solve_ivp
 from numpy import log as ln
-
+import skfuzzy as fuzz
+from skfuzzy import control as ctrl
 #declear a list
 dose = [None] * 121
 
@@ -29,28 +30,36 @@ T_max = 100
 C_th = 10
 t = int(0)
 
+
 def dSdt(t, S):
+    global temp
     C_t, N_t, T_t = S
-        
+    D_t =0    
     flag = {}
-    if int(t)%15 == 0 or (int(t)+1)%15 ==0 or t==0:
-        dose[int(t)] = 40
-        if flag.get(int(t)) == None:
-            flag[int(t)] = 1
-            D_t = dose[int(t)]
-            #print("true", t, int(t), C_t, N_t, T_t, dose[int(t)])
-        else:
-            D_t = 0
-        print("true", t, int(t), C_t, N_t, T_t, D_t)
+
+    if int(t)==1:
+        D_t = 45
+    elif int(t)%15 == 0:
+        dose[int(t)] = fes1.fes1(N_t, T_t)
+        print(D_t, t)
+        #   print(flag,"true", t, int(t), C_t, N_t, T_t, D_t)
+        D_t = dose[int(t)]
+        temp = D_t
+        print(D_t, t, "Cool")
+
+    elif int(t)%15 ==1:
+        D_t = temp
+        print(D_t, t, "Cooled")
 
     else:
     #  print("false", t, int(t))
         dose[int(t)] = 0
         D_t = dose[int(t)]
-        print(t, int(t), C_t, N_t, T_t, D_t)
+        #print(t, int(t), C_t, N_t, T_t, D_t)
 
+    if flag.get(int(t)) == 1:
+        print(flag)
 
-        
     if C_t>=C_th:
         H_ct_cth = 1
     else:
@@ -101,7 +110,7 @@ def calc(request):
     T_t = sol.y[2]
 
     logNT = np.log10(N_t)
-    print(logNT)
+    print(N_t[84] )
     toxPlot = generateFigure.get_plot(T_t, "Toxicity Vs Days", "Day", "Toxicity")
 
     noCellPlot = generateFigure.get_plot(logNT, "No of cells Vs Days", "Day", "Cells")
