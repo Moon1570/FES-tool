@@ -17,9 +17,9 @@ dose = [None] * 121
 
 
 C_0 = 0
-N_0 = 10** 10
+N_0 = 10000000000
 tau_g = 150
-rho_g = 10 ** 12
+rho_g = 1000000000000
 K_eff = 2.7 * 10 ** -2
 lambdaa = .27
 eta = .4
@@ -29,27 +29,39 @@ D_max = 50
 T_max = 100
 C_th = 10
 t = int(0)
+temp = 0.0
 
 
 def dSdt(t, S):
     global temp
+    #temp = 0.0
     C_t, N_t, T_t = S
     D_t =0    
     flag = {}
 
-    if int(t)==1:
-        D_t = 45
-    elif int(t)%15 == 0:
-        dose[int(t)] = fes1.fes1(N_t, T_t)
-        print(D_t, t)
-        #   print(flag,"true", t, int(t), C_t, N_t, T_t, D_t)
-        D_t = dose[int(t)]
-        temp = D_t
-        print(D_t, t, "Cool")
+    #print(t, int(t), D_t)
+    if int(t) == 0:
+        D_t = 45.0
+        dose[int(t)] = D_t
 
-    elif int(t)%15 ==1:
+    elif int(t)==1:
+        D_t = 0.0
+        dose[int(t)] = D_t
+
+    elif int(t)%14 == 0 :
+        D_t = fes1.fes1(N_t, T_t)
+        #print(D_t, t)
+        #   print(flag,"true", t, int(t), C_t, N_t, T_t, D_t)
+        dose[int(t)] = D_t
+        temp = D_t
+        #print(D_t, t, int(t), "Cool", temp)
+
+        #print(D_t, t, "Cool")
+
+    elif int(t)%14 == 1:
         D_t = temp
-        print(D_t, t, "Cooled")
+        dose[int(t)] = D_t
+       # print(D_t, t, int(t), "Cooled", temp)
 
     else:
     #  print("false", t, int(t))
@@ -57,8 +69,6 @@ def dSdt(t, S):
         D_t = dose[int(t)]
         #print(t, int(t), C_t, N_t, T_t, D_t)
 
-    if flag.get(int(t)) == 1:
-        print(flag)
 
     if C_t>=C_th:
         H_ct_cth = 1
@@ -73,8 +83,9 @@ def dSdt(t, S):
    #         ((1/tau_g)*ln((ln(rho_g/N_0))/ln(rho_g/(2*N_0)))*N_t*ln(rho_g/N_t)) - (K_eff*C_eff* N_t),
    #         C_t-(eta*T_t)]
 
+    #print(K_eff, C_eff, N_t, t)
     return [ D_t-lambdaa*C_t,
-            ((1/tau_g)*ln((ln(rho_g/N_0))/ln(rho_g/(2*N_0)))*N_t*ln(rho_g/N_t)) - (.27*1* N_t),
+            ((1/tau_g)*ln((ln(rho_g/N_0))/ln(rho_g/(2*N_0)))*N_t*ln(rho_g/N_t)) - (K_eff*C_eff* N_t),
             C_t-(eta*T_t)]
 
 
@@ -110,21 +121,15 @@ def calc(request):
     T_t = sol.y[2]
 
     logNT = np.log10(N_t)
-    print(N_t[84] )
+    print(N_t )
+    print(logNT)
     toxPlot = generateFigure.get_plot(T_t, "Toxicity Vs Days", "Day", "Toxicity")
 
     noCellPlot = generateFigure.get_plot(logNT, "No of cells Vs Days", "Day", "Cells")
 
-
+    print(dose[84])
     dosePlot = generateFigure.get_plot(dose, "Dose Vs Days", "Day", "Dose")
 
 
     return render(request, 'result.html', {'name':name, 'weight':weight, 'BSA':BSA, 'toxPlot':toxPlot, 'noCellPlot':noCellPlot, 'dosePlot':dosePlot})
 
-##Martins Model
-    #Initializing Variables
-    
-
-
-    #Packaging Equations to a function
-    
