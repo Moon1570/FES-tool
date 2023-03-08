@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from app import functions, fes1
+from app import functions, fes1, fes2
 from app import generateFigure
 
 import numpy as np
@@ -13,7 +13,7 @@ from numpy import log as ln
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 #declear a list
-dose = [None] * 121
+dose = [0] * 121
 
 
 C_0 = 0
@@ -49,18 +49,38 @@ def dSdt(t, S):
         dose[int(t)] = D_t
 
     elif int(t)%14 == 0 :
-        D_t = fes1.fes1(N_t, T_t)
-        #print(D_t, t)
-        #   print(flag,"true", t, int(t), C_t, N_t, T_t, D_t)
-        dose[int(t)] = D_t
-        temp = D_t
-        #print(D_t, t, int(t), "Cool", temp)
+        if dose[int(t)] != 0:
+            D_t = dose[int(t)]
+            print(dose[int(t)], t)
 
-        #print(D_t, t, "Cool")
+        else:
+            fes1Dose = fes1.fes1(N_t, T_t) 
+
+            percentIncrease = fes2.fes2(N_t, T_t, BSA)
+
+            D_t = fes1Dose + fes1Dose * percentIncrease
+            if D_t>43:
+                D_t = D_t*.95
+
+            dose[int(t)] = D_t
+            temp = D_t
+
 
     elif int(t)%14 == 1:
-        D_t = temp
+        fes1Dose = fes1.fes1(N_t, T_t) 
+        percentIncrease = fes2.fes2(N_t, T_t, BSA)
+
+        D_t = dose[int(t-1)]
+
+        if D_t>43:
+            D_t = D_t*.95
+
         dose[int(t)] = D_t
+
+
+
+        #D_t = temp
+        #dose[int(t)] = D_t
        # print(D_t, t, int(t), "Cooled", temp)
 
     else:
@@ -102,6 +122,7 @@ def calc(request):
     #print to console
     print("Printing - " + name, weight, intervalTime)
 
+    global BSA
     BSA = functions.calcBSA(weight)
 
 
@@ -121,14 +142,17 @@ def calc(request):
     T_t = sol.y[2]
 
     logNT = np.log10(N_t)
-    print(N_t )
+    print(dose)
     print(logNT)
     toxPlot = generateFigure.get_plot(T_t, "Toxicity Vs Days", "Day", "Toxicity")
 
     noCellPlot = generateFigure.get_plot(logNT, "No of cells Vs Days", "Day", "Cells")
 
-    print(dose[84])
+    print(N_t[84])
+    print(T_t)
     dosePlot = generateFigure.get_plot(dose, "Dose Vs Days", "Day", "Dose")
+
+    
 
 
     return render(request, 'result.html', {'name':name, 'weight':weight, 'BSA':BSA, 'toxPlot':toxPlot, 'noCellPlot':noCellPlot, 'dosePlot':dosePlot})

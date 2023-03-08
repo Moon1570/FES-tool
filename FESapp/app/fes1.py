@@ -84,6 +84,6 @@ def fes1(no_of_cells, toxicity):
     dosing.input['toxicity'] = toxicity
     dosing.compute()
     dose = dosing.output['dose']
-    print("Dose: ", dose)
+    #print("Dose: ", dose)
 
     return dose
