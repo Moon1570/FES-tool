@@ -104,9 +104,9 @@ V_art = 2.212
 def dS2dt(t, S):
     C_v, C_rbcv, C_lv, C_le, C_lb, C_art, C_rbca, C_gv, C_bv, C_be, C_bb, C_sv, C_se, C_sb, C_liv, C_lie, C_lib, C_kv, C_ke, C_kb, C_mv, C_me, C_mb, C_fv, C_fe, C_fb, C_tv, C_te, C_tb, C_hv, C_he, C_hb, C_ov, C_oe, C_ob = S
     
-    return [ one_by_one_sub_f_hem * (1),
-            ((1/tau_g)*ln((ln(rho_g/N_0))/ln(rho_g/(2*N_0)))*N_t*ln(rho_g/N_t)) - (K_eff*C_eff* N_t),
-            C_t-(eta*T_t)]
+    return [ (1 - (F_tot * C_v))/(V_ven * one_sub_f_hem),
+            ((one_sub_f_hem/f_hem)*k_plasrbc*f_unb,C_v)-(k_rbcplas * C_rbcv),
+            (F_l/V_lv)*(C_v-C_lv)]
 
 
 def dSdt(t, S):
