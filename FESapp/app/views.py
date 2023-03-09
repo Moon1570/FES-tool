@@ -100,13 +100,70 @@ F_tot = 5.60
 V_ven = 3.318
 V_art = 2.212
 
+V_lv = 0.159
+V_le = 0.371
+V_gv = 1.28
+V_bv = 0.056
+V_be = 1.344
+V_sv = 0.036
+V_se = 0.144
+V_liv = 0.288
+V_lie = 1.512
+V_kv = 0.0744
+V_ke = 0.2356
+V_mv = 0.84
+V_me = 27.16
+V_fv = 0.45
+V_fe = 14.55
+V_tv = 0.01
+V_te = 0.19
+V_hv = 0.0066
+V_he = 0.3234
+V_ov = 0.79
+V_oe = 15.01
+
 
 def dS2dt(t, S):
     C_v, C_rbcv, C_lv, C_le, C_lb, C_art, C_rbca, C_gv, C_bv, C_be, C_bb, C_sv, C_se, C_sb, C_liv, C_lie, C_lib, C_kv, C_ke, C_kb, C_mv, C_me, C_mb, C_fv, C_fe, C_fb, C_tv, C_te, C_tb, C_hv, C_he, C_hb, C_ov, C_oe, C_ob = S
     
-    return [ (1 - (F_tot * C_v))/(V_ven * one_sub_f_hem),
-            ((one_sub_f_hem/f_hem)*k_plasrbc*f_unb,C_v)-(k_rbcplas * C_rbcv),
-            (F_l/V_lv)*(C_v-C_lv)]
+    return [ (1 - (F_tot * C_v))/(V_ven * one_sub_f_hem), #EQ 1
+            ((one_sub_f_hem/f_hem)*k_plasrbc*f_unb,C_v)-(k_rbcplas * C_rbcv), #EQ 2
+            ((F_l/V_lv)*(C_v-C_lv)) - (k_lve*f_unb*C_lv) + ((V_le*k_lev*C_le)/V_lv), #EQ 3
+            (V_lv*k_lve*f_unb*C_lv/V_le)-(k_lev*C_le)+(k_bind_out*C_lb)-(k_bind_in*C_le), #EQ 4
+            (k_bind_in*C_le)-(k_bind_out*C_lb), #EQ 5
+            (one_by_one_sub_f_hem/V_art)*((F_l*C_lv)-(F_tot*C_art))+(f_hem*k_rbcplas*C_rbca/one_sub_f_hem)-(k_plasrbc*f_unb*C_art) #EQ 6
+            (one_sub_f_hem*k_rbcplas*f_unb*C_art/f_hem) - (krbcplas*C_rbca), #EQ 7
+            ((F_g/V_gv)*(C_art - C_gv)) , #EQ 8
+            ((F_b/V_bv)*(C_art - C_bv)) - (k_bve*f_unb*C_bv) + ((V_be*k_bev*C_be)/V_bv), #EQ 9
+            (V_bv*k_bve*f_unb*C_bv/V_be)-(k_bev*C_be)+(k_bind_out*C_bb)-(k_bind_in*C_be), #EQ 10\
+            (k_bind_in*C_be)-(k_bind_out*C_bb), #EQ 11
+            ((F_s/V_sv)*(C_art - C_sv)) - (k_sve*f_unb*C_sv) + ((V_se*k_sev*C_se)/V_sv), #EQ 12
+            (V_sv*k_sve*f_unb*C_sv/V_se)-(k_sev*C_se)+(k_bind_out*C_sb)-(k_bind_in*C_se), #EQ 13
+            (k_bind_in*C_se)-(k_bind_out*C_sb), #EQ 14
+            ((F_li*C_art)+(F_g*C_g)+(F_s*C_sv)-(C_liv*(F_g+F_s+F_li))/V_liv)-(k_live*f_unb*C_liv)+(V_lie*k_liev*C_lie/V_liv), #EQ 15
+            (V_liv*k_live*f_unb*C_liv/V_lie)-(k_liev*C_lie)+(k_bind_out*C_lib)-(k_bind_in*C_lie)-(k_clli*C_lie), #EQ 16
+            (k_bind_in*C_lie)-(k_bind_out*C_lib)-(k_clli*C_lib), #EQ 17
+            (F_h*(C_art-C_hv)/V_hv)-(k_hve*f_unb*C_hv)+(V_he*k_hev*C_he/V_hv), #EQ 18
+            (V_hv*k_hve*f_unb*C_hv/V_he)-(k_hev*C_he)+(k_bind_out*C_hb)-(k_bind_in*C_he), #EQ 19
+            (k_bind_in*C_he)-(k_bind_out*C_hb), #EQ 20
+            ((F_k/V_kv)*(C_art - C_kv)) - (k_kve*f_unb*C_kv) + ((V_ke*k_kev*C_ke)/V_kv), #EQ 21
+            (V_kv*k_kve*f_unb*C_kv/V_ke)-(k_kev*C_ke)+(k_bind_out*C_kb)-(k_bind_in*C_ke), #EQ 22
+            (k_bind_in*C_ke)-(k_bind_out*C_kb), #EQ 23
+            ((F_m/V_mv)*(C_art - C_mv)) - (k_mve*f_unb*C_mv) + ((V_me*k_mev*C_me)/V_mv), #EQ 24
+            (V_mv*k_mve*f_unb*C_mv/V_me)-(k_mev*C_me)+(k_bind_out*C_mb)-(k_bind_in*C_me), #EQ 25
+            (k_bind_in*C_me)-(k_bind_out*C_mb), #EQ 26
+            (F_f*(C_art-C_fv)/V_fv)-(k_fve*f_unb*C_fv)+(V_fe*k_fev*C_fe/V_fv), #EQ 27
+            (V_fv*k_fve*f_unb*C_fv/V_fe)-(k_fev*C_fe)+(k_bind_out*C_fb)-(k_bind_in*C_fe), #EQ 28
+            (k_bind_in*C_fe)-(k_bind_out*C_fb), #EQ 29
+            (F_t*(C_art-C_tv)/V_tv)-(k_tve*f_unb*C_tv)+(V_te*k_tev*C_te/V_tv), #EQ 30
+            (V_tv*k_tve*f_unb*C_tv/V_te)-(k_tev*C_te)+(k_bind_out*C_tb)-(k_bind_in*C_te), #EQ 31
+            (k_bind_in*C_te)-(k_bind_out*C_tb), #EQ 32
+            (F_o*(C_art-C_ov)/V_ov)-(k_ove*f_unb*C_ov)+(V_oe*k_oev*C_oe/V_ov), #EQ 33
+            (V_ov*k_ove*f_unb*C_ov/V_oe)-(k_oev*C_oe)+(k_bind_out*C_ob)-(k_bind_in*C_oe), #EQ 34
+            (k_bind_in*C_oe)-(k_bind_out*C_ob), #EQ 35
+            
+
+            ]
 
 
 def dSdt(t, S):
