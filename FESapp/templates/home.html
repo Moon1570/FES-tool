@@ -3,18 +3,45 @@
 
 {% block content %} 
 
-<h1>fdff {{name}}</h1>
 
+<h2> Good day</h2>
+<p> This is a decision support system for cancer chemotherapy. It is designed to help you make the best decision for your patient. </p>
+<p> Please fill the form and submit to get data on yout subject </p>
 
+    <form action="calc" method='POST' onsubmit="openLoader()">
+        <!-- 2 column grid layout with text inputs for the first and last names -->
+        {% csrf_token %}
 
-<form action="calc" method='POST'>
-    {% csrf_token %}
-    Enter Patient Name: <input type="text" name="name" value="{{name}}"><br>
-    Enter Patient Weight: <input type="number" name="weight" value="" placeholder="in KG"><br>
-    Interval time: <input type="number" name="intervalTime" value="14"><br>
+    
+        <!-- Text input -->
+        <div class="form-outline mb-4">
+            <input type="text" id="form6Example1" class="form-control" name="name" />
+            <label class="form-label" for="form6Example1">Enter Patient Name:</label>
+        </div>
+    
+        <!-- Number input -->
+        <div class="form-outline mb-4">
+        <input type="number" name="weight" value="" placeholder="in KG" id="form6Example4" class="form-control" />
+        <label class="form-label" for="form6Example4">Enter Patient Weight</label>
+        </div>
 
-    <input type="submit">
+        <!-- Number input -->
+        <div class="form-outline mb-4">
+            <input type="number" name="intervalTime" value="14" id="form6Example4" class="form-control" />
+            <label class="form-label" for="form6Example4">Enter Dose Interval</label>
+        </div>
+        
+        <!-- Submit button -->
+        <button id="loadingModal" type="submit" class="btn btn-outline-primary btn-block mb-4">Simulate</button>
+    </form>
 
-</form>
+    <script>
 
+        function openLoader() {
+            document.getElementById("loadingModal").innerHTML = "Loading...";
+            document.getElementById("loadingModal").disabled = true;
+
+          }
+        
+        </script>
 {% endblock %}

@@ -31,6 +31,8 @@ C_th = 10
 t = int(0)
 temp = 0.0
 
+
+
 #Parameters for PBPK model
 k_live = 10.251
 k_clli = 0.1023
@@ -102,7 +104,7 @@ V_art = 2.212
 
 V_lv = 0.159
 V_le = 0.371
-V_gv = 1.28
+V_gv = 1.27
 V_bv = 0.056
 V_be = 1.344
 V_sv = 0.036
@@ -125,14 +127,20 @@ V_oe = 15.01
 
 def dS2dt(t, S):
     C_v, C_rbcv, C_lv, C_le, C_lb, C_art, C_rbca, C_gv, C_bv, C_be, C_bb, C_sv, C_se, C_sb, C_liv, C_lie, C_lib, C_kv, C_ke, C_kb, C_mv, C_me, C_mb, C_fv, C_fe, C_fb, C_tv, C_te, C_tb, C_hv, C_he, C_hb, C_ov, C_oe, C_ob = S
+    dose = adminstrated_dose
+        
+    if(int(dose) != 45 and int(t) == 1):
+        dose = dose + adminstrated_dose
     
-    return [ (1 - (F_tot * C_v))/(V_ven * one_sub_f_hem), #EQ 1
-            ((one_sub_f_hem/f_hem)*k_plasrbc*f_unb,C_v)-(k_rbcplas * C_rbcv), #EQ 2
+
+
+    return [((((F_l*C_le)+(F_b*C_be)+(F_s*C_se)+(F_li*C_lie)+(F_h*C_he)+(F_k*C_ke)+(F_m*C_me)+(F_f*C_fe)+(F_t*C_te)+(F_o*C_oe)) - (F_tot * C_v))/(V_ven * one_sub_f_hem))+(dose/(V_ven*one_sub_f_hem))+(one_by_one_sub_f_hem*f_hem*k_rbcplas*C_rbcv)-(k_plasrbc*f_unb*C_v), #EQ 1
+            (one_sub_f_hem*k_plasrbc*f_unb*C_v/f_hem)-(k_rbcplas*C_rbcv), #EQ 2
             ((F_l/V_lv)*(C_v-C_lv)) - (k_lve*f_unb*C_lv) + ((V_le*k_lev*C_le)/V_lv), #EQ 3
             (V_lv*k_lve*f_unb*C_lv/V_le)-(k_lev*C_le)+(k_bind_out*C_lb)-(k_bind_in*C_le), #EQ 4
             (k_bind_in*C_le)-(k_bind_out*C_lb), #EQ 5
-            (one_by_one_sub_f_hem/V_art)*((F_l*C_lv)-(F_tot*C_art))+(f_hem*k_rbcplas*C_rbca/one_sub_f_hem)-(k_plasrbc*f_unb*C_art) #EQ 6
-            (one_sub_f_hem*k_rbcplas*f_unb*C_art/f_hem) - (krbcplas*C_rbca), #EQ 7
+            (((F_l*C_lv)-(F_tot*C_art))/(V_art*one_sub_f_hem))+(f_hem*k_rbcplas*C_rbca/one_sub_f_hem)-(k_plasrbc*f_unb*C_art), #EQ 6
+            (one_sub_f_hem*k_rbcplas*f_unb*C_art/f_hem) - (k_rbcplas*C_rbca), #EQ 7
             ((F_g/V_gv)*(C_art - C_gv)) , #EQ 8
             ((F_b/V_bv)*(C_art - C_bv)) - (k_bve*f_unb*C_bv) + ((V_be*k_bev*C_be)/V_bv), #EQ 9
             (V_bv*k_bve*f_unb*C_bv/V_be)-(k_bev*C_be)+(k_bind_out*C_bb)-(k_bind_in*C_be), #EQ 10\
@@ -140,7 +148,7 @@ def dS2dt(t, S):
             ((F_s/V_sv)*(C_art - C_sv)) - (k_sve*f_unb*C_sv) + ((V_se*k_sev*C_se)/V_sv), #EQ 12
             (V_sv*k_sve*f_unb*C_sv/V_se)-(k_sev*C_se)+(k_bind_out*C_sb)-(k_bind_in*C_se), #EQ 13
             (k_bind_in*C_se)-(k_bind_out*C_sb), #EQ 14
-            ((F_li*C_art)+(F_g*C_g)+(F_s*C_sv)-(C_liv*(F_g+F_s+F_li))/V_liv)-(k_live*f_unb*C_liv)+(V_lie*k_liev*C_lie/V_liv), #EQ 15
+            ((F_li*C_art)+(F_g*C_gv)+(F_s*C_sv)-(C_liv*(F_g+F_s+F_li))/V_liv)-(k_live*f_unb*C_liv)+(V_lie*k_liev*C_lie/V_liv), #EQ 15
             (V_liv*k_live*f_unb*C_liv/V_lie)-(k_liev*C_lie)+(k_bind_out*C_lib)-(k_bind_in*C_lie)-(k_clli*C_lie), #EQ 16
             (k_bind_in*C_lie)-(k_bind_out*C_lib)-(k_clli*C_lib), #EQ 17
             (F_h*(C_art-C_hv)/V_hv)-(k_hve*f_unb*C_hv)+(V_he*k_hev*C_he/V_hv), #EQ 18
@@ -160,9 +168,7 @@ def dS2dt(t, S):
             (k_bind_in*C_te)-(k_bind_out*C_tb), #EQ 32
             (F_o*(C_art-C_ov)/V_ov)-(k_ove*f_unb*C_ov)+(V_oe*k_oev*C_oe/V_ov), #EQ 33
             (V_ov*k_ove*f_unb*C_ov/V_oe)-(k_oev*C_oe)+(k_bind_out*C_ob)-(k_bind_in*C_oe), #EQ 34
-            (k_bind_in*C_oe)-(k_bind_out*C_ob), #EQ 35
-            
-
+            (k_bind_in*C_oe)-(k_bind_out*C_ob) #EQ 35
             ]
 
 
@@ -173,7 +179,7 @@ def dSdt(t, S):
     D_t =0    
     flag = {}
 
-    #print(t, int(t), D_t)
+    
     if int(t) == 0:
         D_t = 45.0
         dose[int(t)] = D_t
@@ -182,10 +188,9 @@ def dSdt(t, S):
         D_t = 0.0
         dose[int(t)] = D_t
 
-    elif int(t)%14 == 0 :
+    elif int(t)%intval_time == 0 :
         if dose[int(t)] != 0:
             D_t = dose[int(t)]
-            print(dose[int(t)], t)
 
         else:
             fes1Dose = fes1.fes1(N_t, T_t) 
@@ -200,7 +205,7 @@ def dSdt(t, S):
             temp = D_t
 
 
-    elif int(t)%14 == 1:
+    elif int(t)%intval_time == 1:
         fes1Dose = fes1.fes1(N_t, T_t) 
         percentIncrease = fes2.fes2(N_t, T_t, BSA)
 
@@ -245,16 +250,17 @@ def dSdt(t, S):
 
 # Create your views here.
 def home(request):
-    return render(request, 'home.html', {'name':'Moon'})
+    return render(request, 'home.html')
 
 def calc(request):
+    
+    global intval_time
     #get name from request
     name = request.POST.get('name')
     weight = int(request.POST.get('weight'))
-    intervalTime = int(request.POST.get('intervalTime'))
-
+    intval_time = int(request.POST.get('intervalTime'))
+    print(intval_time)
     #print to console
-    print("Printing - " + name, weight, intervalTime)
 
     global BSA
     BSA = functions.calcBSA(weight)
@@ -265,8 +271,14 @@ def calc(request):
     N_t_0 = N_0
     T_t_0 = 0
 
+
+    C_v_0, C_rbcv_0, C_lv_0, C_le_0, C_lb_0, C_art_0, C_rbca_0, C_gv_0, C_bv_0, C_be_0, C_bb_0, C_sv_0, C_se_0, C_sb_0, C_liv_0, C_lie_0, C_lib_0, C_kv_0, C_ke_0, C_kb_0, C_mv_0, C_me_0, C_mb_0, C_fv_0, C_fe_0, C_fb_0, C_tv_0, C_te_0, C_tb_0, C_hv_0, C_he_0, C_hb_0, C_ov_0, C_oe_0, C_ob_0 = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+
     t_eval  = np.linspace(0, 120, 121, dtype=int)
     t_range = (0, 120)
+
+    
 
 
     sol = solve_ivp(dSdt, t_range, y0=[C_t_0, N_t_0, T_t_0],method='LSODA',t_eval=t_eval)
@@ -276,18 +288,57 @@ def calc(request):
     T_t = sol.y[2]
 
     logNT = np.log10(N_t)
-    print(dose)
-    print(logNT)
+    #print(dose)
+    #print(logNT)
     toxPlot = generateFigure.get_plot(T_t, "Toxicity Vs Days", "Day", "Toxicity")
 
     noCellPlot = generateFigure.get_plot(logNT, "No of cells Vs Days", "Day", "Cells")
 
-    print(N_t[84])
+    #print(N_t[84])
     print(T_t)
     dosePlot = generateFigure.get_plot(dose, "Dose Vs Days", "Day", "Dose")
+
+    uniqueDose = []
+    for i in range(0, 121):
+        if i%intval_time == 0:
+            uniqueDose.append(dose[i])
+
+    print(uniqueDose)
+
+    
+
+    t_eval2  = np.linspace(0, 2, 48, dtype=float)
+    t_range2 = (0, 2)
+    
+    global adminstrated_dose
+    pbpk = []
+    for dt in uniqueDose:
+        adminstrated_dose = dt
+        sol2 = solve_ivp(dS2dt, t_range2, y0=[C_v_0, C_rbcv_0, C_lv_0, C_le_0, C_lb_0, C_art_0, C_rbca_0, C_gv_0, C_bv_0, C_be_0, C_bb_0, C_sv_0, C_se_0, C_sb_0, C_liv_0, C_lie_0, C_lib_0, C_kv_0, C_ke_0, C_kb_0, C_mv_0, C_me_0, C_mb_0, C_fv_0, C_fe_0, C_fb_0, C_tv_0, C_te_0, C_tb_0, C_hv_0, C_he_0, C_hb_0, C_ov_0, C_oe_0, C_ob_0],method = 'LSODA',t_eval=t_eval2, atol=1.49e-8, rtol=1.49e-8)
+        pbpk.append(sol2)
+       
+    #sol2 = solve_ivp(dS2dt, t_range2, y0=[C_v_0, C_rbcv_0, C_lv_0, C_le_0, C_lb_0, C_art_0, C_rbca_0, C_gv_0, C_bv_0, C_be_0, C_bb_0, C_sv_0, C_se_0, C_sb_0, C_liv_0, C_lie_0, C_lib_0, C_kv_0, C_ke_0, C_kb_0, C_mv_0, C_me_0, C_mb_0, C_fv_0, C_fe_0, C_fb_0, C_tv_0, C_te_0, C_tb_0, C_hv_0, C_he_0, C_hb_0, C_ov_0, C_oe_0, C_ob_0],method = 'LSODA',t_eval=t_eval2, atol=1.49e-8, rtol=1.49e-8)
+    t = sol2.t
+    #N_t = sol2.y[1]
+    #T_t = sol2.y[2]
+
+
+    dose1 = pbpk[0]
+    dose2 = pbpk[1]
+    dose3 = pbpk[2]
+    dose4 = pbpk[3]
+    dose5 = pbpk[4]
+    dose6 = pbpk[5]
+    dose7 = pbpk[6]
+    dose8 = pbpk[7]
+    dose9 = pbpk[8]
 
     
 
 
-    return render(request, 'result.html', {'name':name, 'weight':weight, 'BSA':BSA, 'toxPlot':toxPlot, 'noCellPlot':noCellPlot, 'dosePlot':dosePlot})
+    venousBloodPlot1 = generateFigure.get_plot(dose1.y[0], "1st Dose Venous Blood Vs Time", "Time", "Venous Blood")
+    venousBloodPlot2 = generateFigure.get_plot(dose2.y[0], "2nd Dose Venous Blood Vs Time", "Time", "Venous Blood")
+    venousBloodPlot3 = generateFigure.get_plot(dose3.y[0], "3rd Dose Venous Blood Vs Time", "Time", "Venous Blood")
+
+    return render(request, 'result.html', {'name':name, 'weight':weight, 'BSA':BSA, 'toxPlot':toxPlot, 'noCellPlot':noCellPlot, 'dosePlot':dosePlot, 'venousBloodPlot1':venousBloodPlot1, 'venousBloodPlot2':venousBloodPlot2, 'venousBloodPlot3':venousBloodPlot3})
 
