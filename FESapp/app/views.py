@@ -129,7 +129,7 @@ def dS2dt(t, S):
     C_v, C_rbcv, C_lv, C_le, C_lb, C_art, C_rbca, C_gv, C_bv, C_be, C_bb, C_sv, C_se, C_sb, C_liv, C_lie, C_lib, C_kv, C_ke, C_kb, C_mv, C_me, C_mb, C_fv, C_fe, C_fb, C_tv, C_te, C_tb, C_hv, C_he, C_hb, C_ov, C_oe, C_ob = S
     dose = adminstrated_dose
         
-    if(int(dose) != 45 and int(t) == 1):
+    if(int(dose) != 40 and int(t) == 1):
         dose = dose + adminstrated_dose
     
 
@@ -151,9 +151,6 @@ def dS2dt(t, S):
             ((F_li*C_art)+(F_g*C_gv)+(F_s*C_sv)-(C_liv*(F_g+F_s+F_li))/V_liv)-(k_live*f_unb*C_liv)+(V_lie*k_liev*C_lie/V_liv), #EQ 15
             (V_liv*k_live*f_unb*C_liv/V_lie)-(k_liev*C_lie)+(k_bind_out*C_lib)-(k_bind_in*C_lie)-(k_clli*C_lie), #EQ 16
             (k_bind_in*C_lie)-(k_bind_out*C_lib)-(k_clli*C_lib), #EQ 17
-            (F_h*(C_art-C_hv)/V_hv)-(k_hve*f_unb*C_hv)+(V_he*k_hev*C_he/V_hv), #EQ 18
-            (V_hv*k_hve*f_unb*C_hv/V_he)-(k_hev*C_he)+(k_bind_out*C_hb)-(k_bind_in*C_he), #EQ 19
-            (k_bind_in*C_he)-(k_bind_out*C_hb), #EQ 20
             ((F_k/V_kv)*(C_art - C_kv)) - (k_kve*f_unb*C_kv) + ((V_ke*k_kev*C_ke)/V_kv), #EQ 21
             (V_kv*k_kve*f_unb*C_kv/V_ke)-(k_kev*C_ke)+(k_bind_out*C_kb)-(k_bind_in*C_ke), #EQ 22
             (k_bind_in*C_ke)-(k_bind_out*C_kb), #EQ 23
@@ -166,6 +163,9 @@ def dS2dt(t, S):
             (F_t*(C_art-C_tv)/V_tv)-(k_tve*f_unb*C_tv)+(V_te*k_tev*C_te/V_tv), #EQ 30
             (V_tv*k_tve*f_unb*C_tv/V_te)-(k_tev*C_te)+(k_bind_out*C_tb)-(k_bind_in*C_te), #EQ 31
             (k_bind_in*C_te)-(k_bind_out*C_tb), #EQ 32
+            (F_h*(C_art-C_hv)/V_hv)-(k_hve*f_unb*C_hv)+(V_he*k_hev*C_he/V_hv), #EQ 18
+            (V_hv*k_hve*f_unb*C_hv/V_he)-(k_hev*C_he)+(k_bind_out*C_hb)-(k_bind_in*C_he), #EQ 19
+            (k_bind_in*C_he)-(k_bind_out*C_hb), #EQ 20            
             (F_o*(C_art-C_ov)/V_ov)-(k_ove*f_unb*C_ov)+(V_oe*k_oev*C_oe/V_ov), #EQ 33
             (V_ov*k_ove*f_unb*C_ov/V_oe)-(k_oev*C_oe)+(k_bind_out*C_ob)-(k_bind_in*C_oe), #EQ 34
             (k_bind_in*C_oe)-(k_bind_out*C_ob) #EQ 35
@@ -211,7 +211,7 @@ def dSdt(t, S):
 
         D_t = dose[int(t-1)]
 
-        if D_t>43:
+        if D_t>43.7:
             D_t = D_t*.95
 
         dose[int(t)] = D_t
@@ -290,24 +290,24 @@ def calc(request):
     logNT = np.log10(N_t)
     #print(dose)
     #print(logNT)
-    toxPlot = generateFigure.get_plot(T_t, "Toxicity Vs Days", "Day", "Toxicity")
+    toxPlot = generateFigure.get_plot_auto(T_t, "Toxicity Vs Days", "Day", "Toxicity")
 
-    noCellPlot = generateFigure.get_plot(logNT, "No of cells Vs Days", "Day", "Cells")
+    noCellPlot = generateFigure.get_plot_auto(logNT, "No of cells Vs Days", "Day", "Cells")
 
     #print(N_t[84])
     print(T_t)
-    dosePlot = generateFigure.get_plot(dose, "Dose Vs Days", "Day", "Dose")
+    print(dose)
+    dosePlot = generateFigure.get_plot_auto(dose, "Dose Vs Days", "Day", "Dose")
 
     uniqueDose = []
     for i in range(0, 121):
         if i%intval_time == 0:
             uniqueDose.append(dose[i])
 
-    print(uniqueDose)
 
     
 
-    t_eval2  = np.linspace(0, 2, 48, dtype=float)
+    t_eval2  = np.linspace(0, 2, 49, dtype=float)
     t_range2 = (0, 2)
     
     global adminstrated_dose
@@ -333,8 +333,7 @@ def calc(request):
     dose8 = pbpk[7]
     dose9 = pbpk[8]
 
-    print(dose)
-    print(uniqueDose)
+
 
     dose_amount1 = uniqueDose[0]
     dose_amount2 = uniqueDose[1]
@@ -346,18 +345,69 @@ def calc(request):
     dose_amount8 = uniqueDose[7]
     dose_amount9 = uniqueDose[8]
 
-    print(N_t[84], N_t[83], N_t[85])
+    print(dose1.y[17])
+    print(dose1.y[18])
 
-    venousBloodPlot1 = generateFigure.get_plot(dose1.y[0], "1st Dose Venous Blood Vs Time", "Time", "Venous Blood")
-    venousBloodPlot2 = generateFigure.get_plot(dose2.y[0], "2nd Dose Venous Blood Vs Time", "Time", "Venous Blood")
-    venousBloodPlot3 = generateFigure.get_plot(dose3.y[0], "3rd Dose Venous Blood Vs Time", "Time", "Venous Blood")
+    venousBloodPlot1 = generateFigure.get_plot(dose1.y[0], "1st Dose Venous Blood Vs Time", "Time (hrs)", "Venous Blood")
+    venousBloodPlot2 = generateFigure.get_plot(dose2.y[0], "2nd Dose Venous Blood Vs Time", "Time (hrs)", "Venous Blood")
+    venousBloodPlot3 = generateFigure.get_plot(dose3.y[0], "3rd Dose Venous Blood Vs Time", "Time (hrs)", "Venous Blood")
+
+    venousBloodPlot = generateFigure.get_plot_multiple([dose1.y[0], dose2.y[0], dose3.y[0], dose4.y[0], dose5.y[0], dose6.y[0], dose7.y[0], dose8.y[0], dose9.y[0]], "Venous Blood (C_ven) Vs Time", "Time (hrs)", "Venous Blood")
+    venourRBCPlot = generateFigure.get_plot_multiple([dose1.y[1], dose2.y[1], dose3.y[1], dose4.y[1], dose5.y[1], dose6.y[1], dose7.y[1], dose8.y[1], dose9.y[1]], "Venous RBC (C_rbcv) Vs Time", "Time (hrs)", "Venous RBC")
+    lungClvPlot = generateFigure.get_plot_multiple([dose1.y[2], dose2.y[2], dose3.y[2], dose4.y[2], dose5.y[2], dose6.y[2], dose7.y[2], dose8.y[2], dose9.y[2]], "Lung (C_lv) Vs Time", "Time (hrs)", "Lung")
+    lungClePlot = generateFigure.get_plot_multiple([dose1.y[3], dose2.y[3], dose3.y[3], dose4.y[3], dose5.y[3], dose6.y[3], dose7.y[3], dose8.y[3], dose9.y[3]], "Lung (C_le) Vs Time", "Time (hrs)", "Lung")
+    lungClbPlot = generateFigure.get_plot_multiple([dose1.y[4], dose2.y[4], dose3.y[4], dose4.y[4], dose5.y[4], dose6.y[4], dose7.y[4], dose8.y[4], dose9.y[4]], "Lung (C_lb) Vs Time", "Time (hrs)", "Lung")
+    artetialBloodPlot = generateFigure.get_plot_multiple([dose1.y[5], dose2.y[5], dose3.y[5], dose4.y[5], dose5.y[5], dose6.y[5], dose7.y[5], dose8.y[5], dose9.y[5]], "Arterial Blood (C_art) Vs Time", "Time (hrs)", "Arterial Blood")    
+    artetialRBCPlot = generateFigure.get_plot_multiple([dose1.y[6], dose2.y[6], dose3.y[6], dose4.y[6], dose5.y[6], dose6.y[6], dose7.y[6], dose8.y[6], dose9.y[6]], "Arterial RBC (C_rbca) Vs Time", "Time (hrs)", "Arterial RBC")
+    gutCgvPlot = generateFigure.get_plot_multiple([dose1.y[7], dose2.y[7], dose3.y[7], dose4.y[7], dose5.y[7], dose6.y[7], dose7.y[7], dose8.y[7], dose9.y[7]], "Gut (C_gv) Vs Time", "Time (hrs)", "Gut")
+    brainCbvPlot = generateFigure.get_plot_multiple([dose1.y[8], dose2.y[8], dose3.y[8], dose4.y[8], dose5.y[8], dose6.y[8], dose7.y[8], dose8.y[8], dose9.y[8]], "Brain (C_bv) Vs Time", "Time (hrs)", "Brain")
+    brainCbePlot = generateFigure.get_plot_multiple([dose1.y[9], dose2.y[9], dose3.y[9], dose4.y[9], dose5.y[9], dose6.y[9], dose7.y[9], dose8.y[9], dose9.y[9]], "Brain (C_be) Vs Time", "Time (hrs)", "Brain")
+    brainCbbPlot = generateFigure.get_plot_multiple([dose1.y[10], dose2.y[10], dose3.y[10], dose4.y[10], dose5.y[10], dose6.y[10], dose7.y[10], dose8.y[10], dose9.y[10]], "Brain (C_bb) Vs Time (hrs)", "Time", "Brain")
+    spleenCsvPlot = generateFigure.get_plot_multiple([dose1.y[11], dose2.y[11], dose3.y[11], dose4.y[11], dose5.y[11], dose6.y[11], dose7.y[11], dose8.y[11], dose9.y[11]], "Spleen (C_sv) Vs Time (hrs)", "Time", "Spleen")
+    spleenCsePlot = generateFigure.get_plot_multiple([dose1.y[12], dose2.y[12], dose3.y[12], dose4.y[12], dose5.y[12], dose6.y[12], dose7.y[12], dose8.y[12], dose9.y[12]], "Spleen (C_se) Vs Time (hrs)", "Time", "Spleen")
+    spleenCsbPlot = generateFigure.get_plot_multiple([dose1.y[13], dose2.y[13], dose3.y[13], dose4.y[13], dose5.y[13], dose6.y[13], dose7.y[13], dose8.y[13], dose9.y[13]], "Spleen (C_sb) Vs Time (hrs)", "Time", "Spleen")
+    liverClivPlot = generateFigure.get_plot_multiple([dose1.y[14], dose2.y[14], dose3.y[14], dose4.y[14], dose5.y[14], dose6.y[14], dose7.y[14], dose8.y[14], dose9.y[14]], "Liver (C_liv) Vs Time (hrs)", "Time", "Liver")
+    liverCliePlot = generateFigure.get_plot_multiple([dose1.y[15], dose2.y[15], dose3.y[15], dose4.y[15], dose5.y[15], dose6.y[15], dose7.y[15], dose8.y[15], dose9.y[15]], "Liver (C_lie) Vs Time (hrs)", "Time", "Liver")
+    liverClibPlot = generateFigure.get_plot_multiple([dose1.y[16], dose2.y[16], dose3.y[16], dose4.y[16], dose5.y[16], dose6.y[16], dose7.y[16], dose8.y[16], dose9.y[16]], "Liver (C_lib) Vs Time (hrs)", "Time", "Liver")
+    kidneyCkvPlot = generateFigure.get_plot_multiple([dose1.y[17], dose2.y[17], dose3.y[17], dose4.y[17], dose5.y[17], dose6.y[17], dose7.y[17], dose8.y[17], dose9.y[17]], "Kidney (C_kv) Vs Time (hrs)", "Time", "Kidney")
+    kidneyCkePlot = generateFigure.get_plot_multiple([dose1.y[18], dose2.y[18], dose3.y[18], dose4.y[18], dose5.y[18], dose6.y[18], dose7.y[18], dose8.y[18], dose9.y[18]], "Kidney (C_ke) Vs Time (hrs)", "Time", "Kidney")
+    kidneyCkbPlot = generateFigure.get_plot_multiple([dose1.y[19], dose2.y[19], dose3.y[19], dose4.y[19], dose5.y[19], dose6.y[19], dose7.y[19], dose8.y[19], dose9.y[19]], "Kidney (C_kb) Vs Time (hrs)", "Time", "Kidney")
+    muscleCmvPlot = generateFigure.get_plot_multiple([dose1.y[20], dose2.y[20], dose3.y[20], dose4.y[20], dose5.y[20], dose6.y[20], dose7.y[20], dose8.y[20], dose9.y[20]], "Muscle (C_mv) Vs Time (hrs)", "Time", "Muscle")
+    muscleCmePlot = generateFigure.get_plot_multiple([dose1.y[21], dose2.y[21], dose3.y[21], dose4.y[21], dose5.y[21], dose6.y[21], dose7.y[21], dose8.y[21], dose9.y[21]], "Muscle (C_me) Vs Time (hrs)", "Time", "Muscle")
+    muscleCmbPlot = generateFigure.get_plot_multiple([dose1.y[22], dose2.y[22], dose3.y[22], dose4.y[22], dose5.y[22], dose6.y[22], dose7.y[22], dose8.y[22], dose9.y[22]], "Muscle (C_mb) Vs Time (hrs)", "Time", "Muscle")
+    fatCfvPlot = generateFigure.get_plot_multiple([dose1.y[23], dose2.y[23], dose3.y[23], dose4.y[23], dose5.y[23], dose6.y[23], dose7.y[23], dose8.y[23], dose9.y[23]], "Fat (C_fv) Vs Time", "Time (hrs)", "Fat")
+    fatCfePlot = generateFigure.get_plot_multiple([dose1.y[24], dose2.y[24], dose3.y[24], dose4.y[24], dose5.y[24], dose6.y[24], dose7.y[24], dose8.y[24], dose9.y[24]], "Fat (C_fe) Vs Time", "Time (hrs)", "Fat")
+    fatCfbPlot = generateFigure.get_plot_multiple([dose1.y[25], dose2.y[25], dose3.y[25], dose4.y[25], dose5.y[25], dose6.y[25], dose7.y[25], dose8.y[25], dose9.y[25]], "Fat (C_fb) Vs Time", "Time (hrs)", "Fat")
+    tumorCtvPlot = generateFigure.get_plot_multiple([dose1.y[26], dose2.y[26], dose3.y[26], dose4.y[26], dose5.y[26], dose6.y[26], dose7.y[26], dose8.y[26], dose9.y[26]], "Tumor (C_tv) Vs Time", "Time (hrs)", "Tumor")
+    tumorCtePlot = generateFigure.get_plot_multiple([dose1.y[27], dose2.y[27], dose3.y[27], dose4.y[27], dose5.y[27], dose6.y[27], dose7.y[27], dose8.y[27], dose9.y[27]], "Tumor (C_te) Vs Time", "Time (hrs)", "Tumor")
+    tumorCtbPlot = generateFigure.get_plot_multiple([dose1.y[28], dose2.y[28], dose3.y[28], dose4.y[28], dose5.y[28], dose6.y[28], dose7.y[28], dose8.y[28], dose9.y[28]], "Tumor (C_tb) Vs Time", "Time (hrs)", "Tumor")
+    heartChvPlot = generateFigure.get_plot_multiple([dose1.y[29], dose2.y[29], dose3.y[29], dose4.y[29], dose5.y[29], dose6.y[29], dose7.y[29], dose8.y[29], dose9.y[29]], "Heart (C_hv) Vs Time", "Time (hrs)", "Heart")
+    heartChePlot = generateFigure.get_plot_multiple([dose1.y[30], dose2.y[30], dose3.y[30], dose4.y[30], dose5.y[30], dose6.y[30], dose7.y[30], dose8.y[30], dose9.y[30]], "Heart (C_he) Vs Time", "Time (hrs)", "Heart")
+    heartChbPlot = generateFigure.get_plot_multiple([dose1.y[31], dose2.y[31], dose3.y[31], dose4.y[31], dose5.y[31], dose6.y[31], dose7.y[31], dose8.y[31], dose9.y[31]], "Heart (C_hb) Vs Time", "Time (hrs)", "Heart")
+    otherCovPlot = generateFigure.get_plot_multiple([dose1.y[32], dose2.y[32], dose3.y[32], dose4.y[32], dose5.y[32], dose6.y[32], dose7.y[32], dose8.y[32], dose9.y[32]], "Other (C_ov) Vs Time", "Time (hrs)", "Other")
+    otherCoePlot = generateFigure.get_plot_multiple([dose1.y[33], dose2.y[33], dose3.y[33], dose4.y[33], dose5.y[33], dose6.y[33], dose7.y[33], dose8.y[33], dose9.y[33]], "Other (C_oe) Vs Time", "Time (hrs)", "Other")
+    otherCobPlot = generateFigure.get_plot_multiple([dose1.y[34], dose2.y[34], dose3.y[34], dose4.y[34], dose5.y[34], dose6.y[34], dose7.y[34], dose8.y[34], dose9.y[34]], "Other (C_ob) Vs Time", "Time (hrs)", "Other")
+
+
 
     return render(request, 'result.html', {
         'name':name, 'weight':weight, 'BSA':BSA, 'toxPlot':toxPlot,
-         'noCellPlot':noCellPlot, 'dosePlot':dosePlot, 'cell84':N_t[84],
-         'dose1':dose_amount1, 'dose2':dose_amount2, 'dose3':dose_amount3,
-            'dose4':dose_amount4, 'dose5':dose_amount5, 'dose6':dose_amount6,
-            'dose7':dose_amount7, 'dose8':dose_amount8, 'dose9':dose_amount9, 'doses':uniqueDose,
-          'venousBloodPlot1':venousBloodPlot1, 'venousBloodPlot2':venousBloodPlot2,
-           'venousBloodPlot3':venousBloodPlot3})
+        'noCellPlot':noCellPlot, 'dosePlot':dosePlot, 'cell84':N_t[84],
+        'dose1':dose_amount1, 'dose2':dose_amount2, 'dose3':dose_amount3,
+        'dose4':dose_amount4, 'dose5':dose_amount5, 'dose6':dose_amount6,
+        'dose7':dose_amount7, 'dose8':dose_amount8, 'dose9':dose_amount9, 'doses':uniqueDose,
+        'venousBloodPlot1':venousBloodPlot1, 'venousBloodPlot2':venousBloodPlot2,
+        'venousBloodPlot3':venousBloodPlot3, 'venousBloodPlot':venousBloodPlot,
+        'venourRBCPlot':venourRBCPlot, 'lungClvPlot':lungClvPlot, 'lungClePlot':lungClePlot, 'lungClbPlot':lungClbPlot, 
+        'artetialBloodPlot':artetialBloodPlot, 'artetialRBCPlot':artetialRBCPlot,
+        'gutCgvPlot':gutCgvPlot, 'brainCbvPlot':brainCbvPlot, 'brainCbePlot':brainCbePlot, 'brainCbbPlot':brainCbbPlot,
+        'spleenCsvPlot':spleenCsvPlot, 'spleenCsePlot':spleenCsePlot, 'spleenCsbPlot':spleenCsbPlot,
+        'liverClivPlot':liverClivPlot, 'liverCliePlot':liverCliePlot, 'liverClibPlot':liverClibPlot,
+        'kidneyCkvPlot':kidneyCkvPlot, 'kidneyCkePlot':kidneyCkePlot, 'kidneyCkbPlot':kidneyCkbPlot,
+        'muscleCmvPlot':muscleCmvPlot, 'muscleCmePlot':muscleCmePlot, 'muscleCmbPlot':muscleCmbPlot,
+        'fatCfvPlot':fatCfvPlot, 'fatCfePlot':fatCfePlot, 'fatCfbPlot':fatCfbPlot,
+        'tumorCtvPlot':tumorCtvPlot, 'tumorCtePlot':tumorCtePlot, 'tumorCtbPlot':tumorCtbPlot,
+        'heartChvPlot':heartChvPlot, 'heartChePlot':heartChePlot, 'heartChbPlot':heartChbPlot,
+        'otherCovPlot':otherCovPlot, 'otherCoePlot':otherCoePlot, 'otherCobPlot':otherCobPlot
+        })
 
