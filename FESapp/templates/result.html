@@ -3,8 +3,40 @@
 
 {% block content %} 
 
-<h1>name : {{name}}</h1>
+<h1>Name : {{name}}</h1>
 <p>BSA : {{BSA}}</p>
+<p>Number of cells in 84th day: {{cell84}}</p>
+<button class="btn btn-primary">Download CSV Data</button>
+<a class="btn" href="javascript:window.print()">Click to Print</a>
+<br>
+<hr>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Number of dose</th>
+            <th scope="col">Dose</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for dose in doses %}
+            <tr>
+                <th scope="row">{{forloop.counter0}}</th>
+                <td>{{dose}}</td>
+
+            </tr>
+        {% endfor %}
+    </tbody>
+
+
+</table>
+
+<br>
+<hr>
+<h2>Figures</h2>
+<br>
+
     {% if toxPlot %}
         <img src="data:image/png;base64, {{toxPlot|safe}}" />
     {% endif %}

@@ -181,7 +181,7 @@ def dSdt(t, S):
 
     
     if int(t) == 0:
-        D_t = 45.0
+        D_t = 40.0
         dose[int(t)] = D_t
 
     elif int(t)==1:
@@ -333,12 +333,31 @@ def calc(request):
     dose8 = pbpk[7]
     dose9 = pbpk[8]
 
-    
+    print(dose)
+    print(uniqueDose)
 
+    dose_amount1 = uniqueDose[0]
+    dose_amount2 = uniqueDose[1]
+    dose_amount3 = uniqueDose[2]
+    dose_amount4 = uniqueDose[3]
+    dose_amount5 = uniqueDose[4]
+    dose_amount6 = uniqueDose[5]
+    dose_amount7 = uniqueDose[6]
+    dose_amount8 = uniqueDose[7]
+    dose_amount9 = uniqueDose[8]
+
+    print(N_t[84], N_t[83], N_t[85])
 
     venousBloodPlot1 = generateFigure.get_plot(dose1.y[0], "1st Dose Venous Blood Vs Time", "Time", "Venous Blood")
     venousBloodPlot2 = generateFigure.get_plot(dose2.y[0], "2nd Dose Venous Blood Vs Time", "Time", "Venous Blood")
     venousBloodPlot3 = generateFigure.get_plot(dose3.y[0], "3rd Dose Venous Blood Vs Time", "Time", "Venous Blood")
 
-    return render(request, 'result.html', {'name':name, 'weight':weight, 'BSA':BSA, 'toxPlot':toxPlot, 'noCellPlot':noCellPlot, 'dosePlot':dosePlot, 'venousBloodPlot1':venousBloodPlot1, 'venousBloodPlot2':venousBloodPlot2, 'venousBloodPlot3':venousBloodPlot3})
+    return render(request, 'result.html', {
+        'name':name, 'weight':weight, 'BSA':BSA, 'toxPlot':toxPlot,
+         'noCellPlot':noCellPlot, 'dosePlot':dosePlot, 'cell84':N_t[84],
+         'dose1':dose_amount1, 'dose2':dose_amount2, 'dose3':dose_amount3,
+            'dose4':dose_amount4, 'dose5':dose_amount5, 'dose6':dose_amount6,
+            'dose7':dose_amount7, 'dose8':dose_amount8, 'dose9':dose_amount9, 'doses':uniqueDose,
+          'venousBloodPlot1':venousBloodPlot1, 'venousBloodPlot2':venousBloodPlot2,
+           'venousBloodPlot3':venousBloodPlot3})
 
