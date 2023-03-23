@@ -30,7 +30,56 @@
             <input type="number" name="intervalTime" value="14" id="form6Example4" class="form-control" />
             <label class="form-label" for="form6Example4">Enter Dose Interval</label>
         </div>
-        
+
+        <!-- Table for maximum Dose -->
+        <table class="table table-condensed">
+            <tr>
+                <th>Compartment</th>
+                <th>Max-dose</th>
+                <th>Compartment</th>
+                <th>Max-dose</th>
+            </tr>
+            <tr>
+                <td>Venous Blood</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default"  name="ven_blood_max"></td>
+                <td>Lung</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="lung_max"></td>
+            </tr>
+            <tr>
+                <td>Arterial Blood</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="art_blood_max"></td>
+                <td>Gut</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="gut_max"></td>
+            </tr>
+            <tr>
+                <td>Brain</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="brain_max"></td>
+            <tr>
+                <td>Spleen</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="spleen_max"></td>
+                <td>Liver</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="liver_max"></td>
+            </tr>
+            <tr>
+                <td>Heart</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="heart_max"></td>
+                <td>Kidney</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="kidney_max"></td>
+            </tr>
+            <tr>
+                <td>Muscle</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="muscle_max"></td>
+                <td>Fat</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="fat_max"></td>
+            </tr>
+            <tr>
+                <td>Tumor</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="tumor_max"></td>
+                <td>Others</td>
+                <td><input class="form-control" step="any" min="0" type="number" placeholder="default" name="others_max"></td>
+            </tr>
+        </table>
+        <br><br>
         <!-- Submit button -->
         <button id="loadingModal" type="submit" class="btn btn-outline-primary btn-block mb-4">Simulate</button>
     </form>

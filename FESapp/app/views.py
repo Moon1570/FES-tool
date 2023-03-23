@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from app import functions, fes1, fes2
+from app import functions, fes1, fes2, feedback
 from app import generateFigure
 
 import numpy as np
@@ -133,7 +133,6 @@ def dS2dt(t, S):
         dose = dose + adminstrated_dose
     
 
-
     return [((((F_l*C_le)+(F_b*C_be)+(F_s*C_se)+(F_li*C_lie)+(F_h*C_he)+(F_k*C_ke)+(F_m*C_me)+(F_f*C_fe)+(F_t*C_te)+(F_o*C_oe)) - (F_tot * C_v))/(V_ven * one_sub_f_hem))+(dose/(V_ven*one_sub_f_hem))+(one_by_one_sub_f_hem*f_hem*k_rbcplas*C_rbcv)-(k_plasrbc*f_unb*C_v), #EQ 1
             (one_sub_f_hem*k_plasrbc*f_unb*C_v/f_hem)-(k_rbcplas*C_rbcv), #EQ 2
             ((F_l/V_lv)*(C_v-C_lv)) - (k_lve*f_unb*C_lv) + ((V_le*k_lev*C_le)/V_lv), #EQ 3
@@ -256,9 +255,89 @@ def calc(request):
     
     global intval_time
     #get name from request
-    name = request.POST.get('name')
-    weight = int(request.POST.get('weight'))
-    intval_time = int(request.POST.get('intervalTime'))
+    if request.POST.get('name') == '':
+        name = 'John Doe'
+    else:
+        name = request.POST.get('name')
+
+    if request.POST.get('weight') == '':
+        weight = 70
+    else:
+        weight = int(request.POST.get('weight'))
+    
+    if request.POST.get('intervalTime') == '':
+        intval_time = 14
+    else:
+        intval_time = int(request.POST.get('intervalTime'))
+
+    if request.POST.get('ven_blood_max') == '':
+        ven_blood_max = float(50.0)
+    else:
+        ven_blood_max = float(request.POST.get('ven_blood_max'))
+    
+    if request.POST.get('lung_max') == '':
+        lung_max = float(50.0)
+    else:
+        lung_max = float(request.POST.get('lung_max'))
+    
+    if request.POST.get('art_blood_max') == '':
+        art_blood_max = float(50.0)
+    else:
+        art_blood_max = float(request.POST.get('art_blood_max'))
+
+    if request.POST.get('gut_max') == '':
+        gut_max = float(50.0)
+    else:
+        gut_max = float(request.POST.get('gut_max'))
+
+    if request.POST.get('brain_max') == '':
+        brain_max = float(50.0)
+    else:
+        brain_max = float(request.POST.get('brain_max'))
+
+    if request.POST.get('spleen_max') == '':
+        spleen_max = float(50.0)
+    else:
+        spleen_max = float(request.POST.get('spleen_max'))
+
+    if request.POST.get('liver_max') == '':
+        liver_max = float(50.0)
+    else:
+        liver_max = float(request.POST.get('liver_max'))
+
+    if request.POST.get('heart_max') == '':
+        heart_max = float(50.0)
+    else:
+        heart_max = float(request.POST.get('heart_max'))
+
+    if request.POST.get('kidney_max') == '':
+        kidney_max = float(50.0)
+    else:
+        kidney_max = float(request.POST.get('kidney_max'))
+
+    if request.POST.get('muscle_max') == '':
+        muscle_max = float(50.0)
+    else:
+        muscle_max = float(request.POST.get('muscle_max'))
+
+    if request.POST.get('fat_max') == '':
+        fat_max = float(50.0)
+    else:
+        fat_max = float(request.POST.get('fat_max'))
+
+    if request.POST.get('tumor_max') == '':
+        tumor_max = float(50.0)
+    else:
+        tumor_max = float(request.POST.get('tumor_max'))
+
+    if request.POST.get('others_max') == '':
+        others_max = float(50.0)
+    else:
+        others_max = float(request.POST.get('others_max'))
+
+    max_dose = [ven_blood_max, lung_max, art_blood_max, gut_max, brain_max, spleen_max, liver_max, heart_max, kidney_max, muscle_max, fat_max, tumor_max, others_max]
+
+
     print(intval_time)
     #print to console
 
@@ -333,7 +412,31 @@ def calc(request):
     dose8 = pbpk[7]
     dose9 = pbpk[8]
 
+    message = ""
 
+    isOverdosage = False
+    for i, dose_number in enumerate(pbpk):
+        print("checking dose number: ", i+1)
+        isOverdosage = feedback.check(dose_number, max_dose)
+        if isOverdosage:
+            print("Overdosage on dose number: ", i+1)
+            print("Adjusting dose no. ", i+1)
+            amount = uniqueDose[i]
+            while isOverdosage:
+                print("amount before adjustment: ", amount)
+                amount = amount * 0.95
+                print("amount after adjustment: ", amount)
+                adminstrated_dose = amount
+                sol3 = solve_ivp(dS2dt, t_range2, y0=[C_v_0, C_rbcv_0, C_lv_0, C_le_0, C_lb_0, C_art_0, C_rbca_0, C_gv_0, C_bv_0, C_be_0, C_bb_0, C_sv_0, C_se_0, C_sb_0, C_liv_0, C_lie_0, C_lib_0, C_kv_0, C_ke_0, C_kb_0, C_mv_0, C_me_0, C_mb_0, C_fv_0, C_fe_0, C_fb_0, C_tv_0, C_te_0, C_tb_0, C_hv_0, C_he_0, C_hb_0, C_ov_0, C_oe_0, C_ob_0],method = 'LSODA',t_eval=t_eval2, atol=1.49e-8, rtol=1.49e-8)
+                isOverdosage = feedback.check(sol3, max_dose)
+            message = message + "\n Note: The calculated dose for dose number: " + str(i+1) + " is over the maximum dose.\n It is adjusted from " + str(uniqueDose[i]) + " to " + str(amount)
+
+            uniqueDose[i] = amount
+            pbpk[i] = sol3
+
+
+
+            
 
     dose_amount1 = uniqueDose[0]
     dose_amount2 = uniqueDose[1]
@@ -345,8 +448,7 @@ def calc(request):
     dose_amount8 = uniqueDose[7]
     dose_amount9 = uniqueDose[8]
 
-    print(dose1.y[17])
-    print(dose1.y[18])
+
 
     venousBloodPlot1 = generateFigure.get_plot(dose1.y[0], "1st Dose Venous Blood Vs Time", "Time (hrs)", "Venous Blood")
     venousBloodPlot2 = generateFigure.get_plot(dose2.y[0], "2nd Dose Venous Blood Vs Time", "Time (hrs)", "Venous Blood")
@@ -388,7 +490,10 @@ def calc(request):
     otherCoePlot = generateFigure.get_plot_multiple([dose1.y[33], dose2.y[33], dose3.y[33], dose4.y[33], dose5.y[33], dose6.y[33], dose7.y[33], dose8.y[33], dose9.y[33]], "Other (C_oe) Vs Time", "Time (hrs)", "Other")
     otherCobPlot = generateFigure.get_plot_multiple([dose1.y[34], dose2.y[34], dose3.y[34], dose4.y[34], dose5.y[34], dose6.y[34], dose7.y[34], dose8.y[34], dose9.y[34]], "Other (C_ob) Vs Time", "Time (hrs)", "Other")
 
-
+    print("TS on 84 day ", N_t[84])
+    print("TS on 120 day ", N_t[120])
+    print("TX on 84 day ", T_t[84])
+    print("TX on 120 day ", T_t[120])
 
     return render(request, 'result.html', {
         'name':name, 'weight':weight, 'BSA':BSA, 'toxPlot':toxPlot,
@@ -408,6 +513,7 @@ def calc(request):
         'fatCfvPlot':fatCfvPlot, 'fatCfePlot':fatCfePlot, 'fatCfbPlot':fatCfbPlot,
         'tumorCtvPlot':tumorCtvPlot, 'tumorCtePlot':tumorCtePlot, 'tumorCtbPlot':tumorCtbPlot,
         'heartChvPlot':heartChvPlot, 'heartChePlot':heartChePlot, 'heartChbPlot':heartChbPlot,
-        'otherCovPlot':otherCovPlot, 'otherCoePlot':otherCoePlot, 'otherCobPlot':otherCobPlot
+        'otherCovPlot':otherCovPlot, 'otherCoePlot':otherCoePlot, 'otherCobPlot':otherCobPlot, 
+        'message':message
         })
 

@@ -12,7 +12,8 @@
 <hr>
 
 <table class="table table-striped">
-    <thead>
+    <caption>{{message}}</caption>
+    <thead class="thead-dark">
         <tr>
             <th scope="col">Number of dose</th>
             <th scope="col">Dose</th>
@@ -22,7 +23,7 @@
     <tbody>
         {% for dose in doses %}
             <tr>
-                <th scope="row">{{forloop.counter0}}</th>
+                <th scope="row">{{forloop.counter}}</th>
                 <td>{{dose}}</td>
 
             </tr>
