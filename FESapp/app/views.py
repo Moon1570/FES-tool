@@ -413,7 +413,7 @@ def calc(request):
     dose9 = pbpk[8]
 
     message = ""
-
+    """
     isOverdosage = False
     for i, dose_number in enumerate(pbpk):
         print("checking dose number: ", i+1)
@@ -433,7 +433,7 @@ def calc(request):
 
             uniqueDose[i] = amount
             pbpk[i] = sol3
-
+    """
 
 
             
