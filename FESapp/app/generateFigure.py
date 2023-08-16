@@ -75,12 +75,12 @@ def get_plot_multiple(y, title, xAxisName, yAxisName):
     plt.legend(handles=[blue_star, red_square, purple_diamond, green_circle, black_triangle, orange_x])
 
 
-    plt.plot(y[0], color='blue', marker='^', linestyle='solid', linewidth=1, markersize=2)
-    plt.plot(y[1], color='red', marker='', linestyle='dashdot', linewidth=2, markersize=2)
-    plt.plot(y[2], color='black', marker='', linestyle='dashed', linewidth=2, markersize=2)
-    plt.plot(y[3], color='green', marker='o', linestyle='solid', linewidth=1, markersize=2)
-    plt.plot(y[4], color='purple', marker='D', linestyle='dotted', linewidth=2, markersize=2)
-    plt.plot(y[5], color='orange', marker='x', linestyle='solid', linewidth=1, markersize=2)
+    plt.plot(y[0], color='blue', marker='^', linestyle='solid', linewidth=1, markersize=3)
+    plt.plot(y[1], color='red', marker='', linestyle='dashdot', linewidth=2, markersize=3)
+    plt.plot(y[2], color='black', marker='', linestyle='dashed', linewidth=2, markersize=3)
+    plt.plot(y[3], color='green', marker='o', linestyle='solid', linewidth=1, markersize=3)
+    plt.plot(y[4], color='purple', marker='D', linestyle='dotted', linewidth=2, markersize=3)
+    plt.plot(y[5], color='orange', marker='x', linestyle='solid', linewidth=1, markersize=3)
 
 
     plt.xlim([0, 48])

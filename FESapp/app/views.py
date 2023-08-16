@@ -15,6 +15,8 @@ from skfuzzy import control as ctrl
 #declear a list
 dose = [0] * 121
 
+j = 0
+tmp = 0.0
 
 C_0 = 0
 N_0 = 10000000000
@@ -247,6 +249,59 @@ def dSdt(t, S):
             C_t-(eta*T_t)]
 
 
+def dS3dt(t, S):
+    global temp
+    #temp = 0.0
+    C_t, N_t, T_t = S
+    D_t =0    
+    flag = {}
+
+    j = 1
+    tmp = 0.0
+
+    if int(t) == 0:
+        D_t = uniqueDose[0]
+        dose[int(t)] = D_t
+
+    elif int(t)==1:
+        D_t = 0.0
+
+    elif int(t)%intval_time == 0 :
+        D_t = uniqueDose[int(int(t)/intval_time)]
+        j = j+1
+        tmp = D_t
+
+
+    elif int(t)%intval_time == 1:
+        D_t = uniqueDose[int(int(t)/intval_time)]
+
+
+    else:
+    #  print("false", t, int(t))
+        dose[int(t)] = 0
+        D_t = dose[int(t)]
+        #print(t, int(t), C_t, N_t, T_t, D_t)
+
+
+    if C_t>=C_th:
+        H_ct_cth = 1
+    else:
+        H_ct_cth = 0
+        
+    C_eff = (C_t-C_th)*H_ct_cth
+
+   # print(D_t, t)
+    
+   # return [ 40-.27*C_t,
+   #         ((1/tau_g)*ln((ln(rho_g/N_0))/ln(rho_g/(2*N_0)))*N_t*ln(rho_g/N_t)) - (K_eff*C_eff* N_t),
+   #         C_t-(eta*T_t)]
+
+    #print(K_eff, C_eff, N_t, t)
+    return [ D_t-lambdaa*C_t,
+            ((1/tau_g)*ln((ln(rho_g/N_0))/ln(rho_g/(2*N_0)))*N_t*ln(rho_g/N_t)) - (K_eff*C_eff* N_t),
+            C_t-(eta*T_t)]
+
+
 # Create your views here.
 def home(request):
     return render(request, 'home.html')
@@ -374,10 +429,11 @@ def calc(request):
     noCellPlot = generateFigure.get_plot_auto(logNT, "No of cells Vs Days", "Day", "Cells")
 
     #print(N_t[84])
-    print(T_t)
-    print(dose)
+    #print(T_t)
+    #print(dose)
     dosePlot = generateFigure.get_plot_auto(dose, "Dose Vs Days", "Day", "Dose")
 
+    global uniqueDose
     uniqueDose = []
     for i in range(0, 121):
         if i%intval_time == 0:
@@ -402,18 +458,9 @@ def calc(request):
     #T_t = sol2.y[2]
 
 
-    dose1 = pbpk[0]
-    dose2 = pbpk[1]
-    dose3 = pbpk[2]
-    dose4 = pbpk[3]
-    dose5 = pbpk[4]
-    dose6 = pbpk[5]
-    dose7 = pbpk[6]
-    dose8 = pbpk[7]
-    dose9 = pbpk[8]
+    
 
     message = ""
-    """
     isOverdosage = False
     for i, dose_number in enumerate(pbpk):
         print("checking dose number: ", i+1)
@@ -433,8 +480,16 @@ def calc(request):
 
             uniqueDose[i] = amount
             pbpk[i] = sol3
-    """
 
+    dose1 = pbpk[0]
+    dose2 = pbpk[1]
+    dose3 = pbpk[2]
+    dose4 = pbpk[3]
+    dose5 = pbpk[4]
+    dose6 = pbpk[5]
+    dose7 = pbpk[6]
+    dose8 = pbpk[7]
+    dose9 = pbpk[8]
 
             
 
@@ -448,7 +503,39 @@ def calc(request):
     dose_amount8 = uniqueDose[7]
     dose_amount9 = uniqueDose[8]
 
+    C_t_0 = 0
+    N_t_0 = N_0
+    T_t_0 = 0
 
+    #for med in uniqueDose:
+        
+    t_eval  = np.linspace(0, 120, 121, dtype=int)
+    t_range = (0, 120)
+
+    so = solve_ivp(dS3dt, t_range, y0=[C_t_0, N_t_0, T_t_0],method='LSODA',t_eval=t_eval)
+    t = so.t
+    Ct = so.y[0]
+    Nt = so.y[1]
+    Tt = so.y[2]
+
+    print("C_t: ", Ct)
+    print("N_t: ", Nt)
+    print("T_t: ", Tt)
+
+
+    lonT = np.log10(Nt)
+    #print(dose)
+    #print(logNT)
+    toxPlot = generateFigure.get_plot_auto(Tt, "Toxicity Vs Days", "Day", "Toxicity")
+
+    noCellPlot = generateFigure.get_plot_auto(lonT, "No of cells Vs Days", "Day", "Cells")
+
+    dos1 = [40.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40.50169312054402, 40.50169312054402, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40.55455265889474, 40.55455265889474, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40.5706100891379, 40.5706100891379, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40.52159024641394, 40.52159024641394, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26.800307812555687, 26.800307812555687, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27.094213551395942, 27.094213551395942, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27.198394467477673, 27.198394467477673, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27.251749259524978, 27.251749259524978, 0, 0, 0, 0, 0, 0, 0]
+    for j, ds in enumerate(dose):
+        print(j, dose[j])
+        
+
+    dosePlot = generateFigure.get_plot_auto(dos1, "Dose Vs Days", "Day", "Dose")
 
     venousBloodPlot1 = generateFigure.get_plot(dose1.y[0], "1st Dose Venous Blood Vs Time", "Time (hrs)", "Venous Blood")
     venousBloodPlot2 = generateFigure.get_plot(dose2.y[0], "2nd Dose Venous Blood Vs Time", "Time (hrs)", "Venous Blood")
@@ -490,10 +577,10 @@ def calc(request):
     otherCoePlot = generateFigure.get_plot_multiple([dose1.y[33], dose2.y[33], dose3.y[33], dose4.y[33], dose5.y[33], dose6.y[33], dose7.y[33], dose8.y[33], dose9.y[33]], "Other (C_oe) Vs Time", "Time (hrs)", "Other")
     otherCobPlot = generateFigure.get_plot_multiple([dose1.y[34], dose2.y[34], dose3.y[34], dose4.y[34], dose5.y[34], dose6.y[34], dose7.y[34], dose8.y[34], dose9.y[34]], "Other (C_ob) Vs Time", "Time (hrs)", "Other")
 
-    print("TS on 84 day ", N_t[84])
-    print("TS on 120 day ", N_t[120])
-    print("TX on 84 day ", T_t[84])
-    print("TX on 120 day ", T_t[120])
+    print("TS on 84 day ", Nt[84])
+    print("TS on 120 day ", Nt[120])
+    print("TX on 84 day ", Tt[84])
+    print("TX on 120 day ", Tt[120])
 
     return render(request, 'result.html', {
         'name':name, 'weight':weight, 'BSA':BSA, 'toxPlot':toxPlot,
