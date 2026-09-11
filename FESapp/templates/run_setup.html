@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block nav_new %}active{% endblock %}
-{% block title %}New run — Decision Support System{% endblock %}
+{% block title %}New run · Decision Support System{% endblock %}
 
 {% block content %}
 <div class="page-head">
@@ -22,7 +22,7 @@
         <div class="field">
           <label for="f-name">Patient name or identifier</label>
           <input type="text" id="f-name" name="name" placeholder="e.g. Case 01" autocomplete="off">
-          <div class="help">Use a made-up label such as "Case 01". Do not enter real patient information{% if public %} — this demo is public{% endif %}.</div>
+          <div class="help">Use a made-up label such as "Case 01". Do not enter real patient information.{% if public %} This demo is public.{% endif %}</div>
         </div>
         <div class="inline">
           <div class="field">
@@ -32,7 +32,7 @@
           </div>
           <div class="field">
             <label>Body surface area</label>
-            <input type="text" id="f-bsa" value="—" readonly tabindex="-1"
+            <input type="text" id="f-bsa" value="–" readonly tabindex="-1"
                    style="background:var(--surface-2);color:var(--text-2)">
             <div class="help">Costeff formula, (4W + 7) / (W + 90)</div>
           </div>
@@ -57,7 +57,7 @@
         </div>
         <div class="field">
           <label for="f-cycles">Resulting cycles</label>
-          <input type="text" id="f-cycles" value="—" readonly tabindex="-1"
+          <input type="text" id="f-cycles" value="–" readonly tabindex="-1"
                  style="background:var(--surface-2);color:var(--text-2)">
           <div class="help">The drug is given on the cycle day and the day after.</div>
         </div>
@@ -68,7 +68,7 @@
             <option value="{{ b.key }}" data-cells="{{ b.cells }}" data-detail="{{ b.detail }}"
                     data-fuzzy="{{ b.fuzzy_term }}"
                     {% if b.key == default_burden %}selected{% endif %}>
-              {{ b.label }} — {{ b.mass }} ({{ b.cells|stringformat:".0e" }} cells)
+              {{ b.label }}: {{ b.mass }} ({{ b.cells|stringformat:".0e" }} cells)
             </option>
             {% endfor %}
             <option value="custom" data-detail="Enter an explicit cell count.">Custom…</option>
@@ -143,8 +143,8 @@
           <td><a href="{% url 'result' r.id %}">{{ r.patient_name }}</a></td>
           <td class="muted">{{ r.preset_label }}</td>
           <td class="num">{{ r.interval_days }} d</td>
-          <td class="num">{% if r.summary %}{{ r.summary.log_reduction|floatformat:2 }}{% else %}—{% endif %}</td>
-          <td class="num">{% if r.summary %}{{ r.summary.cycles_adjusted }}/{{ r.summary.cycles_total }}{% else %}—{% endif %}</td>
+          <td class="num">{% if r.summary %}{{ r.summary.log_reduction|floatformat:2 }}{% else %}–{% endif %}</td>
+          <td class="num">{% if r.summary %}{{ r.summary.cycles_adjusted }}/{{ r.summary.cycles_total }}{% else %}–{% endif %}</td>
           <td class="muted">{{ r.created_at|date:"j M, H:i" }}</td>
         </tr>
       {% endfor %}
@@ -164,9 +164,9 @@ const weight = $('#f-weight'), interval = $('#f-interval'), horizon = $('#f-hori
 
 function refreshDerived() {
   const w = parseFloat(weight.value);
-  $('#f-bsa').value = (w > 0) ? (((w * 4) + 7) / (90 + w)).toFixed(3) + ' m²' : '—';
+  $('#f-bsa').value = (w > 0) ? (((w * 4) + 7) / (90 + w)).toFixed(3) + ' m²' : '–';
   const iv = parseInt(interval.value, 10), hz = parseInt(horizon.value, 10);
-  $('#f-cycles').value = (iv > 0 && hz > 0) ? (Math.floor(hz / iv) + 1) + ' cycles' : '—';
+  $('#f-cycles').value = (iv > 0 && hz > 0) ? (Math.floor(hz / iv) + 1) + ' cycles' : '–';
 }
 
 const burdenSel = $('#f-burden');

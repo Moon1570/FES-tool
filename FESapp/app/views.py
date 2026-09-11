@@ -254,9 +254,9 @@ def features(request):
     """Static 'Key features' page. Its example links point at the seeded demo cases
     when they exist, and simply fall back to the setup page when they don't."""
     demo = Run.objects.filter(is_demo=True, status=Run.Status.DONE)
-    example = demo.filter(patient_name="Case 01 — standard").first() or demo.first()
+    example = demo.filter(patient_name="Case 01: standard").first() or demo.first()
     # The card describes 14-day against 21-day cycles, so prefer that demo pair.
-    other = (demo.filter(patient_name="Case 01 — 21-day cycles").first()
+    other = (demo.filter(patient_name="Case 01: 21-day cycles").first()
              or (demo.exclude(pk=example.pk).first() if example else None))
     return render(request, "features.html", {
         "example": example,
@@ -430,7 +430,7 @@ def run_from_sweep(request, sweep_id):
     preset = safety.PRESETS.get(preset_key, safety.PRESETS[safety.DEFAULT_PRESET])
 
     run = Run.objects.create(
-        patient_name=f"{sweep.patient_name} — {interval}-day, {preset['label']}",
+        patient_name=f"{sweep.patient_name}: {interval}-day, {preset['label']}",
         weight_kg=sweep.weight_kg, n0=sweep.n0,
         interval_days=interval, horizon_days=sweep.horizon_days,
         preset=preset_key if preset_key in safety.PRESETS else safety.DEFAULT_PRESET,

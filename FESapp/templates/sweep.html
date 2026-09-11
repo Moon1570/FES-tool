@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block nav_explore %}active{% endblock %}
-{% block title %}{{ sweep.patient_name }} — Regimen explorer{% endblock %}
+{% block title %}{{ sweep.patient_name }} · Regimen explorer{% endblock %}
 
 {% block content %}
 {% if sweep.status == 'pending' or sweep.status == 'running' %}
@@ -43,7 +43,7 @@
   </div>
 
   <div class="notice info">
-    The outlined points form the <strong>trade-off frontier</strong> — regimens that no
+    The outlined points form the <strong>trade-off frontier</strong>: regimens that no
     other regimen in this grid beats on both tumour kill and peak toxicity. Which of them
     is acceptable depends on the patient and is a clinical judgement; the tool does not rank them.
   </div>
@@ -110,7 +110,7 @@ const traces = Object.entries(byPreset).map(([key, pts]) => ({
   x: pts.map(p => p.peak_toxicity),
   y: pts.map(p => p.log_reduction),
   text: pts.map(p => `${p.interval}d`),
-  customdata: pts.map(p => [p.interval, p.preset_label, p.cycles_adjusted, p.cycles_total, p.limiting || '—']),
+  customdata: pts.map(p => [p.interval, p.preset_label, p.cycles_adjusted, p.cycles_total, p.limiting || '–']),
   mode: 'markers+text', type: 'scatter', name: pts[0].preset_label,
   textposition: 'top center', textfont: { size: 9, color: C.text2 },
   marker: {
@@ -156,7 +156,7 @@ document.querySelector('#grid tbody').innerHTML = sorted.map(p => `
         ? ' <span class="chip bad">over reference</span>' : ''}</td>
     <td class="num">${p.cycles_adjusted}/${p.cycles_total}</td>
     <td class="num">${p.total_delivered.toFixed(0)}</td>
-    <td class="muted">${p.limiting || '—'}</td>
+    <td class="muted">${p.limiting || '–'}</td>
     <td>${p.on_front ? '<span class="chip ok">on frontier</span>' : ''}</td>
     <td class="muted">Run →</td>
   </tr>`).join('');

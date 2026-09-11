@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block nav_explore %}active{% endblock %}
-{% block title %}Regimen explorer — Decision Support System{% endblock %}
+{% block title %}Regimen explorer · Decision Support System{% endblock %}
 
 {% block content %}
 <div class="page-head">
@@ -20,7 +20,7 @@
         <div class="field">
           <label for="f-name">Patient name or identifier</label>
           <input type="text" id="f-name" name="name" placeholder="e.g. Case 01" autocomplete="off">
-          <div class="help">Use a made-up label such as "Case 01". Do not enter real patient information{% if max_points %} — this demo is public{% endif %}.</div>
+          <div class="help">Use a made-up label such as "Case 01". Do not enter real patient information.{% if max_points %} This demo is public.{% endif %}</div>
         </div>
         <div class="inline">
           <div class="field">
@@ -37,7 +37,7 @@
           <select id="f-burden" name="burden">
             {% for b in burdens %}
             <option value="{{ b.key }}"{% if b.key == default_burden %} selected{% endif %}>
-              {{ b.label }} — {{ b.mass }}
+              {{ b.label }}: {{ b.mass }}
             </option>
             {% endfor %}
           </select>
@@ -114,7 +114,7 @@ function refreshCount() {
   document.getElementById('grid-count').textContent = n + ' regimen' + (n === 1 ? '' : 's');
   document.getElementById('eta').textContent =
     !n ? 'Select at least one of each.'
-    : tooMany ? 'The public demo explores up to ' + cap + ' regimens at a time — untick a few.'
+    : tooMany ? 'The public demo explores up to ' + cap + ' regimens at a time. Untick a few.'
     : 'About ' + Math.max(1, Math.round(n * 0.38)) + ' s to simulate.';
   document.getElementById('f-submit').disabled = n === 0 || tooMany;
 }

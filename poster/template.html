@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Decision Support System for Cancer Chemotherapy — Innovation Fair BD 2026 — 3 × 4 ft poster</title>
+<title>Decision Support System for Cancer Chemotherapy · Innovation Fair BD 2026 · 3 × 4 ft poster</title>
 <style>
   /* 3 ft wide x 4 ft tall, portrait. Every size is in mm so the PDF is exact. */
   @page { size: 914.4mm 1219.2mm; margin: 0; }
@@ -18,26 +18,45 @@
   }
   body { display: flex; flex-direction: column; overflow: hidden; }
   .pad { padding-left: 44mm; padding-right: 44mm; }
+  /* no single word left alone on a last line; headings split evenly */
+  p, div, span, li, td { text-wrap: pretty; }
+  h1, h2, h3 { text-wrap: balance; }
 
   /* ---------------- header ---------------- */
-  header { background: var(--blue); color: #fff; padding: 26mm 44mm 22mm; }
-  .top { display: flex; align-items: center; gap: 11mm; margin-bottom: 14mm; }
+  header { background: var(--blue); color: #fff; padding: 20mm 44mm 16mm; }
+  .top { display: flex; align-items: center; gap: 11mm; margin-bottom: 10mm; }
   .mark { width: 34mm; height: 34mm; border-radius: 7mm; background: #fff; color: var(--blue);
           display: grid; place-items: center; font-size: 15mm; font-weight: 800; letter-spacing: -0.02em; }
   .event { font-size: 9mm; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,.85); }
   .pub { margin-left: auto; font-size: 9mm; font-weight: 700; color: var(--blue); background: #fff;
          border-radius: 99mm; padding: 4mm 11mm; }
-  h1 { font-size: 46mm; line-height: 1.04; font-weight: 800; letter-spacing: -0.025em; white-space: nowrap; }  /* one line, with ~8% width to spare if a printer substitutes the font */
-  .tagline { margin-top: 11mm; font-size: 20mm; font-weight: 300; line-height: 1.2; color: rgba(255,255,255,.95); }
+  h1 { font-size: 43mm; line-height: 1.04; font-weight: 800; letter-spacing: -0.025em; white-space: nowrap; }  /* one line, with ~14% width to spare if a printer substitutes the font */
+  .tagline { margin-top: 9mm; font-size: 19mm; font-weight: 300; line-height: 1.2; color: rgba(255,255,255,.95); }
+
+  /* ---------------- problem / solution / impact ---------------- */
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16mm; padding-top: 18mm; padding-bottom: 15mm; }
+  .col { border-top: 2mm solid var(--ink); padding-top: 8mm; }
+  .col.coral { border-top-color: var(--coral); }
+  .col.blue  { border-top-color: var(--blue); }
+  .col h2 { font-size: 11mm; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4mm; }
+  .col p { font-size: 10mm; line-height: 1.42; color: var(--grey); }
+  .col p b { color: var(--ink); }
+
+  /* ---------------- what the numbers mean (one line each) ---------------- */
+  .terms { background: var(--wash); padding-top: 11mm; padding-bottom: 11mm; }
+  .terms .kicker { margin-bottom: 5mm; }
+  .tgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm 24mm; }
+  .term { font-size: 8.8mm; line-height: 1.3; color: var(--grey); }
+  .term b { color: var(--ink); font-weight: 800; }
 
   /* ---------------- case study ---------------- */
-  .case { padding-top: 24mm; padding-bottom: 10mm; }
-  .kicker { font-size: 8.4mm; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--blue); }
+  .case { padding-top: 22mm; padding-bottom: 8mm; }
+  .kicker { font-size: 8.4mm; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); }
   .case h2 { font-size: 18mm; line-height: 1.12; font-weight: 800; letter-spacing: -0.015em; margin: 3mm 0 3mm; }
   .case-sub { font-size: 10mm; line-height: 1.38; color: var(--grey); margin-bottom: 11mm; }
   .panels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14mm; }
   .panel { border: 0.8mm solid var(--line); border-radius: 6mm; padding: 9mm 9mm 6mm; }
-  .pk { font-size: 7.4mm; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); }
+  .pk { font-size: 8mm; font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase; color: var(--blue); }
   .big { font-size: 16.5mm; font-weight: 800; letter-spacing: -0.025em; line-height: 1.08; margin: 4mm 0 3mm; }
   .big.good { color: var(--ok); }
   .cap { font-size: 8.4mm; line-height: 1.36; color: var(--grey); min-height: 30mm; }
@@ -47,8 +66,9 @@
   .legend i.dash { background: repeating-linear-gradient(90deg, var(--coral) 0 4mm, transparent 4mm 6.5mm); }
   .legend i.dot  { background: repeating-linear-gradient(90deg, #7A8796 0 1.6mm, transparent 1.6mm 3.6mm); }
   .legend i.box  { width: 7mm; height: 7mm; border-radius: 1.2mm; }
+  .legend i.tick { width: 2.4mm; height: 7mm; border-radius: 1.2mm; background: var(--blue); }
 
-  .organs-head { display: flex; align-items: baseline; gap: 12mm; margin: 13mm 0 3mm; flex-wrap: wrap; }
+  .organs-head { display: flex; align-items: baseline; gap: 12mm; margin: 12mm 0 3mm; flex-wrap: wrap; }
   .organs-head h3 { font-size: 11mm; font-weight: 800; letter-spacing: -0.01em; }
   .organs-head span { font-size: 9mm; color: var(--grey); }
   .dose-key { display: flex; flex-wrap: wrap; gap: 2mm 8mm; font-size: 7.8mm; color: var(--grey); margin-bottom: 6mm; }
@@ -63,23 +83,6 @@
   .chip.ok  { background: #E3F5EC; color: var(--ok); }
   .organ-sub { font-size: 7.4mm; color: var(--grey); margin: 2mm 0 1mm; }
 
-  /* ---------------- what the numbers mean ---------------- */
-  .terms { background: var(--wash); padding-top: 11mm; padding-bottom: 11mm; }
-  .terms .kicker { margin-bottom: 6mm; }
-  .tgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14mm; }
-  .term h3 { font-size: 9mm; font-weight: 800; margin-bottom: 1.5mm; }
-  .term p { font-size: 7.8mm; line-height: 1.32; color: var(--grey); }
-  .term p b { color: var(--ink); }
-
-  /* ---------------- problem / solution / impact ---------------- */
-  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16mm; padding-top: 15mm; padding-bottom: 14mm; }
-  .col { border-top: 2mm solid var(--ink); padding-top: 8mm; }
-  .col.coral { border-top-color: var(--coral); }
-  .col.blue  { border-top-color: var(--blue); }
-  .col h2 { font-size: 11mm; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4mm; }
-  .col p { font-size: 10mm; line-height: 1.42; color: var(--grey); }
-  .col p b { color: var(--ink); }
-
   /* ---------------- why it matters ---------------- */
   .why { background: var(--wash); padding-top: 14mm; padding-bottom: 14mm; }
   .why h2 { font-size: 13mm; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 7mm; }
@@ -92,30 +95,47 @@
   .b p { font-size: 9.2mm; line-height: 1.38; color: var(--grey); }
 
   /* ---------------- how it works ---------------- */
-  .process { display: flex; align-items: center; padding-top: 13mm; padding-bottom: 13mm; }
-  .step { flex: 1; display: flex; align-items: center; gap: 7mm; }
-  .step .n { flex: 0 0 auto; width: 26mm; height: 26mm; border-radius: 50%; background: var(--blue); color: #fff;
-             display: grid; place-items: center; font-size: 12mm; font-weight: 800; }
-  .step .t { font-size: 11mm; font-weight: 700; line-height: 1.22; }
-  .arrow { flex: 0 0 auto; padding: 0 7mm; }
+  .method { padding-top: 13mm; padding-bottom: 12mm; }
+  .method h2 { font-size: 13mm; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 8mm; }
+  .method h2 span { font-size: 9.4mm; font-weight: 400; letter-spacing: 0; color: var(--grey); }
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; align-items: start; }
+  .fbox { border: 0.8mm solid var(--line); border-radius: 6mm; padding: 7mm 8mm 8mm; height: 100%; }
+  .fbox.act { border-color: #B9CBF7; background: #F5F8FF; }
+  .fbox.out { border-color: #BFE3D1; background: #F3FBF7; }
+  .fhead { display: flex; align-items: center; gap: 5mm; margin-bottom: 3mm; }
+  .fn { flex: 0 0 auto; width: 17mm; height: 17mm; border-radius: 50%; background: var(--blue); color: #fff;
+        display: grid; place-items: center; font-size: 9.5mm; font-weight: 800; }
+  .fbox.out .fn { background: var(--ok); }
+  .fhead h3 { font-size: 10.4mm; font-weight: 800; line-height: 1.15; }
+  .fbox p { font-size: 8.6mm; line-height: 1.34; color: var(--grey); }
+  .farrow { padding: 0 5mm; align-self: center; }
+  .farrow svg { display: block; width: 20mm; height: 11mm; }
+  .loop { grid-column: 3 / 6; position: relative; padding-top: 13mm; margin-top: 5mm; }
+  .loop .u { position: absolute; top: 0; left: 8mm; right: 8mm; height: 12mm;
+             border: 1.3mm solid var(--coral); border-top: 0; border-radius: 0 0 6mm 6mm; }
+  .loop .u::before { content: ""; position: absolute; left: -3.4mm; top: -5mm;
+             border-left: 3.2mm solid transparent; border-right: 3.2mm solid transparent;
+             border-bottom: 5.4mm solid var(--coral); }
+  .loop .ltext { text-align: center; font-size: 9mm; line-height: 1.3; color: var(--ink); }
+  .loop .ltext b { color: var(--coral); }
 
   /* ---------------- footer ---------------- */
-  footer { margin-top: auto; border-top: 1mm solid var(--line); padding-top: 13mm; padding-bottom: 18mm;
-           display: flex; align-items: center; gap: 18mm; }
+  footer { margin-top: auto; border-top: 1mm solid var(--line); padding-top: 11mm; padding-bottom: 11mm;
+           display: flex; align-items: center; gap: 16mm; }
   .team { flex: 1; min-width: 0; }
-  .team .lbl { font-size: 7.4mm; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey); margin-bottom: 3mm; }
-  .team .names { font-size: 13mm; font-weight: 800; line-height: 1.2; }
-  .team .inst { font-size: 10mm; color: var(--grey); margin-top: 2mm; }
-  .team .status { font-size: 6.6mm; color: var(--muted); margin-top: 6mm; line-height: 1.4; max-width: 420mm; }
-  .logo { flex: 0 0 auto; width: 92mm; height: 92mm; display: grid; place-items: center; }
+  .team .lbl { font-size: 7mm; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey); margin-bottom: 2.5mm; }
+  .team .names { font-size: 12mm; font-weight: 800; line-height: 1.2; }
+  .team .inst { font-size: 9.4mm; color: var(--grey); margin-top: 1.5mm; }
+  .team .status { font-size: 6.6mm; color: var(--muted); margin-top: 4mm; line-height: 1.35; max-width: 420mm; }
+  .logo { flex: 0 0 auto; width: 68mm; height: 68mm; display: grid; place-items: center; }
   .logo img { max-width: 100%; max-height: 100%; }
   .logo .slot { width: 100%; height: 100%; border: 0.9mm dashed var(--line); border-radius: 4mm; display: grid;
                 place-items: center; text-align: center; font-size: 6.4mm; font-weight: 700; letter-spacing: 0.08em;
                 text-transform: uppercase; color: #A9B3C0; line-height: 1.4; }
-  .qr { flex: 0 0 auto; display: flex; align-items: center; gap: 8mm; }
-  .qr svg { width: 104mm; height: 104mm; display: block; }
-  .qr-cap { font-size: 9mm; line-height: 1.35; color: var(--grey); }
-  .qr-cap b { display: block; color: var(--ink); font-size: 9.4mm; margin-top: 2mm; }
+  .qr { flex: 0 0 auto; display: flex; align-items: center; gap: 7mm; }
+  .qr svg { width: 76mm; height: 76mm; display: block; }
+  .qr-cap { font-size: 8.4mm; line-height: 1.35; color: var(--grey); }
+  .qr-cap b { display: block; color: var(--ink); font-size: 8.8mm; margin-top: 1.5mm; }
 </style>
 </head>
 <body>
@@ -130,8 +150,36 @@
   <div class="tagline">Maximum effect on the tumour, Minimum harm to the patient.</div>
 </header>
 
+<section class="cols pad">
+  <div class="col coral">
+    <h2>Problem</h2>
+    <p>Chemotherapy has to shrink the tumour without harming healthy organs, but the dose is
+    usually lowered only <b>after</b> the patient already has side effects.</p>
+  </div>
+  <div class="col blue">
+    <h2>Solution</h2>
+    <p>Before a dose is given, the clinician sees what it is expected to do to the tumour and to
+    <b>each major organ</b>, and which organ is limiting it.</p>
+  </div>
+  <div class="col">
+    <h2>Impact</h2>
+    <p>The full course is reviewed and alternatives compared <b>before treatment starts</b>, so
+    the dose is decided in advance rather than in reaction.</p>
+  </div>
+</section>
+
+<section class="terms pad">
+  <div class="kicker">What the numbers mean</div>
+  <div class="tgrid">
+    <div class="term"><b>Tumour cells:</b> how much cancer is left, counted on a logarithmic scale.</div>
+    <div class="term"><b>Safe limit:</b> the most drug an organ should see in the 48 h after a dose.</div>
+    <div class="term"><b>Side-effect load:</b> the model's own 0–100 scale of drug burden, not a clinical grade.</div>
+    <div class="term"><b>Dose:</b> the amount given on the cycle day and the day after, in the model's units.</div>
+  </div>
+</section>
+
 <section class="case pad">
-  <div class="kicker">Case study</div>
+  <div class="kicker">A case study</div>
   <h2>@@CASE_HEADING@@</h2>
   <p class="case-sub">@@CASE_SUB@@</p>
   <div class="panels">
@@ -140,7 +188,7 @@
       <div class="big good">@@P1_BIG@@</div>
       <div class="cap">@@P1_CAP@@</div>
       @@P1_SVG@@
-      <div class="legend"><span><i class="dash"></i>No treatment</span><span><i style="background:#1B4EE0"></i>Recommended plan</span></div>
+      <div class="legend"><span><i class="dash"></i>No treatment</span><span><i style="background:#1B4EE0"></i>Recommended plan</span><span><i class="tick"></i>Dose given</span></div>
     </div>
     <div class="panel">
       <div class="pk">Minimum harm to the patient</div>
@@ -160,56 +208,10 @@
 
   <div class="organs-head">
     <h3>Drug level in key organs after each dose</h3>
-    <span>The red dashed line is each organ's safe limit — every dose stays below it.</span>
+    <span>The red dashed line is each organ's safe limit. Every dose stays below it.</span>
   </div>
   <div class="dose-key">@@DOSE_KEY@@</div>
   <div class="organs">@@ORGANS@@</div>
-</section>
-
-<section class="terms pad">
-  <div class="kicker">What the numbers mean</div>
-  <div class="tgrid">
-    <div class="term">
-      <h3>Tumour cells</h3>
-      <p>How much cancer is left, counted on a logarithmic scale because treatment kills a
-      share of the cells, not a fixed number. This patient starts near <b>10 billion</b>
-      cells, about 10 g of tumour.</p>
-    </div>
-    <div class="term">
-      <h3>Side-effect load</h3>
-      <p>How much drug the body has had to cope with: it builds up after each dose and eases
-      between them. It is the <b>model's own scale, not a clinical grade</b> — 100 is the
-      reference maximum the plan is kept under.</p>
-    </div>
-    <div class="term">
-      <h3>Safe limit</h3>
-      <p>The most drug an organ should be exposed to in the 48 hours after a dose, set for
-      each of the <b>13 organs</b>. A dose that would cross a limit is lowered first.</p>
-    </div>
-    <div class="term">
-      <h3>Dose</h3>
-      <p>The amount given on the cycle day and the day after. Shown in the model's own units,
-      so the figures compare doses with each other rather than with a drug label.</p>
-    </div>
-  </div>
-</section>
-
-<section class="cols pad">
-  <div class="col coral">
-    <h2>Problem</h2>
-    <p>Chemotherapy has to shrink the tumour without harming healthy organs — but the dose is
-    usually lowered only <b>after</b> the patient already has side effects.</p>
-  </div>
-  <div class="col blue">
-    <h2>Solution</h2>
-    <p>Before a dose is given, the clinician sees what it is expected to do to the tumour and to
-    <b>each major organ</b> — and which organ is limiting it.</p>
-  </div>
-  <div class="col">
-    <h2>Impact</h2>
-    <p>The full course is reviewed and alternatives compared <b>before treatment starts</b>, so
-    the dose is decided in advance rather than in reaction.</p>
-  </div>
 </section>
 
 <section class="why pad">
@@ -230,12 +232,33 @@
   </div>
 </section>
 
-<section class="process pad">
-  <div class="step"><div class="n">1</div><div class="t">Enter the<br>patient's details</div></div>
-  <div class="arrow"><svg width="76" height="38" viewBox="0 0 46 26" fill="none"><path d="M2 13H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/><path d="M31 4L42 13L31 22" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-  <div class="step"><div class="n">2</div><div class="t">Review the<br>recommended plan</div></div>
-  <div class="arrow"><svg width="76" height="38" viewBox="0 0 46 26" fill="none"><path d="M2 13H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/><path d="M31 4L42 13L31 22" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-  <div class="step"><div class="n">3</div><div class="t">Compare options<br>and decide</div></div>
+<section class="method pad">
+  <h2>How it works: <span>every step is finished before the patient is given anything</span></h2>
+  <div class="flow">
+    <div class="fbox">
+      <div class="fhead"><div class="fn">1</div><h3>The patient</h3></div>
+      <p>Body weight, tumour size, and how often the drug is given.</p>
+    </div>
+    <div class="farrow"><svg viewBox="0 0 46 26" fill="none"><path d="M2 13H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/><path d="M31 4L42 13L31 22" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="fbox act">
+      <div class="fhead"><div class="fn">2</div><h3>A dose is suggested</h3></div>
+      <p>It weighs the tumour against the side effects so far, as an oncologist would.</p>
+    </div>
+    <div class="farrow"><svg viewBox="0 0 46 26" fill="none"><path d="M2 13H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/><path d="M31 4L42 13L31 22" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="fbox act">
+      <div class="fhead"><div class="fn">3</div><h3>The body is checked</h3></div>
+      <p>The drug is traced through 13 organs for 48 h, against each safe limit.</p>
+    </div>
+    <div class="farrow"><svg viewBox="0 0 46 26" fill="none"><path d="M2 13H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/><path d="M31 4L42 13L31 22" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="fbox out">
+      <div class="fhead"><div class="fn">4</div><h3>The plan</h3></div>
+      <p>The whole course, dose by dose, naming the organ behind every change.</p>
+    </div>
+    <div class="loop">
+      <div class="u"></div>
+      <div class="ltext">If a dose would take any organ past its limit, it is <b>lowered and checked again</b>.</div>
+    </div>
+  </div>
 </section>
 
 <footer class="pad">

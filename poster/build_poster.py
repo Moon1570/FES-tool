@@ -27,7 +27,7 @@ django.setup()
 from app.models import Run  # noqa: E402
 from app.views import _case_study  # noqa: E402
 
-RUN_NAME = "Case 01 — standard"
+RUN_NAME = "Case 01: standard"
 QR_URL = "https://moon1570.pythonanywhere.com/"
 QR_TEXT = "moon1570.pythonanywhere.com"
 
@@ -35,6 +35,9 @@ BLUE, CORAL, AMBER, INK = "#1B4EE0", "#E8543F", "#B26A00", "#16202B"
 GREY, MUTED, GRID = "#5A6675", "#8A94A3", "#DDE3EC"
 DOSE_COLOURS = ["#1f6feb", "#2b8ae0", "#22a0c8", "#1fae9e", "#3fae63",
                 "#8aa63a", "#c09428", "#cf6f24", "#c0392b", "#a3306e"]
+# One plot box for all three case-study charts, so their axes line up across the row.
+# The left margin fits the widest y-axis label, "10 billion".
+BOX = (170, 22, 18, 52)
 
 
 def esc(text):
@@ -43,7 +46,7 @@ def esc(text):
 
 def cells_in_words(log10):
     if log10 is None:
-        return "—"
+        return "–"
     if log10 < 0:
         return "fewer than 1"
     n = 10 ** log10
@@ -120,24 +123,44 @@ class Chart:
                 self.parts.append(f'<rect x="{self.px(x) - half:.1f}" y="{top:.1f}" width="{2 * half:.1f}" '
                                   f'height="{base - top:.1f}" fill="{colour}"/>')
 
+    def marks(self, xs, colour, height=22, width=6):
+        """Short vertical ticks on the baseline: the days a dose was given."""
+        base = self.h - self.b
+        for x in xs:
+            px = self.px(x)
+            self.parts.append(f'<line x1="{px:.1f}" y1="{base:.1f}" x2="{px:.1f}" y2="{base - height:.1f}" '
+                              f'stroke="{colour}" stroke-width="{width}" stroke-linecap="round"/>')
+
     def svg(self, label):
         return (f'<svg viewBox="0 0 {self.w} {self.h}" role="img" aria-label="{esc(label)}" '
                 f'font-family="Helvetica Neue, Helvetica, Arial, sans-serif">' + "".join(self.parts) + "</svg>")
 
 
+def dose_days(c):
+    """The first day of each cycle: a dose runs over that day and the next."""
+    previous, days = 0, []
+    for day, dose in zip(c["days"], c["dose_final"]):
+        if dose and not previous:
+            days.append(day)
+        previous = dose or 0
+    return days
+
+
 def tumour_chart(c):
     days = c["days"]
-    ch = Chart(800, 470, (170, 22, 18, 52), (days[0], days[-1]), (-1.5, 11.2))
+    ch = Chart(800, 470, BOX, (days[0], days[-1]), (-1.5, 11.2))
     ch.axes([(10, "10 billion"), (6, "1 million"), (2, "100"), (0, "1")],
             [(0, "day 0"), (60, "day 60"), (days[-1], f"day {days[-1]}")])
     ch.line(days, c["untreated"], CORAL, 6, dash="16 11")
     ch.line(days, c["treated"], BLUE, 8)
-    return ch.svg("Tumour cells over the course: no treatment against the recommended plan")
+    ch.marks(dose_days(c), BLUE)
+    return ch.svg("Tumour cells over the course: no treatment against the recommended plan, "
+                  "with a tick on each day a dose was given")
 
 
 def toxicity_chart(c):
     days, limit = c["days"], c["metrics"]["toxicity_limit"]
-    ch = Chart(800, 470, (82, 22, 18, 52), (days[0], days[-1]), (0, limit * 1.12))
+    ch = Chart(800, 470, BOX, (days[0], days[-1]), (0, limit * 1.12))
     ch.axes([(0, "0"), (50, "50"), (100, "100")],
             [(0, "day 0"), (60, "day 60"), (days[-1], f"day {days[-1]}")])
     ch.hline(limit, CORAL, 4)
@@ -149,7 +172,7 @@ def toxicity_chart(c):
 def dose_chart(c):
     days = c["days"]
     top = max(v for v in c["dose_planned"] if v is not None)
-    ch = Chart(800, 470, (82, 22, 18, 52), (days[0] - 2, days[-1] + 2), (0, top * 1.12))
+    ch = Chart(800, 470, BOX, (days[0] - 2, days[-1] + 2), (0, top * 1.12))
     ch.axes([(v, f"{v:g}") for v in nice_ticks(top * 1.05)],
             [(days[0] - 2, "day 0"), (60, "day 60"), (days[-1] + 2, f"day {days[-1]}")])
     ch.bars(days, c["dose_planned"], "rgba(122,135,150,0.40)", 3.0)
@@ -233,7 +256,8 @@ def main():
         "@@P2_SVG@@": toxicity_chart(c),
         "@@P3_BIG@@": esc(f"{m['cycles_adjusted']} of {m['cycles_total']} doses lowered"),
         "@@P3_CAP@@": esc("before being given, so every organ stays within its safe limit"
-                          + (f" — {less:.0f}% less drug in total." if less else ".")),
+                          # non-breaking space: "In total" must not split across lines
+                          + (f". In total, {less:.0f}% less drug." if less else ".")),
         "@@P3_SVG@@": dose_chart(c),
         "@@DOSE_KEY@@": dose_key,
         "@@ORGANS@@": "".join(organs),

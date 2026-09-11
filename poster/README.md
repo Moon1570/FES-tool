@@ -1,8 +1,8 @@
-# Innovation Fair BD 2026 — 3 × 4 ft poster
+# Innovation Fair BD 2026: 3 × 4 ft poster
 
 A clinician-facing presentation of the decision support system: what a doctor sees and how
-it helps them choose a dose. There is deliberately no mention of the inference engine, the
-rule bases or the feedback loop.
+it helps them choose a dose. The only method it shows is the "How it works" strip, in plain
+language. There is no mention of the inference engine or the rule bases.
 
 | File | What it is |
 |---|---|
@@ -11,14 +11,14 @@ rule bases or the feedback loop.
 | `template.html` | Layout and copy. Edit this. |
 | `build_poster.py` | Fills the template from a real run in the database. |
 | `qr.swift` | Makes and reads QR codes with macOS's built-in Core Image. |
-| `poster.html` | Generated — do not edit by hand, it is overwritten. |
+| `poster.html` | Generated. Do not edit by hand, it is overwritten. |
 | `proof.png` | Screen-size proof for review. |
 
 ## Before you print
 
 - **Logo.** `poster/logo.png` (the University of Barishal logo) is embedded automatically;
   replace the file and rebuild to change it. Note its motto text is white, so it does not
-  show against the white footer — only the emblem and the university name do.
+  show against the white footer. Only the emblem and the university name do.
 - **Check the live site answers** before printing: `https://moon1570.pythonanywhere.com/`
   is what the QR code opens. On PythonAnywhere's free tier the web app expires after a
   month unless extended (Web tab → *Run until …*), so confirm it on the day.
@@ -43,11 +43,12 @@ swift qr.swift read FES-poster-3x4ft-150dpi.png
 ```
 
 **If the PDF comes out as two pages**, the content has grown taller than 1219 mm. Reduce
-the chart heights in `build_poster.py` or the section padding in `template.html`.
+the chart heights in `build_poster.py` or the section padding in `template.html`. The layout
+is close to full: it measures about 1210 mm of the 1219 mm page.
 
 ## Where the content comes from
 
-Everything in the case study comes from the seeded run *Case 01 — standard*, read through the
+Everything in the case study comes from the seeded run *Case 01: standard*, read through the
 same function that builds the website's home page (`app.views._case_study`), so the poster
 and the site always show the same numbers:
 
@@ -55,6 +56,7 @@ and the site always show the same numbers:
   about 18 billion (the model with every dose set to zero).
 - **83 instead of 97** peak side-effect load, compared with the system's first suggestion.
 - **4 of 9 doses lowered** before being given; 7% less drug in total.
+- A tick on the tumour chart's baseline for each day a dose was given.
 - Lung, heart and kidney drug levels after each dose, with each organ's safe limit.
 
 The QR code encodes `https://moon1570.pythonanywhere.com/` with error correction level Q

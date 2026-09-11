@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block nav_compare %}active{% endblock %}
-{% block title %}Compare — Decision Support System{% endblock %}
+{% block title %}Compare · Decision Support System{% endblock %}
 
 {% block content %}
 <div class="page-head">
@@ -44,8 +44,8 @@
     <header><h2>Head to head</h2></header>
     <div class="body tight">
       <div class="table-scroll"><table id="cmp-table">
-        <thead><tr><th>Metric</th><th class="num">A — {{ left.patient_name }}</th>
-          <th class="num">B — {{ right.patient_name }}</th><th class="num">Difference</th></tr></thead>
+        <thead><tr><th>Metric</th><th class="num">A: {{ left.patient_name }}</th>
+          <th class="num">B: {{ right.patient_name }}</th><th class="num">Difference</th></tr></thead>
         <tbody></tbody>
       </table></div>
     </div>
@@ -99,7 +99,7 @@ document.querySelector('#cmp-table tbody').innerHTML = ROWS.map(([label, get, dp
     cls = bBetter ? 'chip ok' : 'chip cut';
   }
   const sign = diff > 0 ? '+' : '';
-  const diffTxt = Math.abs(diff) < 1e-9 ? '—'
+  const diffTxt = Math.abs(diff) < 1e-9 ? '–'
     : `<span class="${cls}">${sign}${diff.toFixed(dp)}</span>`;
   return `<tr><td>${label}</td><td class="num">${a.toFixed(dp)}</td>
           <td class="num">${b.toFixed(dp)}</td><td class="num">${diffTxt}</td></tr>`;
@@ -107,9 +107,9 @@ document.querySelector('#cmp-table tbody').innerHTML = ROWS.map(([label, get, dp
 
 function pair(key, sel, yTitle, extra) {
   draw(document.getElementById(sel), [
-    { x: A.final.days, y: A.final[key], mode: 'lines', name: 'A — {{ left.patient_name|escapejs }}',
+    { x: A.final.days, y: A.final[key], mode: 'lines', name: 'A: {{ left.patient_name|escapejs }}',
       line: { color: CA, width: 2.5 } },
-    { x: B.final.days, y: B.final[key], mode: 'lines', name: 'B — {{ right.patient_name|escapejs }}',
+    { x: B.final.days, y: B.final[key], mode: 'lines', name: 'B: {{ right.patient_name|escapejs }}',
       line: { color: CB, width: 2.5, dash: 'dash' } },
   ], Object.assign({ showlegend: true, xaxis: { title: 'Day', gridcolor: C.grid },
                      yaxis: { title: yTitle, gridcolor: C.grid } }, extra || {}));

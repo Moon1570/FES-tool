@@ -18,7 +18,7 @@ Wherever you see **`YOURNAME`** below, use the PythonAnywhere username you pick 
 
 ---
 
-## Part 0 — Push the code (on your laptop, 2 min)
+## Part 0: Push the code (on your laptop, 2 min)
 
 Review what will be committed, then push:
 
@@ -34,7 +34,7 @@ git push origin master
 
 ---
 
-## Part A — The live app on PythonAnywhere (~30 min)
+## Part A: The live app on PythonAnywhere (~30 min)
 
 ### 1. Create a free account
 
@@ -82,7 +82,7 @@ Takes a few minutes. The finished install is about **380 MB of the 512 MB** free
 
 - Keep `--no-cache-dir`. Without it pip keeps a second copy of every download and you
   run out of space.
-- Use **Python 3.11** (3.10 also works). **Not 3.12 or later** — the pinned numpy and
+- Use **Python 3.11** (3.10 also works). **Not 3.12 or later**. The pinned numpy and
   scipy versions have no builds for it.
 - The prompt should now start with `(fes)`. If you open a new console later, run
   `workon fes` first.
@@ -103,7 +103,7 @@ sees. **Copy the long random string** the last command prints; you need it in st
 ### 5. Create the web app
 
 **Web** tab → **Add a new web app** → Next → choose **Manual configuration**
-(*not* "Django" — that option creates a new, empty project) → **Python 3.11** → Next.
+(*not* "Django": that option creates a new, empty project) → **Python 3.11** → Next.
 
 ### 6. Configure it
 
@@ -124,7 +124,7 @@ Still on the **Web** tab, fill in these sections:
 **Virtualenv**
 - `/home/YOURNAME/.virtualenvs/fes`
 
-**Static files** — add one row:
+**Static files**: add one row:
 | URL | Directory |
 |---|---|
 | `/static/` | `/home/YOURNAME/FES-tool/FESapp/staticfiles` |
@@ -142,7 +142,7 @@ Open `https://YOURNAME.pythonanywhere.com` on your laptop **and on your phone**:
 - [ ] The home page is **Key features**. Its **Run a simulation** button opens the form;
       **Run simulation** there, with the defaults, opens a finished result straight away.
 - [ ] **History** lists the three "Case 0x" demo cases.
-- [ ] **Explore** lists "Case 01 — regimen sweep", and it opens.
+- [ ] **Explore** lists "Case 01: regimen sweep", and it opens.
 - [ ] Open the site in a private window: your test run should **not** appear in its History.
 
 ### 8. Stop it from expiring
@@ -152,7 +152,7 @@ Free web apps switch off after **one month** unless extended.
 
 ---
 
-## Part B — The landing page on GitHub Pages (~5 min)
+## Part B: The landing page on GitHub Pages (~5 min)
 
 ### 9. Put your address into the landing page
 
@@ -162,7 +162,7 @@ On your laptop, open `docs/index.html` and replace:
 https://REPLACE-WITH-YOUR-USERNAME.pythonanywhere.com/
 ```
 
-with your real address. Leave the YouTube link as it is for now — **the video button stays
+with your real address. Leave the YouTube link as it is for now: **the video button stays
 hidden until its link is filled in**, so the page never shows a broken button.
 
 ```bash
@@ -185,12 +185,12 @@ Open that address and tap **Try the live demo**.
 
 ---
 
-## Part C — The video (optional, whenever you're ready)
+## Part C: The video (optional, whenever you're ready)
 
 12. Record a two-minute screen capture. A running order that works:
     *New run → Run simulation → treatment schedule (four doses lowered, lung is
     dose-limiting) → organ safety panel → Compare 14-day against 21-day cycles.*
-13. Upload to YouTube as **Unlisted** or **Public** (not Private — nobody else can open a
+13. Upload to YouTube as **Unlisted** or **Public** (not Private: nobody else can open a
     Private video). Copy the share link.
 14. In `docs/index.html`, replace `https://youtu.be/REPLACE-WITH-VIDEO-ID` with your link,
     then commit and push. The **Watch the demo video** button appears within a minute.
@@ -198,13 +198,13 @@ Open that address and tap **Try the live demo**.
 
 ---
 
-## Part D — The QR code
+## Part D: The QR code
 
-It should encode **`https://moon1570.github.io/FES-tool/`**. It is generated as part of the
+It should encode **`https://moon1570.pythonanywhere.com/`**. It is generated as part of the
 poster rebuild.
 
 If you make one yourself, use a **static** QR code. Many free "dynamic QR" sites encode a
-redirect through their own servers and stop working when a trial ends — after the poster is
+redirect through their own servers and stop working when a trial ends, by which time the poster is already
 printed.
 
 ---
@@ -262,7 +262,7 @@ Start with **Web** tab → **Error log** (the newest lines are at the bottom).
 | Symptom | Cause and fix |
 |---|---|
 | "Something went wrong :-(" | Read the error log. If it says *Edit USERNAME and SECRET_KEY*, you haven't filled those in (step 6). |
-| **400 Bad Request** | `USERNAME` in the WSGI file doesn't match your address — or it's an EU account, see step 1. |
+| **400 Bad Request** | `USERNAME` in the WSGI file doesn't match your address, or it's an EU account, see step 1. |
 | **403 Forbidden** when you press Run | You're on `http://`. Turn on **Force HTTPS** (step 6) and use `https://`. |
 | Page loads with no styling | The static files row is wrong, or `collectstatic` wasn't run (steps 4 and 6). |
 | `No module named 'django'` in the error log | The virtualenv path is wrong (step 6), or the install failed (step 3). |

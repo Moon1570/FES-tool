@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block nav_history %}active{% endblock %}
-{% block title %}History — Decision Support System{% endblock %}
+{% block title %}History · Decision Support System{% endblock %}
 
 {% block content %}
 <div class="page-head hstack">
@@ -35,7 +35,7 @@
             <td class="num">{{ r.summary.peak_toxicity|floatformat:1 }}</td>
             <td class="num">{{ r.summary.cycles_adjusted }}/{{ r.summary.cycles_total }}</td>
           {% else %}
-            <td class="num muted">—</td><td class="num muted">—</td><td class="num muted">—</td>
+            <td class="num muted">–</td><td class="num muted">–</td><td class="num muted">–</td>
           {% endif %}
           <td>
             {% if r.status == 'done' %}<span class="chip ok">Complete</span>

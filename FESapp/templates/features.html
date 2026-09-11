@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block nav_features %}active{% endblock %}
-{% block title %}Key features — Decision Support System{% endblock %}
+{% block title %}Key features · Decision Support System{% endblock %}
 
 {% block content %}
 {% url 'new_run' as new_run_url %}
@@ -34,7 +34,7 @@
 <section class="kf-case" id="case-study">
   <div class="kf-case-head">
     <div>
-      <div class="kf-kicker">Case study</div>
+      <div class="kf-kicker">A case study</div>
       <h2 class="kf-section" style="margin:4px 0 6px">
         A {{ example.weight_kg|floatformat:0 }} kg adult with {{ example.burden_label|lower }},
         treated for {{ example.horizon_days }} days
@@ -103,7 +103,7 @@
     </div>
     <h3>Fewer calculation mistakes</h3>
     <ul>
-      <li>Body surface area is worked out from the patient's weight automatically — no formulas by hand.</li>
+      <li>Body surface area is worked out from the patient's weight automatically. No formulas by hand.</li>
       <li>Every adjustment to a dose (body size, upper limit, organ safety) is calculated and shown, not done on paper.</li>
       <li>The same patient details always give the same plan, so every result can be checked and reproduced.</li>
     </ul>
@@ -135,7 +135,7 @@
     <ul>
       <li>Predicts how much drug builds up in the lungs, heart, kidneys, liver, brain and 8 more over the 48 hours after each dose.</li>
       <li>Lowers a dose <strong>before</strong> it is given if any organ would go past its safe limit.</li>
-      <li>Names the organ that limited each dose — for example, “lung: would reach 15.0, limit 13.0”.</li>
+      <li>Names the organ that limited each dose. For example, “lung: would reach 15.0, limit 13.0”.</li>
     </ul>
     {% if example %}<a class="kf-link" href="{% url 'result' example.id %}#organ-grid">See the organ checks →</a>{% endif %}
   </article>
@@ -149,8 +149,8 @@
     <h3>Thinks the way a doctor does</h3>
     <ul>
       <li>Its 51 rules try to mimic how an oncologist thinks: weigh how big the tumour is against the side effects so far, then adjust for the patient's body size.</li>
-      <li>Written in a doctor's own terms — “tumour very big and side effects low → give a very high dose”.</li>
-      <li>Each dose comes with a plain explanation, and can be traced back step by step to its cause — no black box.</li>
+      <li>Written in a doctor's own terms: “tumour very big and side effects low → give a very high dose”.</li>
+      <li>Each dose comes with a plain explanation, and can be traced back step by step to its cause. No black box.</li>
     </ul>
     {% if example %}<a class="kf-link" href="{% url 'result' example.id %}#why">Read an explanation →</a>{% endif %}
   </article>
@@ -163,7 +163,7 @@
     </div>
     <h3>Personalised to each patient</h3>
     <ul>
-      <li>Adjusts for body size, and for how much tumour there is — from molecular remission to very bulky disease.</li>
+      <li>Adjusts for body size, and for how much tumour there is, from molecular remission to very bulky disease.</li>
       <li>Tolerance profiles for patients with reduced kidney or heart function.</li>
       <li>Doses ease off as the tumour responds, instead of repeating one fixed amount.</li>
     </ul>
@@ -179,7 +179,7 @@
     </div>
     <h3>Compare options before deciding</h3>
     <ul>
-      <li>Put two plans side by side — for example, a dose every 14 days against every 21 days.</li>
+      <li>Put two plans side by side. For example, a dose every 14 days against every 21 days.</li>
       <li>See exactly what each choice gains in tumour control and costs in side effects.</li>
       <li>Explore many schedules on one chart to find the best balance for this patient.</li>
     </ul>
@@ -198,7 +198,7 @@
     <li>Every plan is saved and reopens instantly from <a href="{% url 'history' %}">History</a>.</li>
     <li>Download the full plan as a spreadsheet (CSV), or print it.</li>
     <li>Open any chart full screen to zoom in, and save it as a high-resolution picture.</li>
-    <li>Works on a phone, tablet or laptop — nothing to install.</li>
+    <li>Works on a phone, tablet or laptop. Nothing to install.</li>
     {% if demo_sweep %}<li>See 28 schedules on one efficacy-against-side-effects chart in the <a href="{% url 'sweep_detail' demo_sweep.id %}">regimen explorer</a>.</li>{% endif %}
     <li>Each plan is worked out in well under a second, so options can be tried live, in front of the patient.</li>
   </ul>
@@ -248,7 +248,7 @@ const { C, CYCLE_COLORS, draw } = FES;
 const m = CASE.metrics;
 
 function cellsInWords(log10) {
-  if (log10 === null || log10 === undefined) return '—';
+  if (log10 === null || log10 === undefined) return '–';
   if (log10 < 0) return 'fewer than 1';
   const n = Math.pow(10, log10);
   for (const [unit, word] of [[1e9, 'billion'], [1e6, 'million'], [1e3, 'thousand']]) {
@@ -284,7 +284,7 @@ draw(document.getElementById('p-tumour'), [
   yaxis: { gridcolor: C.grid, automargin: true, zeroline: false, tickvals: [10, 6, 2, 0],
            ticktext: ['10 billion', '1 million', '100', '1'] } }),
   { mount: header('p-tumour'),
-    meta: () => ({ title: 'Case study — tumour cells', subtitle: 'No treatment against the recommended plan' }) });
+    meta: () => ({ title: 'Case study: tumour cells', subtitle: 'No treatment against the recommended plan' }) });
 
 /* 2. side-effect load: first suggestion against the recommended plan */
 document.getElementById('big-tox').textContent =
@@ -304,14 +304,14 @@ draw(document.getElementById('p-tox'), [
   shapes: [{ type: 'line', x0: 0, x1: last(days), y0: m.toxicity_limit, y1: m.toxicity_limit,
              line: { color: C.danger, width: 1, dash: 'dash' } }] }),
   { mount: header('p-tox'),
-    meta: () => ({ title: 'Case study — side-effect load', subtitle: 'First suggestion against the recommended plan' }) });
+    meta: () => ({ title: 'Case study: side-effect load', subtitle: 'First suggestion against the recommended plan' }) });
 
 /* 3. doses: which ones were lowered */
 const lessPct = m.total_planned > m.total_delivered ? 100 * (1 - m.total_delivered / m.total_planned) : 0;
 document.getElementById('big-dose').textContent = `${m.cycles_adjusted} of ${m.cycles_total} doses lowered`;
 document.getElementById('cap-dose').textContent =
   `before being given, to keep every organ within its safe limit` +
-  (lessPct ? ` — ${lessPct.toFixed(0)}% less drug in total.` : '.');
+  (lessPct ? `. In total, ${lessPct.toFixed(0)}% less drug.` : '.');
 draw(document.getElementById('p-dose'), [
   { x: days, y: CASE.dose_planned, type: 'bar', name: 'First suggestion',
     marker: { color: 'rgba(122,135,150,.35)' }, hovertemplate: '%{y:.1f}<extra>first suggestion</extra>' },
@@ -321,7 +321,7 @@ draw(document.getElementById('p-dose'), [
   xaxis: { tickprefix: 'day ', gridcolor: C.grid, zeroline: false },
   yaxis: { gridcolor: C.grid, zeroline: false } }),
   { mount: header('p-dose'),
-    meta: () => ({ title: 'Case study — doses', subtitle: 'First suggestion against the recommended plan' }) });
+    meta: () => ({ title: 'Case study: doses', subtitle: 'First suggestion against the recommended plan' }) });
 
 /* 4. three organs, same presentation as the full organ grid */
 const colour = i => CYCLE_COLORS[i % CYCLE_COLORS.length];
@@ -351,7 +351,7 @@ CASE.organs.forEach(o => {
     { displayModeBar: false, responsive: true })
   .then(() => FES.attachFullscreen(el, {
     mount: el.parentElement.querySelector('.organ-cell-head'), unifiedHover: true,
-    meta: () => ({ title: 'Case study — ' + o.label,
+    meta: () => ({ title: 'Case study: ' + o.label,
                    subtitle: `Drug level over the 48 hours after each dose · safe limit ${o.limit.toFixed(1)}` }) }));
 });
 </script>

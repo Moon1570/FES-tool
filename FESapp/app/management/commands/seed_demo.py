@@ -13,9 +13,9 @@ from app.engine import runner, safety, serialize, sweep as sweep_engine
 from app.models import Run, Sweep
 
 SCENARIOS = [
-    ("Case 01 — standard", 70.0, 14, "standard"),
-    ("Case 01 — 21-day cycles", 70.0, 21, "standard"),
-    ("Case 02 — reduced renal", 82.0, 14, "renal"),
+    ("Case 01: standard", 70.0, 14, "standard"),
+    ("Case 01: 21-day cycles", 70.0, 21, "standard"),
+    ("Case 02: reduced renal", 82.0, 14, "renal"),
 ]
 
 
@@ -65,14 +65,14 @@ class Command(BaseCommand):
             preset_keys=presets, horizon_days=120,
         )
         Sweep.objects.create(
-            patient_name="Case 01 — regimen sweep", weight_kg=70.0, n0=1e10,
+            patient_name="Case 01: regimen sweep", weight_kg=70.0, n0=1e10,
             horizon_days=120, intervals=intervals, preset_keys=presets,
             status=Run.Status.DONE, result=payload, is_demo=True,
             duration_ms=int((time.time() - started) * 1000),
         )
         front = sum(1 for p in payload["points"] if p["on_front"])
         self.stdout.write(
-            f"  {'Case 01 — regimen sweep':28} {len(payload['points'])} regimens, "
+            f"  {'Case 01: regimen sweep':28} {len(payload['points'])} regimens, "
             f"{front} on the trade-off frontier"
         )
         self.stdout.write(self.style.SUCCESS(

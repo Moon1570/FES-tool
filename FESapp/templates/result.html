@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}{{ run.patient_name }} — Decision Support System{% endblock %}
+{% block title %}{{ run.patient_name }} · Decision Support System{% endblock %}
 
 {% block content %}
 {% if run.status == 'pending' or run.status == 'running' %}
@@ -149,7 +149,7 @@ const { C, CYCLE_COLORS, draw } = FES;
 /* ---------------- plain-language helpers ---------------- */
 // log10(cells) -> words: 10 -> "10 billion", 6.4 -> "2.5 million", -0.9 -> "fewer than 1".
 function cellsInWords(log10) {
-  if (log10 === null || log10 === undefined) return '—';
+  if (log10 === null || log10 === undefined) return '–';
   if (log10 < 0) return 'fewer than 1';
   const n = Math.pow(10, log10);
   for (const [unit, word] of [[1e9, 'billion'], [1e6, 'million'], [1e3, 'thousand']]) {
@@ -195,13 +195,13 @@ document.querySelector('#calendar tbody').innerHTML = DATA.cycles.map(c => {
   else if (c.adjusted) chip = `<span class="chip cut">Lowered ${c.reduction_pct.toFixed(0)}%</span>`;
   const lim = c.limiting_label
     ? `${c.limiting_label} <span class="muted">(would reach ${c.limiting_peak.toFixed(1)}, limit ${c.limiting_limit.toFixed(1)})</span>`
-    : '<span class="muted">—</span>';
+    : '<span class="muted">–</span>';
   return `<tr>
     <td><strong>${c.index}</strong></td>
     <td class="num">${c.day}</td>
     <td class="num">${c.planned.toFixed(1)}</td>
     <td class="num"><strong>${c.delivered.toFixed(1)}</strong></td>
-    <td class="num">${c.adjusted ? '−' + c.reduction_pct.toFixed(1) + '%' : '—'}</td>
+    <td class="num">${c.adjusted ? '−' + c.reduction_pct.toFixed(1) + '%' : '–'}</td>
     <td>${lim}</td>
     <td>${chip}</td>
   </tr>`;
@@ -211,11 +211,11 @@ document.querySelector('#calendar tbody').innerHTML = DATA.cycles.map(c => {
 const explained = DATA.cycles.filter(c => c.why);
 const whyPick = document.getElementById('why-pick');
 whyPick.innerHTML = explained.map(c =>
-  `<option value="${c.index}">Dose ${c.index} — day ${c.day}</option>`).join('');
+  `<option value="${c.index}">Dose ${c.index}, day ${c.day}</option>`).join('');
 
 // Fuzzy terms as word chips; the exact degree of fit stays in the tooltip for experts.
 function termChips(list) {
-  if (!list || !list.length) return '<span class="muted">—</span>';
+  if (!list || !list.length) return '<span class="muted">–</span>';
   return list.map(t =>
     `<span class="chip muted" style="margin-right:4px" title="degree of fit ${t.mu.toFixed(2)}">${lower(t.label)}</span>`
   ).join('');
@@ -246,11 +246,11 @@ function renderWhy() {
     The rules try to mimic how a doctor thinks, so they describe each measurement in words,
     the way a clinician would.</p>`;
   html += step(1, `Where things stand on day ${c.day}`,
-    `Tumour: about <strong>${cellsInWords(w.log10_cells)} cells</strong> — read as ${termChips(w.fes1_inputs.tumor)}<br>
-     Side-effect load so far: <strong>${w.toxicity.toFixed(0)}</strong> — read as ${termChips(w.fes1_inputs.toxicity)}`);
+    `Tumour: about <strong>${cellsInWords(w.log10_cells)} cells</strong>, read as ${termChips(w.fes1_inputs.tumor)}<br>
+     Side-effect load so far: <strong>${w.toxicity.toFixed(0)}</strong>, read as ${termChips(w.fes1_inputs.toxicity)}`);
   html += step(2, `Expert rules suggest ${w.fes1_dose.toFixed(1)}`,
     `Based on tumour size and side effects so far, using 21 rules that try to mimic how an
-     oncologist thinks — for example, “tumour very big and side effects low → give a very high dose”.`);
+     oncologist thinks. For example, “tumour very big and side effects low → give a very high dose”.`);
   html += step(3, pct > 0.05 ? `Adjusted for body size: +${pct.toFixed(1)}% → ${w.raw.toFixed(1)}`
                              : 'Checked for body size: no change',
     `This patient's body surface area (${DATA.patient.bsa_m2.toFixed(2)} m²) counts as ${size},
@@ -337,7 +337,7 @@ const ORGAN_STATES = {{ organ_states_json|safe }};
 const hours = DATA.pbpk.t_hours;
 const lastHour = hours[hours.length - 1];
 const doseColour = i => CYCLE_COLORS[i % CYCLE_COLORS.length];
-const num = (v, dp) => (v === null || v === undefined) ? '—' : Number(v).toFixed(dp);
+const num = (v, dp) => (v === null || v === undefined) ? '–' : Number(v).toFixed(dp);
 
 document.getElementById('dose-key').innerHTML =
   '<span>Each line is one dose:</span>' +
@@ -382,7 +382,7 @@ let part = 'whole';
 
 // Parts of an organ can hold very little drug (the lung's bound part peaks near 0.001),
 // so small values keep two significant figures instead of rounding to 0.0.
-const sig = v => (v === null || v === undefined) ? '—'
+const sig = v => (v === null || v === undefined) ? '–'
   : v >= 10 ? v.toFixed(1) : v >= 1 ? v.toFixed(2) : Number(v.toPrecision(2)).toString();
 
 function partName(organKey, p) {
@@ -433,7 +433,7 @@ function drawOrgan(o) {
     unifiedHover: true,
     meta: () => {
       const cur = PARTS.find(x => x.key === part);
-      return { title: o.label + (cur.key === 'whole' ? '' : ' — ' + partName(o.key, cur)),
+      return { title: o.label + (cur.key === 'whole' ? '' : ': ' + partName(o.key, cur)),
                subtitle: sub.textContent.trim() + ' · drug level over the 48 hours after each dose' };
     },
   }));

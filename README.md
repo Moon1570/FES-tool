@@ -1,6 +1,6 @@
 # FES-tool
 
-**Decision Support System for Cancer Chemotherapy** — dose scheduling by fuzzy inference
+**Decision Support System for Cancer Chemotherapy**: dose scheduling by fuzzy inference
 under physiologically-based organ safety constraints.
 
 A two-stage **Fuzzy Expert System** (FES-1 → FES-2) proposes a dose for each treatment
@@ -26,7 +26,7 @@ cd FESapp
 ../.venv/bin/python manage.py runserver
 ```
 
-Open <http://127.0.0.1:8000>. Everything runs locally — the Plotly bundle is vendored in
+Open <http://127.0.0.1:8000>. Everything runs locally. The Plotly bundle is vendored in
 `static/js/`, so the app works with no network connection.
 
 ## Deploying
@@ -68,7 +68,7 @@ cd FESapp && ../.venv/bin/python tools/regress.py
 The suite pins the rewrite against `tests/baseline_original.json`, a recording of the
 original `views.calc`. In legacy mode (`log_tumor=False`, `legacy_dose_gate=True`,
 50.0 ceilings) the new engine reproduces the original's dose schedule, BSA and N(84)
-to within 1e-9 — while running about 350x faster.
+to within 1e-9, while running about 350x faster.
 
 ## What changed, and why
 
@@ -90,8 +90,8 @@ to within 1e-9 — while running about 350x faster.
 
 ### Performance
 
-FES-1 and FES-2 rebuilt their entire scikit-fuzzy `ControlSystem` — 21 and 30 rules, all
-membership functions, a networkx graph — on **every call**, from inside an ODE right-hand
+FES-1 and FES-2 rebuilt their entire scikit-fuzzy `ControlSystem` (21 and 30 rules, all
+membership functions, a networkx graph) on **every call**, from inside an ODE right-hand
 side, and the `interval + 1` branch called both on every solver step only to discard the
 result. Rule graphs are now built once at import.
 
@@ -106,7 +106,7 @@ since changing model equations is a scientific decision:
 - **EQ 7** (arterial RBC) uses `k_rbcplas` for the influx term where the symmetric EQ 2
   uses `k_plasrbc`.
 - **EQ 15** (liver) reads `((F_li*C_art)+(F_g*C_gv)+(F_s*C_sv)-(C_liv*(F_g+F_s+F_li))/V_liv)`
-  — the `/V_liv` binds only to the last term, so the inflow terms are missing their volume
+  where the `/V_liv` binds only to the last term, so the inflow terms are missing their volume
   normalisation. Compare the correctly parenthesised EQ 3.
 
 Also note the organ ceilings are **illustrative**. The source model defines none, and its
