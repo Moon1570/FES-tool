@@ -139,7 +139,8 @@ Click the green **Reload YOURNAME.pythonanywhere.com** button at the top.
 Open `https://YOURNAME.pythonanywhere.com` on your laptop **and on your phone**:
 
 - [ ] The page is styled (blue header, cards). If it is plain text, see *Troubleshooting*.
-- [ ] **Run simulation** with the defaults opens a finished result straight away.
+- [ ] The home page is **Key features**. Its **Run a simulation** button opens the form;
+      **Run simulation** there, with the defaults, opens a finished result straight away.
 - [ ] **History** lists the three "Case 0x" demo cases.
 - [ ] **Explore** lists "Case 01 — regimen sweep", and it opens.
 - [ ] Open the site in a private window: your test run should **not** appear in its History.

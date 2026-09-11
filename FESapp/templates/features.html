@@ -3,7 +3,7 @@
 {% block title %}Key features — Decision Support System{% endblock %}
 
 {% block content %}
-{% url 'home' as new_run_url %}
+{% url 'new_run' as new_run_url %}
 
 <section class="kf-hero">
   <div class="kf-eyebrow">Key features</div>
@@ -23,7 +23,7 @@
 
 <section class="kf-stats" aria-label="The system in numbers">
   <div class="kf-stat"><div class="n">13</div><div class="l">organs checked before every dose</div></div>
-  <div class="kf-stat"><div class="n">51</div><div class="l">expert rules behind each dose decision</div></div>
+  <div class="kf-stat"><div class="n">51</div><div class="l">expert rules that mimic how a doctor thinks</div></div>
   <div class="kf-stat"><div class="n">35</div><div class="l">body compartments followed after each dose</div></div>
   <div class="kf-stat"><div class="n">&lt;&nbsp;1&nbsp;s</div><div class="l">to plan a full 120-day course</div></div>
   <div class="kf-stat"><div class="n">28</div><div class="l">schedules compared on a single chart</div></div>
@@ -86,11 +86,11 @@
         <path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.5"/><circle cx="4.5" cy="12" r="1.5"/><circle cx="4.5" cy="18" r="1.5"/>
       </svg>
     </div>
-    <h3>Reasoning a doctor can follow</h3>
+    <h3>Thinks the way a doctor does</h3>
     <ul>
-      <li>Each dose comes with a plain explanation: where the patient stands, what the rules suggest, and why it changed.</li>
-      <li>51 rules written the way an oncologist reasons — “tumour very big and side effects low → give a very high dose”.</li>
-      <li>No black box: every recommended dose can be traced back, step by step, to its cause.</li>
+      <li>Its 51 rules try to mimic how an oncologist thinks: weigh how big the tumour is against the side effects so far, then adjust for the patient's body size.</li>
+      <li>Written in a doctor's own terms — “tumour very big and side effects low → give a very high dose”.</li>
+      <li>Each dose comes with a plain explanation, and can be traced back step by step to its cause — no black box.</li>
     </ul>
     {% if example %}<a class="kf-link" href="{% url 'result' example.id %}#why">Read an explanation →</a>{% endif %}
   </article>
@@ -155,8 +155,8 @@
   <article class="kf-card kf-plain">
     <h3>Under the hood</h3>
     <p>
-      Two fuzzy expert systems (FES-1 and FES-2, 51 rules in all) set each dose from tumour
-      size, side-effect load and body size. A physiologically based pharmacokinetic (PBPK)
+      Two fuzzy expert systems (FES-1 and FES-2), with 51 rules that try to mimic how an
+      oncologist thinks, set each dose from tumour size, side-effect load and body size. A physiologically based pharmacokinetic (PBPK)
       model with 35 compartments predicts how the drug spreads through 13 organs, and a
       tumour growth model projects the response over the course.
     </p>

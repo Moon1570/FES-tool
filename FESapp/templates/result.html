@@ -14,7 +14,7 @@
 {% elif run.status == 'error' %}
   <div class="page-head"><h1>Simulation failed</h1></div>
   <div class="notice bad">{{ run.error|linebreaksbr }}</div>
-  <a class="btn btn-ghost" href="{% url 'home' %}">Back to setup</a>
+  <a class="btn btn-ghost" href="{% url 'new_run' %}">Back to setup</a>
 
 {% else %}
   <div class="page-head hstack">
@@ -33,7 +33,7 @@
       <a class="btn btn-ghost" href="{% url 'export_csv' run.id %}">Download CSV</a>
       <a class="btn btn-ghost" href="{% url 'compare' %}?a={{ run.id }}">Compare</a>
       <button class="btn btn-ghost" onclick="window.print()">Print</button>
-      <a class="btn btn-primary" href="{% url 'home' %}">New run</a>
+      <a class="btn btn-primary" href="{% url 'new_run' %}">New run</a>
     </div>
   </div>
 
@@ -243,13 +243,14 @@ function renderWhy() {
   const pct = w.fes2_increase * 100;
   const organ = lower(c.limiting_label);
   let html = `<p class="muted" style="font-size:.82rem;margin:0 0 2px">
-    The rules describe each measurement in words, the way a clinician would.</p>`;
+    The rules try to mimic how a doctor thinks, so they describe each measurement in words,
+    the way a clinician would.</p>`;
   html += step(1, `Where things stand on day ${c.day}`,
     `Tumour: about <strong>${cellsInWords(w.log10_cells)} cells</strong> — read as ${termChips(w.fes1_inputs.tumor)}<br>
      Side-effect load so far: <strong>${w.toxicity.toFixed(0)}</strong> — read as ${termChips(w.fes1_inputs.toxicity)}`);
   html += step(2, `Expert rules suggest ${w.fes1_dose.toFixed(1)}`,
-    `Based on tumour size and side effects so far, using 21 rules written the way an oncologist
-     reasons — for example, “tumour very big and side effects low → give a very high dose”.`);
+    `Based on tumour size and side effects so far, using 21 rules that try to mimic how an
+     oncologist thinks — for example, “tumour very big and side effects low → give a very high dose”.`);
   html += step(3, pct > 0.05 ? `Adjusted for body size: +${pct.toFixed(1)}% → ${w.raw.toFixed(1)}`
                              : 'Checked for body size: no change',
     `This patient's body surface area (${DATA.patient.bsa_m2.toFixed(2)} m²) counts as ${size},

@@ -112,7 +112,7 @@ def _burden_choices():
     return out
 
 
-def home(request):
+def new_run(request):
     return render(request, "run_setup.html", {
         "organs": safety.ORGANS,
         "presets": _presets_for_template(),

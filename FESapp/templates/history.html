@@ -10,7 +10,7 @@
   </div>
   <div class="controls no-print">
     <a class="btn btn-ghost" href="{% url 'compare' %}">Compare two runs</a>
-    <a class="btn btn-primary" href="{% url 'home' %}">New run</a>
+    <a class="btn btn-primary" href="{% url 'new_run' %}">New run</a>
   </div>
 </div>
 
@@ -51,7 +51,7 @@
     {% else %}
     <div class="empty">
       <p>No runs yet.</p>
-      <a class="btn btn-primary" href="{% url 'home' %}">Run a simulation</a>
+      <a class="btn btn-primary" href="{% url 'new_run' %}">Run a simulation</a>
     </div>
     {% endif %}
   </div>
