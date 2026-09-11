@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decision Support System for Cancer Chemotherapy</title>
+<meta name="description" content="See what each chemotherapy dose will do to the tumour and to every major organ, before it is given.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231B4EE0'/><text x='16' y='21' font-size='12' font-weight='800' fill='white' text-anchor='middle' font-family='Helvetica,Arial'>FES</text></svg>">
+<style>
+  /* ============================================================
+     EDIT THESE TWO LINKS - they are the only things to change.
+     A button stays hidden until its link no longer says REPLACE.
+     ============================================================ */
+  :root {
+    --blue: #1B4EE0; --blue-d: #1640B8; --coral: #E8543F;
+    --ink: #16202B; --grey: #5A6675; --line: #D8DEE7; --wash: #F4F6FA;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink); background: #fff; line-height: 1.5;
+  }
+  header { background: var(--blue); color: #fff; padding: 36px 24px 32px; }
+  .wrap { max-width: 560px; margin: 0 auto; width: 100%; }
+  .eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .mark {
+    width: 40px; height: 40px; border-radius: 9px; background: #fff; color: var(--blue);
+    display: grid; place-items: center; font-weight: 800; font-size: 15px; letter-spacing: -.02em;
+  }
+  .event { font-size: 12px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; opacity: .85; }
+  h1 { font-size: clamp(28px, 7.5vw, 40px); line-height: 1.08; font-weight: 800; letter-spacing: -.02em; }
+  .tag { margin-top: 14px; font-size: 18px; font-weight: 300; opacity: .95; }
+
+  main { flex: 1; padding: 30px 24px 20px; }
+  .lead { font-size: 17px; color: var(--grey); margin-bottom: 26px; }
+  .lead b { color: var(--ink); }
+
+  .btn {
+    display: flex; align-items: center; gap: 16px; width: 100%;
+    padding: 18px 20px; margin-bottom: 14px; border-radius: 14px;
+    text-decoration: none; font-size: 18px; font-weight: 700;
+    transition: transform .08s, background .12s;
+  }
+  .btn:active { transform: scale(.985); }
+  .btn .ic { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 11px; display: grid; place-items: center; }
+  .btn small { display: block; font-size: 14px; font-weight: 500; margin-top: 2px; }
+  .primary { background: var(--blue); color: #fff; }
+  .primary:hover { background: var(--blue-d); }
+  .primary .ic { background: rgba(255,255,255,.16); }
+  .primary small { color: rgba(255,255,255,.82); }
+  .secondary { background: var(--wash); color: var(--ink); border: 1.5px solid var(--line); }
+  .secondary:hover { background: #EAEEF5; }
+  .secondary .ic { background: #FCE8E4; }
+  .secondary small { color: var(--grey); }
+  .btn[hidden] { display: none; }
+
+  .pending {
+    padding: 16px 18px; border-radius: 12px; background: var(--wash);
+    color: var(--grey); font-size: 15px; border: 1.5px dashed var(--line);
+  }
+  .pending[hidden] { display: none; }
+
+  ul.points { list-style: none; margin: 30px 0 6px; border-top: 1px solid var(--line); }
+  ul.points li { padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15.5px; display: flex; gap: 12px; }
+  ul.points li span.n {
+    flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; background: var(--blue); color: #fff;
+    display: grid; place-items: center; font-size: 13px; font-weight: 800; margin-top: 1px;
+  }
+
+  footer { padding: 18px 24px 28px; font-size: 13px; color: var(--grey); }
+  footer .wrap { border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow"><div class="mark">FES</div><div class="event">Innovation Fair BD 2026</div></div>
+    <h1>Decision Support System for Cancer Chemotherapy</h1>
+    <div class="tag">Decide the right dose, before side effects appear.</div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <p class="lead">
+      See what each dose is expected to do to the tumour <b>and to every major organ</b> —
+      before it is given.
+    </p>
+
+    <!-- LIVE DEMO: replace the href with your PythonAnywhere address -->
+    <a class="btn primary" data-link href="https://REPLACE-WITH-YOUR-USERNAME.pythonanywhere.com/">
+      <span class="ic">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M8 5l11 7-11 7V5z" fill="#fff"/></svg>
+      </span>
+      <span>Try the live demo<small>Opens in your browser — no sign-up</small></span>
+    </a>
+
+    <!-- VIDEO: replace the href with your YouTube link -->
+    <a class="btn secondary" data-link href="https://youtu.be/REPLACE-WITH-VIDEO-ID">
+      <span class="ic">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="6" width="13" height="12" rx="2.5" stroke="#E8543F" stroke-width="2"/>
+          <path d="M16 10.5l5-3v9l-5-3" stroke="#E8543F" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span>Watch the demo video<small>A 2-minute walkthrough</small></span>
+    </a>
+
+    <div class="pending" id="pending" hidden>The demo links will appear here shortly.</div>
+
+    <ul class="points">
+      <li><span class="n">1</span><span>Enter a patient's details — made-up ones, please.</span></li>
+      <li><span class="n">2</span><span>Review the projected plan: each dose, the expected tumour response, and the safety margin on 13 organs.</span></li>
+      <li><span class="n">3</span><span>Compare alternative schedules before deciding.</span></li>
+    </ul>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    Research prototype for evaluation only. Not a medical device and not for clinical
+    decision-making. Please do not enter real patient information.
+  </div>
+</footer>
+
+<script>
+  // Hide any button whose link has not been filled in yet, so a half-configured page
+  // never shows a broken button. If neither is ready, show a short holding message.
+  var shown = 0;
+  document.querySelectorAll('[data-link]').forEach(function (a) {
+    if (a.getAttribute('href').indexOf('REPLACE') !== -1) { a.hidden = true; } else { shown++; }
+  });
+  if (!shown) document.getElementById('pending').hidden = false;
+</script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Decision Support System for Cancer Chemotherapy — Innovation Fair BD 2026</title>
+<style>
+  @page { size: 594mm 841mm; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue:  #1B4EE0;
+    --coral: #E8543F;
+    --ink:   #16202B;
+    --grey:  #5A6675;
+    --line:  #D8DEE7;
+    --wash:  #F4F6FA;
+  }
+  html, body {
+    width: 594mm; height: 841mm;
+    background: #fff; color: var(--ink);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ---------------- header ---------------- */
+  header { background: var(--blue); color: #fff; padding: 20mm 30mm 17mm; }
+  .eyebrow { display: flex; align-items: center; gap: 9mm; margin-bottom: 11mm; }
+  .mark {
+    width: 26mm; height: 26mm; border-radius: 5mm; background: #fff; color: var(--blue);
+    display: grid; place-items: center; font-size: 11.5mm; font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .event {
+    font-size: 6.6mm; font-weight: 700; letter-spacing: 0.34em;
+    text-transform: uppercase; color: rgba(255,255,255,.82);
+  }
+  h1 { font-size: 28.5mm; line-height: 1.03; font-weight: 800; letter-spacing: -0.022em; }
+  .tagline {
+    margin-top: 8mm; font-size: 11.8mm; font-weight: 300; line-height: 1.25;
+    color: rgba(255,255,255,.93); letter-spacing: -0.008em;
+  }
+
+  /* ---------------- hero ---------------- */
+  .hero {
+    flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center;
+    padding: 9mm 26mm 7mm;
+  }
+  .hero-label {
+    font-size: 6mm; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase;
+    color: var(--grey); margin-bottom: 7mm;
+  }
+  .hero svg { display: block; width: 100%; height: auto; }
+  .hero-note {
+    margin-top: 8mm; font-size: 8.4mm; line-height: 1.4; font-weight: 500; max-width: 480mm;
+  }
+  .hero-note b { font-weight: 800; }
+
+  /* ---------------- three columns ---------------- */
+  .cols {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14mm;
+    padding: 12mm 30mm 13mm;
+  }
+  .col { border-top: 1.6mm solid var(--ink); padding-top: 7mm; }
+  .col.accent { border-top-color: var(--blue); }
+  .col.coral  { border-top-color: var(--coral); }
+  .col svg { display: block; margin-bottom: 6mm; }
+  .col h2 {
+    font-size: 9mm; font-weight: 800; letter-spacing: 0.13em;
+    text-transform: uppercase; margin-bottom: 4.5mm;
+  }
+  .col p { font-size: 8mm; line-height: 1.44; color: var(--grey); }
+  .col p b { color: var(--ink); font-weight: 700; }
+
+  /* ---------------- clinician workflow ---------------- */
+  .process {
+    background: var(--wash); padding: 16mm 30mm;
+    display: flex; align-items: center;
+  }
+  .step { flex: 1; display: flex; align-items: center; gap: 6mm; }
+  .step .n {
+    flex: 0 0 auto; width: 19mm; height: 19mm; border-radius: 50%;
+    background: var(--blue); color: #fff; display: grid; place-items: center;
+    font-size: 9.6mm; font-weight: 800;
+  }
+  .step .t { font-size: 8.8mm; font-weight: 600; line-height: 1.26; }
+  .arrow { flex: 0 0 auto; padding: 0 6mm; }
+
+  /* ---------------- results ---------------- */
+  .results {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    padding: 16mm 30mm 15mm; gap: 12mm;
+  }
+  .kpi .v {
+    font-size: 60mm; line-height: .88; font-weight: 800; letter-spacing: -0.045em;
+    color: var(--blue); font-variant-numeric: tabular-nums;
+  }
+  .kpi .v small { font-size: 24mm; font-weight: 700; letter-spacing: -0.02em; }
+  .kpi .c {
+    margin-top: 7mm; font-size: 8mm; line-height: 1.36; color: var(--grey);
+    font-weight: 500; max-width: 158mm;
+  }
+  .kpi .c b { color: var(--ink); font-weight: 700; }
+
+  /* ---------------- footer ---------------- */
+  footer {
+    margin-top: auto; border-top: 0.8mm solid var(--line);
+    padding: 15mm 30mm 16mm; display: flex; align-items: flex-end; gap: 16mm;
+  }
+  .team { flex: 1; }
+  .team .lbl {
+    font-size: 5.6mm; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--grey); margin-bottom: 4mm;
+  }
+  .team .names {
+    font-size: 9.6mm; font-weight: 700; line-height: 1.3; color: #A9B3C0;
+    border: 0.7mm dashed var(--line); border-radius: 2.5mm; padding: 4.5mm 6mm;
+    display: inline-block;
+  }
+  .disclaim { margin-top: 5mm; font-size: 5.4mm; color: var(--grey); line-height: 1.4; max-width: 250mm; }
+  .slot {
+    flex: 0 0 auto; width: 52mm; height: 52mm; border: 0.7mm dashed var(--line);
+    border-radius: 3mm; display: grid; place-items: center; text-align: center;
+    font-size: 4.9mm; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #A9B3C0; line-height: 1.35;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">
+    <div class="mark">FES</div>
+    <div class="event">Innovation Fair BD 2026</div>
+  </div>
+  <h1>Decision Support System<br>for Cancer Chemotherapy</h1>
+  <div class="tagline">Decide the right dose, before side effects appear.</div>
+</header>
+
+<section class="hero">
+  <div class="hero-label">What the clinician sees</div>
+  <svg viewBox="0 0 1600 690" role="img"
+       aria-label="A clinician's view: the expected tumour response over 120 days, the safety margin on every organ with the lung shown as dose-limiting, and the full nine-dose plan with four doses lowered in advance.">
+    <rect x="0" y="0" width="960" height="420" rx="24" fill="#F4F6FA"/>
+    <text x="34" y="56" font-size="24" font-weight="800" fill="#5A6675" letter-spacing="2.6">EXPECTED TUMOUR RESPONSE</text>
+    <line x1="190" y1="117.7" x2="920" y2="117.7" stroke="#DDE3EC" stroke-width="2"/>
+    <text x="176" y="124.7" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="end">10 billion cells</text>
+    <line x1="190" y1="215.2" x2="920" y2="215.2" stroke="#DDE3EC" stroke-width="2"/>
+    <text x="176" y="222.2" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="end">100 000 cells</text>
+    <line x1="190" y1="312.6" x2="920" y2="312.6" stroke="#DDE3EC" stroke-width="2"/>
+    <text x="176" y="319.6" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="end">1 cell</text>
+    <polyline points="190.0,117.7 196.1,119.5 202.2,123.5 208.2,126.0 214.3,127.4 220.4,127.9 226.5,127.9 232.6,127.8 238.7,127.7 244.8,127.7 250.8,127.6 256.9,127.6 263.0,127.5 269.1,127.5 275.2,127.4 281.2,129.4 287.3,137.4 293.4,146.4 299.5,152.8 305.6,157.0 311.7,159.7 317.8,161.2 323.8,161.8 329.9,161.8 336.0,161.7 342.1,161.6 348.2,161.5 354.2,161.4 360.3,161.3 366.4,163.3 372.5,171.3 378.6,180.2 384.7,186.4 390.8,190.6 396.8,193.2 402.9,194.6 409.0,195.1 415.1,195.0 421.2,194.9 427.2,194.8 433.3,194.7 439.4,194.5 445.5,194.4 451.6,196.3 457.7,204.1 463.8,212.8 469.8,218.8 475.9,222.9 482.0,225.4 488.1,226.7 494.2,227.1 500.2,227.0 506.3,226.8 512.4,226.7 518.5,226.5 524.6,226.4 530.7,226.2 536.8,228.1 542.8,235.8 548.9,244.4 555.0,250.3 561.1,254.3 567.2,256.8 573.2,258.0 579.3,258.4 585.4,258.2 591.5,258.0 597.6,257.9 603.7,257.7 609.8,257.5 615.8,257.3 621.9,258.9 628.0,266.1 634.1,274.1 640.2,279.7 646.2,283.3 652.3,285.5 658.4,286.6 664.5,286.8 670.6,286.6 676.7,286.4 682.8,286.1 688.8,285.9 694.9,285.7 701.0,285.5 707.1,286.9 713.2,293.5 719.2,300.9 725.3,306.0 731.4,309.2 737.5,311.1 743.6,312.0 749.7,312.0 755.8,311.7 761.8,311.5 767.9,311.2 774.0,311.0 780.1,310.7 786.2,310.5 792.2,311.2 798.3,315.9 804.4,321.2 810.5,324.7 816.6,326.7 822.7,327.7 828.8,327.8 834.8,327.5 840.9,327.2 847.0,327.0 853.1,326.7 859.2,326.4 865.2,326.2 871.3,325.9 877.4,325.8 883.5,327.5 889.6,329.5 895.7,330.5 901.8,330.6 907.8,330.4 913.9,330.1 920.0,329.8" fill="none" stroke="#1B4EE0" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="190.0" cy="117.7" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
+    <circle cx="275.2" cy="127.4" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
+    <circle cx="360.3" cy="161.3" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
+    <circle cx="445.5" cy="194.4" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
+    <circle cx="530.7" cy="226.2" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
+    <circle cx="615.8" cy="257.3" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
+    <circle cx="701.0" cy="285.5" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
+    <circle cx="786.2" cy="310.5" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
+    <circle cx="871.3" cy="325.9" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
+    <text x="190" y="382" font-size="20" font-weight="600" fill="#8A94A3">day 0</text>
+    <text x="920" y="382" font-size="20" font-weight="600" fill="#8A94A3" text-anchor="end">day 120</text>
+    <text x="555" y="382" font-size="20" font-weight="700" fill="#1B4EE0" text-anchor="middle">○ each planned dose</text>
+    <rect x="1000" y="0" width="600" height="420" rx="24" fill="#fff" stroke="#D8DEE7" stroke-width="3"/>
+    <text x="1034" y="56" font-size="24" font-weight="800" fill="#5A6675" letter-spacing="2.6">SAFETY MARGIN, EVERY ORGAN</text>
+    <text x="1468" y="92" font-size="19" font-weight="800" fill="#16202B" text-anchor="end">SAFE LIMIT</text>
+    <text x="1034" y="129" font-size="23" font-weight="800" fill="#E8543F">Lung</text>
+    <rect x="1200" y="114" width="268" height="16" rx="8" fill="#EDF0F5"/>
+    <rect x="1200" y="114" width="266.0" height="16" rx="8" fill="#E8543F"/>
+    <text x="1034" y="163" font-size="23" font-weight="600" fill="#5A6675">Kidney</text>
+    <rect x="1200" y="148" width="268" height="16" rx="8" fill="#EDF0F5"/>
+    <rect x="1200" y="148" width="256.7" height="16" rx="8" fill="#1B4EE0"/>
+    <text x="1034" y="197" font-size="23" font-weight="600" fill="#5A6675">Heart</text>
+    <rect x="1200" y="182" width="268" height="16" rx="8" fill="#EDF0F5"/>
+    <rect x="1200" y="182" width="260.8" height="16" rx="8" fill="#1B4EE0"/>
+    <text x="1034" y="231" font-size="23" font-weight="600" fill="#5A6675">Brain</text>
+    <rect x="1200" y="216" width="268" height="16" rx="8" fill="#EDF0F5"/>
+    <rect x="1200" y="216" width="257.6" height="16" rx="8" fill="#1B4EE0"/>
+    <text x="1034" y="265" font-size="23" font-weight="600" fill="#5A6675">Gut</text>
+    <rect x="1200" y="250" width="268" height="16" rx="8" fill="#EDF0F5"/>
+    <rect x="1200" y="250" width="256.2" height="16" rx="8" fill="#1B4EE0"/>
+    <text x="1034" y="299" font-size="23" font-weight="600" fill="#5A6675">Muscle</text>
+    <rect x="1200" y="284" width="268" height="16" rx="8" fill="#EDF0F5"/>
+    <rect x="1200" y="284" width="255.5" height="16" rx="8" fill="#1B4EE0"/>
+    <text x="1034" y="333" font-size="23" font-weight="600" fill="#5A6675">Liver</text>
+    <rect x="1200" y="318" width="268" height="16" rx="8" fill="#EDF0F5"/>
+    <rect x="1200" y="318" width="141.1" height="16" rx="8" fill="#1B4EE0"/>
+    <line x1="1468" y1="102" x2="1468" y2="338" stroke="#16202B" stroke-width="3"/>
+    <rect x="1034" y="364" width="336" height="40" rx="20" fill="#FCE8E4"/>
+    <text x="1202" y="391" font-size="21" font-weight="800" fill="#E8543F" text-anchor="middle">Lung is limiting this dose</text>
+    <text x="1034" y="442" font-size="21" font-weight="600" fill="#8A94A3">+ 6 more organs monitored, all within limits</text>
+    <text x="0" y="478" font-size="24" font-weight="800" fill="#5A6675" letter-spacing="2.6">THE PLAN THE CLINICIAN REVIEWS · 9 DOSES OVER 120 DAYS</text>
+    <rect x="0" y="506" width="158" height="150" rx="18" fill="#FFF3F0" stroke="#E8543F" stroke-width="3"/>
+    <text x="79.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 0</text>
+    <text x="79.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">36.1</text>
+    <text x="79.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
+    <text x="79.0" y="646" font-size="18" font-weight="800" fill="#E8543F" text-anchor="middle">lowered</text>
+    <rect x="180" y="506" width="158" height="150" rx="18" fill="#FFF3F0" stroke="#E8543F" stroke-width="3"/>
+    <text x="259.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 14</text>
+    <text x="259.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">36.5</text>
+    <text x="259.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
+    <text x="259.0" y="646" font-size="18" font-weight="800" fill="#E8543F" text-anchor="middle">lowered</text>
+    <rect x="360" y="506" width="158" height="150" rx="18" fill="#FFF3F0" stroke="#E8543F" stroke-width="3"/>
+    <text x="439.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 28</text>
+    <text x="439.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">35.8</text>
+    <text x="439.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
+    <text x="439.0" y="646" font-size="18" font-weight="800" fill="#E8543F" text-anchor="middle">lowered</text>
+    <rect x="540" y="506" width="158" height="150" rx="18" fill="#FFF3F0" stroke="#E8543F" stroke-width="3"/>
+    <text x="619.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 42</text>
+    <text x="619.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">35.1</text>
+    <text x="619.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
+    <text x="619.0" y="646" font-size="18" font-weight="800" fill="#E8543F" text-anchor="middle">lowered</text>
+    <rect x="720" y="506" width="158" height="150" rx="18" fill="#F4F6FA" stroke="#DDE3EC" stroke-width="3"/>
+    <text x="799.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 56</text>
+    <text x="799.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">35.0</text>
+    <text x="799.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
+    <rect x="900" y="506" width="158" height="150" rx="18" fill="#F4F6FA" stroke="#DDE3EC" stroke-width="3"/>
+    <text x="979.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 70</text>
+    <text x="979.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">33.3</text>
+    <text x="979.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
+    <rect x="1080" y="506" width="158" height="150" rx="18" fill="#F4F6FA" stroke="#DDE3EC" stroke-width="3"/>
+    <text x="1159.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 84</text>
+    <text x="1159.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">31.4</text>
+    <text x="1159.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
+    <rect x="1260" y="506" width="158" height="150" rx="18" fill="#F4F6FA" stroke="#DDE3EC" stroke-width="3"/>
+    <text x="1339.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 98</text>
+    <text x="1339.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">24.7</text>
+    <text x="1339.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
+    <rect x="1440" y="506" width="158" height="150" rx="18" fill="#F4F6FA" stroke="#DDE3EC" stroke-width="3"/>
+    <text x="1519.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 112</text>
+    <text x="1519.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">14.3</text>
+    <text x="1519.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
+  </svg>
+  <div class="hero-note">
+    The whole course of treatment is laid out before the first dose — how the tumour is
+    expected to respond, and how close each dose comes to every organ's safe limit.
+    Here <b>4 of 9 doses were lowered in advance</b>, because the lung
+    would otherwise have been pushed past its limit.
+  </div>
+</section>
+
+<section class="cols">
+  <div class="col coral">
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+      <path d="M26 5 L49 45 H3 Z" stroke="#E8543F" stroke-width="4.5" stroke-linejoin="round"/>
+      <path d="M26 20 V32" stroke="#E8543F" stroke-width="4.5" stroke-linecap="round"/>
+      <circle cx="26" cy="39" r="2.6" fill="#E8543F"/>
+    </svg>
+    <h2>Problem</h2>
+    <p>Chemotherapy has to shrink the tumour without harming healthy organs — but the dose
+    is usually lowered only <b>after</b> the patient already has side effects.</p>
+  </div>
+  <div class="col accent">
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+      <circle cx="26" cy="26" r="21" stroke="#1B4EE0" stroke-width="4.5"/>
+      <path d="M16 27 l7 7 l13 -15" stroke="#1B4EE0" stroke-width="4.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h2>Solution</h2>
+    <p>Before a dose is given, the clinician can see what it is expected to do to the tumour
+    and to <b>each major organ</b> — and which organ is limiting it.</p>
+  </div>
+  <div class="col">
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+      <path d="M5 40 L18 26 L29 34 L47 12" stroke="#16202B" stroke-width="4.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M35 12 H47 V24" stroke="#16202B" stroke-width="4.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h2>Impact</h2>
+    <p>The full course can be reviewed and alternatives compared <b>before treatment starts</b>,
+    so the dose is decided in advance rather than in reaction.</p>
+  </div>
+</section>
+
+<section class="process">
+  <div class="step"><div class="n">1</div><div class="t">Enter the<br>patient's details</div></div>
+  <div class="arrow">
+    <svg width="60" height="30" viewBox="0 0 46 26" fill="none">
+      <path d="M2 13 H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M31 4 L42 13 L31 22" stroke="#1B4EE0" stroke-width="4.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="step"><div class="n">2</div><div class="t">Review the<br>projected plan</div></div>
+  <div class="arrow">
+    <svg width="60" height="30" viewBox="0 0 46 26" fill="none">
+      <path d="M2 13 H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M31 4 L42 13 L31 22" stroke="#1B4EE0" stroke-width="4.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="step"><div class="n">3</div><div class="t">Compare options<br>and decide</div></div>
+</section>
+
+<section class="results">
+  <div class="kpi">
+    <div class="v">13</div>
+    <div class="c"><b>organs checked</b> before every single dose is given</div>
+  </div>
+  <div class="kpi">
+    <div class="v">4<small> of 9</small></div>
+    <div class="c">doses <b>lowered in advance</b>, before any side effect had appeared</div>
+  </div>
+  <div class="kpi">
+    <div class="v">28</div>
+    <div class="c"><b>alternative schedules</b> compared before treatment begins</div>
+  </div>
+</section>
+
+<footer>
+  <div class="team">
+    <div class="lbl">Team &amp; Institution</div>
+    <div class="names">Author names — Institution / Department</div>
+    <div class="disclaim">
+      Simulation output, for research and evaluation. Not a medical device and not for
+      clinical decision-making. Organ safety limits shown are illustrative.
+    </div>
+  </div>
+  <div class="slot">Institution<br>logo</div>
+  <div class="slot">QR code<br>to demo</div>
+</footer>
+
+</body>
+</html>

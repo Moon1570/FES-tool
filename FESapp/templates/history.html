@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block nav_history %}active{% endblock %}
+{% block title %}History — Decision Support System{% endblock %}
+
+{% block content %}
+<div class="page-head hstack">
+  <div>
+    <h1>Run history</h1>
+    <div class="sub">{% if public %}Your runs from this browser, plus the demo cases. Other visitors cannot see your runs.{% else %}Every simulation is stored, so a result can be reopened instantly.{% endif %}</div>
+  </div>
+  <div class="controls no-print">
+    <a class="btn btn-ghost" href="{% url 'compare' %}">Compare two runs</a>
+    <a class="btn btn-primary" href="{% url 'home' %}">New run</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="body tight">
+    {% if runs %}
+    <div class="table-scroll"><table>
+      <thead><tr>
+        <th>Patient</th><th class="num">Weight</th><th class="num">Interval</th>
+        <th>Limits</th><th class="num">Log kill</th><th class="num">Peak tox</th>
+        <th class="num">Adjusted</th><th>Status</th><th>When</th><th></th>
+      </tr></thead>
+      <tbody>
+      {% for r in runs %}
+        <tr>
+          <td><a href="{% url 'result' r.id %}"><strong>{{ r.patient_name }}</strong></a></td>
+          <td class="num">{{ r.weight_kg|floatformat:1 }} kg</td>
+          <td class="num">{{ r.interval_days }} d</td>
+          <td class="muted">{{ r.preset_label }}</td>
+          {% if r.summary %}
+            <td class="num">{{ r.summary.log_reduction|floatformat:2 }}</td>
+            <td class="num">{{ r.summary.peak_toxicity|floatformat:1 }}</td>
+            <td class="num">{{ r.summary.cycles_adjusted }}/{{ r.summary.cycles_total }}</td>
+          {% else %}
+            <td class="num muted">—</td><td class="num muted">—</td><td class="num muted">—</td>
+          {% endif %}
+          <td>
+            {% if r.status == 'done' %}<span class="chip ok">Complete</span>
+            {% elif r.status == 'error' %}<span class="chip bad">Failed</span>
+            {% else %}<span class="chip muted">{{ r.get_status_display }}</span>{% endif %}
+          </td>
+          <td class="muted">{{ r.created_at|date:"j M Y, H:i" }}</td>
+          <td><a href="{% url 'compare' %}?a={{ r.id }}">Compare</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}
+    <div class="empty">
+      <p>No runs yet.</p>
+      <a class="btn btn-primary" href="{% url 'home' %}">Run a simulation</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

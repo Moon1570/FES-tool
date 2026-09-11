@@ -21,12 +21,37 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3woyun0twfby^(bu=imuo64p8m4m-@2!)h0dll_ohoa5113_^q'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-dev-key-not-for-production-use-only',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '1') == '1'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', 'testserver']
+
+# Deployment hostnames, e.g. DJANGO_ALLOWED_HOSTS="yourname.pythonanywhere.com".
+# Each one is also trusted for CSRF over HTTPS: the host terminates TLS in front of
+# Django, so without this every form POST fails its origin check with a 403.
+_DEPLOY_HOSTS = [h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h.strip()]
+ALLOWED_HOSTS += _DEPLOY_HOSTS
+CSRF_TRUSTED_ORIGINS = [f'https://{h}' for h in _DEPLOY_HOSTS]
+
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# How a simulation is executed.
+#   "thread" - on a background thread with live progress (local use).
+#   "inline" - inside the request. Required on hosts that forbid threads in web
+#              workers, such as PythonAnywhere. A run takes ~0.2 s, so this is fine.
+FES_RUN_MODE = os.environ.get('FES_RUN_MODE', 'thread')
+
+# Public mode: tighter input bounds, so one visitor cannot tie up a single-worker
+# host, and history scoped to each visitor's own runs plus the demo cases.
+FES_PUBLIC = os.environ.get('FES_PUBLIC', '0') == '1'
 
 
 # Application definition
@@ -43,7 +68,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,11 +102,8 @@ WSGI_APPLICATION = 'FESapp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'FESapp',
-        'USER': 'postgres',
-        'PASSWORD': '1570',
-        'HOST': 'localhost',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -121,16 +142,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage' 
-
-
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'assests')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 MEDIA_URL = '/media/'

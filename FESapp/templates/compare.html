@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block nav_compare %}active{% endblock %}
+{% block title %}Compare — Decision Support System{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Compare regimens</h1>
+  <div class="sub">Put two runs side by side to see what a change of interval, weight or organ limits actually costs.</div>
+</div>
+
+<div class="card no-print">
+  <div class="body">
+    <form method="get" class="inline" style="align-items:flex-end">
+      <div class="field" style="margin-bottom:0">
+        <label for="pick-a">Regimen A</label>
+        <select id="pick-a" name="a">
+          <option value="">Select a run…</option>
+          {% for r in runs %}
+          <option value="{{ r.id }}"{% if left and left.id == r.id %} selected{% endif %}>
+            {{ r.patient_name }} · {{ r.weight_kg|floatformat:0 }} kg · {{ r.interval_days }} d · {{ r.preset_label }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label for="pick-b">Regimen B</label>
+        <select id="pick-b" name="b">
+          <option value="">Select a run…</option>
+          {% for r in runs %}
+          <option value="{{ r.id }}"{% if right and right.id == r.id %} selected{% endif %}>
+            {{ r.patient_name }} · {{ r.weight_kg|floatformat:0 }} kg · {{ r.interval_days }} d · {{ r.preset_label }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div style="flex:0 0 auto"><button class="btn btn-primary" type="submit">Compare</button></div>
+    </form>
+  </div>
+</div>
+
+{% if left and right %}
+  <div class="card">
+    <header><h2>Head to head</h2></header>
+    <div class="body tight">
+      <div class="table-scroll"><table id="cmp-table">
+        <thead><tr><th>Metric</th><th class="num">A — {{ left.patient_name }}</th>
+          <th class="num">B — {{ right.patient_name }}</th><th class="num">Difference</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="grid cols-2">
+    <div class="card">
+      <header><h2>Tumour burden</h2></header>
+      <div class="body"><div class="chart" id="c-tumour"></div></div>
+    </div>
+    <div class="card">
+      <header><h2>Cumulative toxicity</h2></header>
+      <div class="body"><div class="chart" id="c-tox"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <header><h2>Delivered dose</h2></header>
+    <div class="body"><div class="chart" id="c-dose"></div></div>
+  </div>
+{% elif left or right %}
+  <div class="notice info">Select a run for both A and B to compare them.</div>
+{% else %}
+  <div class="empty">Pick two completed runs above.</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if left and right %}
+<script src="{% static 'js/charts.js' %}"></script>
+<script>
+const A = {{ left_json|safe }}, B = {{ right_json|safe }};
+const { C, draw } = FES;
+const CA = C.accent, CB = '#c0392b';
+
+const ROWS = [
+  ['Tumour reduction (log₁₀)', d => d.metrics.log_reduction, 2, 'up'],
+  ['Final burden (log₁₀ cells)', d => d.metrics.log10_n_end, 2, 'down'],
+  ['Peak toxicity', d => d.metrics.peak_toxicity, 1, 'down'],
+  ['Cycles adjusted', d => d.metrics.cycles_adjusted, 0, 'down'],
+  ['Cumulative dose', d => d.metrics.total_delivered, 1, null],
+  ['Cycle interval (days)', d => d.regimen.interval_days, 0, null],
+  ['Body weight (kg)', d => d.patient.weight_kg, 1, null],
+];
+
+document.querySelector('#cmp-table tbody').innerHTML = ROWS.map(([label, get, dp, better]) => {
+  const a = get(A), b = get(B), diff = b - a;
+  let cls = 'muted';
+  if (better && Math.abs(diff) > 1e-9) {
+    const bBetter = better === 'up' ? diff > 0 : diff < 0;
+    cls = bBetter ? 'chip ok' : 'chip cut';
+  }
+  const sign = diff > 0 ? '+' : '';
+  const diffTxt = Math.abs(diff) < 1e-9 ? '—'
+    : `<span class="${cls}">${sign}${diff.toFixed(dp)}</span>`;
+  return `<tr><td>${label}</td><td class="num">${a.toFixed(dp)}</td>
+          <td class="num">${b.toFixed(dp)}</td><td class="num">${diffTxt}</td></tr>`;
+}).join('');
+
+function pair(key, sel, yTitle, extra) {
+  draw(document.getElementById(sel), [
+    { x: A.final.days, y: A.final[key], mode: 'lines', name: 'A — {{ left.patient_name|escapejs }}',
+      line: { color: CA, width: 2.5 } },
+    { x: B.final.days, y: B.final[key], mode: 'lines', name: 'B — {{ right.patient_name|escapejs }}',
+      line: { color: CB, width: 2.5, dash: 'dash' } },
+  ], Object.assign({ showlegend: true, xaxis: { title: 'Day', gridcolor: C.grid },
+                     yaxis: { title: yTitle, gridcolor: C.grid } }, extra || {}));
+}
+
+pair('log10N', 'c-tumour', 'log₁₀ tumour cells');
+pair('toxicity', 'c-tox', 'Cumulative toxicity');
+
+draw(document.getElementById('c-dose'), [
+  { x: A.final.days, y: A.final.dose_by_day, type: 'bar', name: 'A', marker: { color: CA } },
+  { x: B.final.days, y: B.final.dose_by_day, type: 'bar', name: 'B', marker: { color: CB } },
+], { showlegend: true, barmode: 'overlay', bargap: 0.55,
+     xaxis: { title: 'Day', gridcolor: C.grid }, yaxis: { title: 'Dose', gridcolor: C.grid } });
+</script>
+{% endif %}
+{% endblock %}

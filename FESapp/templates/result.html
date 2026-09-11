@@ -1,284 +1,403 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ run.patient_name }} — Decision Support System{% endblock %}
 
+{% block content %}
+{% if run.status == 'pending' or run.status == 'running' %}
+  <div class="progress-wrap" id="progress">
+    <div class="spinner"></div>
+    <h1 style="font-size:1.2rem">Simulating {{ run.patient_name }}</h1>
+    <div class="bar"><div class="fill" id="p-fill"></div></div>
+    <div class="stage" id="p-stage">Starting…</div>
+  </div>
 
-{% block content %} 
+{% elif run.status == 'error' %}
+  <div class="page-head"><h1>Simulation failed</h1></div>
+  <div class="notice bad">{{ run.error|linebreaksbr }}</div>
+  <a class="btn btn-ghost" href="{% url 'home' %}">Back to setup</a>
 
-<h1>Name : {{name}}</h1>
-<p>BSA : {{BSA}}</p>
-<p>Number of cells in 84th day: {{cell84}}</p>
-<button class="btn btn-primary">Download CSV Data</button>
-<a class="btn" href="javascript:window.print()">Click to Print</a>
-<br>
-<hr>
+{% else %}
+  <div class="page-head hstack">
+    <div>
+      <h1>{{ run.patient_name }}</h1>
+      <div class="sub">
+        {{ run.weight_kg|floatformat:1 }} kg ·
+        BSA {{ run.result.patient.bsa_m2|floatformat:2 }} m² ·
+        {{ run.burden_label }} ({{ run.result.patient.burden.mass }}) ·
+        {{ run.interval_days }}-day cycles over {{ run.horizon_days }} days ·
+        {{ run.preset_label }} limits
+        {% if run.duration_ms %} · solved in {{ run.duration_ms }} ms{% endif %}
+      </div>
+    </div>
+    <div class="controls no-print">
+      <a class="btn btn-ghost" href="{% url 'export_csv' run.id %}">Download CSV</a>
+      <a class="btn btn-ghost" href="{% url 'compare' %}?a={{ run.id }}">Compare</a>
+      <button class="btn btn-ghost" onclick="window.print()">Print</button>
+      <a class="btn btn-primary" href="{% url 'home' %}">New run</a>
+    </div>
+  </div>
 
-<table class="table table-striped">
-    <caption>{{message}}</caption>
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col">Number of dose</th>
-            <th scope="col">Dose</th>
+  {% if run.result.metrics.any_infeasible %}
+  <div class="notice bad">
+    One or more cycles could not be brought under their organ ceilings even at the
+    minimum dose. Those cycles are flagged in the schedule below.
+  </div>
+  {% endif %}
 
-        </tr>
-    </thead>
-    <tbody>
-        {% for dose in doses %}
-            <tr>
-                <th scope="row">{{forloop.counter}}</th>
-                <td>{{dose}}</td>
+  <div class="kpis" id="kpis"></div>
 
-            </tr>
-        {% endfor %}
-    </tbody>
+  <div class="card">
+    <header>
+      <h2>Treatment schedule</h2>
+      <span class="hint">What the fuzzy controller asked for, and what the safety check allowed</span>
+    </header>
+    <div class="body tight">
+      <div class="table-scroll"><table id="calendar">
+        <thead><tr>
+          <th>Cycle</th><th class="num">Day</th><th class="num">Planned</th>
+          <th class="num">Delivered</th><th class="num">Change</th>
+          <th>Dose-limiting organ</th><th>Status</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+  </div>
 
+  <div class="card">
+    <header>
+      <h2>How each dose was decided</h2>
+      <div class="controls no-print">
+        <label for="why-pick">Cycle</label>
+        <select id="why-pick"></select>
+      </div>
+    </header>
+    <div class="body" id="why"></div>
+  </div>
 
-</table>
+  <div class="grid cols-2">
+    <div class="card">
+      <header><h2>Tumour burden</h2><span class="hint">log₁₀ cells</span></header>
+      <div class="body"><div class="chart" id="c-tumour"></div></div>
+    </div>
+    <div class="card">
+      <header><h2>Cumulative toxicity</h2></header>
+      <div class="body"><div class="chart" id="c-tox"></div></div>
+    </div>
+  </div>
 
-<br>
-<hr>
-<h2>Figures</h2>
-<br>
+  <div class="card">
+    <header><h2>Dose schedule</h2><span class="hint">Delivered dose per day</span></header>
+    <div class="body"><div class="chart" id="c-dose"></div></div>
+  </div>
 
-    {% if toxPlot %}
-        <img src="data:image/png;base64, {{toxPlot|safe}}" />
-    {% endif %}
+  <div class="card">
+    <header>
+      <h2>Organ safety</h2>
+      <span class="hint">Worst peak concentration across all cycles, against its ceiling</span>
+    </header>
+    <div class="body" id="safety"></div>
+  </div>
 
-    <br>
-    {% if noCellPlot %}
-        <img src="data:image/png;base64, {{noCellPlot|safe}}" />
-    {% endif %}
+  <div class="card">
+    <header>
+      <h2>PBPK compartment explorer</h2>
+      <div class="controls no-print">
+        <label for="organ-pick">Organ</label>
+        <select id="organ-pick"></select>
+        <span class="seg" id="sub-toggle"></span>
+      </div>
+    </header>
+    <div class="body"><div class="chart tall" id="c-pbpk"></div></div>
+  </div>
+{% endif %}
+{% endblock %}
 
-    <br>
-    {% if dosePlot %}
-        <img src="data:image/png;base64, {{dosePlot|safe}}" />
-    {% endif %}
+{% block scripts %}
+{% if run.status == 'pending' or run.status == 'running' %}
+<script>
+const STATUS_URL = "{% url 'run_status' run.id %}";
+let misses = 0;
+async function poll() {
+  try {
+    const r = await fetch(STATUS_URL, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+    const d = await r.json();
+    if (d.progress !== undefined) document.getElementById('p-fill').style.width = (d.progress * 100) + '%';
+    if (d.message) document.getElementById('p-stage').textContent = d.message;
+    if (d.status === 'done' || d.status === 'error') { location.reload(); return; }
+    misses = 0;
+  } catch (e) {
+    if (++misses > 20) { document.getElementById('p-stage').textContent = 'Lost contact with the server.'; return; }
+  }
+  setTimeout(poll, 350);
+}
+poll();
+</script>
 
-    
-    <br>
-    {% if venousBloodPlot1 %}
-        <img src="data:image/png;base64, {{venousBloodPlot1|safe}}" />
-    {% endif %}
+{% elif run.status == 'done' %}
+<script src="{% static 'js/charts.js' %}"></script>
+<script>
+const DATA = {{ payload_json|safe }};
+const { C, CYCLE_COLORS, draw } = FES;
 
-    <br>
-    {% if venousBloodPlot2 %}
-        <img src="data:image/png;base64, {{venousBloodPlot2|safe}}" />
-    {% endif %}
+/* ---------------- KPIs ---------------- */
+const m = DATA.metrics;
+const doseDays = DATA.final.days.filter((d, i) => DATA.final.dose_by_day[i] > 0);
+const toxPct = m.peak_toxicity / m.toxicity_limit;
+const kpis = [
+  { k: 'Tumour reduction', v: m.log_reduction.toFixed(2) + ' log₁₀',
+    d: m.log10_n_start.toFixed(1) + ' → ' + m.log10_n_end.toFixed(1) + ' log₁₀ cells',
+    cls: m.log_reduction >= 6 ? 'good' : (m.log_reduction >= 3 ? 'warn' : 'bad') },
+  { k: 'Peak toxicity', v: m.peak_toxicity.toFixed(1),
+    d: (toxPct * 100).toFixed(0) + '% of the model reference (' + m.toxicity_limit + ')',
+    cls: toxPct >= 1 ? 'bad' : (toxPct >= 0.85 ? 'warn' : 'good') },
+  { k: 'Doses reduced', v: m.cycles_adjusted + ' / ' + m.cycles_total,
+    d: m.cycles_adjusted ? 'cut to respect organ ceilings' : 'no cycle hit a ceiling',
+    cls: m.cycles_adjusted ? 'warn' : 'good' },
+  { k: 'Cumulative dose', v: m.total_delivered.toFixed(0),
+    d: (m.total_planned > m.total_delivered
+        ? (100 * (1 - m.total_delivered / m.total_planned)).toFixed(1) + '% below plan'
+        : 'delivered as planned'), cls: '' },
+];
+document.getElementById('kpis').innerHTML = kpis.map(x =>
+  `<div class="kpi ${x.cls}"><div class="k">${x.k}</div><div class="v">${x.v}</div><div class="d">${x.d}</div></div>`
+).join('');
 
-    <br>
-    {% if venousBloodPlot %}
-        <img src="data:image/png;base64, {{venousBloodPlot|safe}}" />
-    {% endif %}
+/* ---------------- treatment calendar ---------------- */
+document.querySelector('#calendar tbody').innerHTML = DATA.cycles.map(c => {
+  let chip = '<span class="chip ok">Delivered in full</span>';
+  if (c.infeasible) chip = '<span class="chip bad">Infeasible</span>';
+  else if (c.adjusted) chip = `<span class="chip cut">Reduced ${c.reduction_pct.toFixed(1)}%</span>`;
+  const lim = c.limiting_label
+    ? `${c.limiting_label} <span class="muted mono">${c.limiting_peak.toFixed(1)} / ${c.limiting_limit.toFixed(1)}</span>`
+    : '<span class="muted">—</span>';
+  return `<tr>
+    <td><strong>${c.index}</strong></td>
+    <td class="num">${c.day}</td>
+    <td class="num">${c.planned.toFixed(2)}</td>
+    <td class="num"><strong>${c.delivered.toFixed(2)}</strong></td>
+    <td class="num">${c.adjusted ? '−' + c.reduction_pct.toFixed(1) + '%' : '—'}</td>
+    <td>${lim}</td>
+    <td>${chip}</td>
+  </tr>`;
+}).join('');
 
-    <br>
-    {% if venourRBCPlot %}
-        <img src="data:image/png;base64, {{venourRBCPlot|safe}}" />
-    {% endif %}
+/* ---------------- why each dose was decided ---------------- */
+const explained = DATA.cycles.filter(c => c.why);
+const whyPick = document.getElementById('why-pick');
+whyPick.innerHTML = explained.map(c =>
+  `<option value="${c.index}">Cycle ${c.index} — day ${c.day}</option>`).join('');
 
-    <br>
-    {% if lungClvPlot %}
-        <img src="data:image/png;base64, {{lungClvPlot|safe}}" />
-    {% endif %}
+function terms(list) {
+  if (!list || !list.length) return '<span class="muted">none</span>';
+  return list.map(t =>
+    `<span class="chip muted" style="margin-right:4px">${t.label} <span class="mono">${t.mu.toFixed(2)}</span></span>`
+  ).join('');
+}
 
-    <br>
-    {% if lungClePlot %}
-        <img src="data:image/png;base64, {{lungClePlot|safe}}" />
-    {% endif %}
+function step(n, title, body) {
+  return `<div style="display:grid;grid-template-columns:26px 1fr;gap:11px;padding:10px 0;
+                      border-bottom:1px solid var(--border)">
+    <div style="width:24px;height:24px;border-radius:99px;background:var(--accent-weak);
+                color:var(--accent);display:grid;place-items:center;font-weight:680;
+                font-size:.78rem">${n}</div>
+    <div><div style="font-weight:600;font-size:.9rem;margin-bottom:3px">${title}</div>
+         <div style="font-size:.87rem;color:var(--text-2)">${body}</div></div>
+  </div>`;
+}
 
-    <br>
-    {% if lungClbPlot %}
-        <img src="data:image/png;base64, {{lungClbPlot|safe}}" />
-    {% endif %}
+function renderWhy() {
+  const c = explained.find(x => String(x.index) === whyPick.value) || explained[0];
+  if (!c) { document.getElementById('why').innerHTML =
+    '<p class="muted">Cycle 1 uses a fixed starting dose rather than a fuzzy decision.</p>'; return; }
+  const w = c.why;
+  let html = '';
+  html += step(1, `State at day ${c.day}`,
+    `Tumour burden <strong>${w.log10_cells.toFixed(2)} log₁₀ cells</strong> &nbsp;
+     ${terms(w.fes1_inputs.tumor)}<br>
+     Cumulative toxicity <strong>${w.toxicity.toFixed(1)}</strong> &nbsp;
+     ${terms(w.fes1_inputs.toxicity)}`);
+  html += step(2, `FES-1 proposed ${w.fes1_dose.toFixed(2)}`,
+    `From tumour size and toxicity alone, across 21 Mamdani rules.`);
+  html += step(3, `FES-2 adjusted by ${(w.fes2_increase * 100).toFixed(1)}%`,
+    `Body-size input (BSA × 100 = ${DATA.patient.bsa_scaled.toFixed(1)}) reads as
+     ${terms(w.fes2_inputs.bsa)} &rarr; dose becomes <strong>${w.raw.toFixed(2)}</strong>.`);
+  if (w.capped) {
+    html += step(4, `Soft cap applied`,
+      `Above ${w.soft_cap}, so scaled by ${w.shrink} to
+       <strong>${c.planned.toFixed(2)}</strong>.`);
+  }
+  const n = w.capped ? 5 : 4;
+  if (c.adjusted) {
+    html += step(n, `${c.limiting_label} ceiling cut it ${c.reduction_pct.toFixed(1)}%`,
+      `Peak ${c.limiting_peak.toFixed(2)} exceeded the ${c.limiting_limit.toFixed(2)} ceiling;
+       the dose was reduced by 5% ${c.iterations} time${c.iterations === 1 ? '' : 's'}
+       until every organ passed. <strong>Delivered ${c.delivered.toFixed(2)}</strong>.`);
+  } else {
+    html += step(n, `All 13 organ ceilings passed`,
+      `No reduction needed. <strong>Delivered ${c.delivered.toFixed(2)}</strong>.`);
+  }
+  document.getElementById('why').innerHTML = html;
+}
+whyPick.addEventListener('change', renderWhy);
+renderWhy();
 
-    <br>
-    {% if artetialBloodPlot %}
-        <img src="data:image/png;base64, {{artetialBloodPlot|safe}}" />
-    {% endif %}
+/* ---------------- headline charts ---------------- */
+const days = DATA.final.days;
+const doseMarkers = {
+  x: doseDays, y: doseDays.map(d => DATA.final.log10N[days.indexOf(d)]),
+  mode: 'markers', type: 'scatter', name: 'Dose day',
+  marker: { size: 6, color: C.accent, symbol: 'circle-open', line: { width: 1.5 } },
+  hovertemplate: 'Day %{x}<br>%{y:.2f} log₁₀ cells<extra>dose</extra>',
+};
 
-    <br>
-    {% if artetialRBCPlot %}
-        <img src="data:image/png;base64, {{artetialRBCPlot|safe}}" />
-    {% endif %}
+draw(document.getElementById('c-tumour'), [
+  { x: days, y: DATA.planned.log10N, mode: 'lines', name: 'Before safety check',
+    line: { color: C.grey, width: 1.5, dash: 'dot' },
+    hovertemplate: '%{y:.2f}<extra>planned</extra>' },
+  { x: days, y: DATA.final.log10N, mode: 'lines', name: 'Delivered',
+    line: { color: C.accent, width: 2.5 },
+    hovertemplate: '%{y:.2f}<extra>delivered</extra>' },
+  doseMarkers,
+], { showlegend: true, xaxis: { title: 'Day', gridcolor: C.grid },
+     yaxis: { title: 'log₁₀ tumour cells', gridcolor: C.grid } });
 
-    <br>
-    {% if gutCgvPlot %}
-        <img src="data:image/png;base64, {{gutCgvPlot|safe}}" />
-    {% endif %}
+draw(document.getElementById('c-tox'), [
+  { x: days, y: DATA.planned.toxicity, mode: 'lines', name: 'Before safety check',
+    line: { color: C.grey, width: 1.5, dash: 'dot' },
+    hovertemplate: '%{y:.1f}<extra>planned</extra>' },
+  { x: days, y: DATA.final.toxicity, mode: 'lines', name: 'Delivered',
+    line: { color: C.warn, width: 2.5 }, fill: 'tozeroy', fillcolor: 'rgba(178,106,0,.10)',
+    hovertemplate: '%{y:.1f}<extra>delivered</extra>' },
+], { showlegend: true, xaxis: { title: 'Day', gridcolor: C.grid },
+     yaxis: { title: 'Cumulative toxicity', gridcolor: C.grid },
+     shapes: [{ type: 'line', x0: 0, x1: days[days.length - 1],
+                y0: m.toxicity_limit, y1: m.toxicity_limit,
+                line: { color: C.danger, width: 1, dash: 'dash' } }],
+     annotations: [{ x: days[days.length - 1], y: m.toxicity_limit, xanchor: 'right',
+                     yanchor: 'bottom', text: 'model reference ' + m.toxicity_limit,
+                     showarrow: false, font: { size: 10, color: C.danger } }] });
 
-    <br>
-    {% if brainCbvPlot %}
-        <img src="data:image/png;base64, {{brainCbvPlot|safe}}" />
-    {% endif %}
+const plannedByDay = DATA.planned.dose_by_day;
+draw(document.getElementById('c-dose'), [
+  { x: days, y: plannedByDay, type: 'bar', name: 'Planned',
+    marker: { color: 'rgba(122,135,150,.35)' }, hovertemplate: '%{y:.2f}<extra>planned</extra>' },
+  { x: days, y: DATA.final.dose_by_day, type: 'bar', name: 'Delivered',
+    marker: { color: C.accent }, hovertemplate: '%{y:.2f}<extra>delivered</extra>' },
+], { showlegend: true, barmode: 'overlay', bargap: 0.55,
+     xaxis: { title: 'Day', gridcolor: C.grid },
+     yaxis: { title: 'Dose', gridcolor: C.grid } });
 
-    <br>
-    {% if brainCbePlot %}
-        <img src="data:image/png;base64, {{brainCbePlot|safe}}" />
-    {% endif %}
+/* ---------------- organ safety panel ----------------
+   The repair loop shrinks each dose until it just fits, so after correction every
+   binding organ sits a whisker under its ceiling. High utilisation is therefore the
+   algorithm working, not a warning: colour on breach only, and call out separately
+   which organs actually forced a reduction. */
+const bindingOrgans = DATA.organs.filter(o => o.binding).map(o => o.label);
+document.getElementById('safety').innerHTML =
+  (bindingOrgans.length
+    ? `<div class="notice info" style="margin-bottom:14px">
+         <strong>${bindingOrgans.join(' and ')}</strong>
+         ${bindingOrgans.length > 1 ? 'were' : 'was'} dose-limiting —
+         ${m.cycles_adjusted} of ${m.cycles_total} cycles ${m.cycles_adjusted === 1 ? 'was' : 'were'}
+         reduced to stay under ${bindingOrgans.length > 1 ? 'those ceilings' : 'that ceiling'}.
+       </div>`
+    : `<div class="notice info" style="margin-bottom:14px">
+         Every dose stayed under all 13 organ ceilings; no reduction was needed.
+       </div>`) +
+  DATA.organs.map(o => {
+    const u = o.utilisation === null ? 0 : o.utilisation;
+    const over = u > 1.0000001;
+    const width = Math.min(u, 1.3) / 1.3 * 100;
+    const limitPos = (1 / 1.3) * 100;
+    return `<div class="organ-row">
+      <div class="organ-name ${o.binding ? 'binding' : ''}"><span class="dot"></span>${o.label}${
+        o.binding ? ' <span class="chip cut" style="margin-left:4px">dose-limiting</span>' : ''}</div>
+      <div class="meter">
+        <div class="fill ${over ? 'over' : ''}" style="width:${width}%"></div>
+        <div class="limit" style="left:${limitPos}%"></div>
+      </div>
+      <div class="organ-num">${o.peak.toFixed(2)} / ${o.limit.toFixed(2)}
+        <span class="muted">(${(u * 100).toFixed(0)}%)</span></div>
+    </div>`;
+  }).join('') +
+`<p class="muted" style="font-size:.8rem;margin-top:12px">
+  Bars show the worst peak concentration reached across all delivered cycles; the
+  vertical rule is that organ's ceiling. Because each dose is reduced only until it
+  fits, a dose-limiting organ will sit just below its rule &mdash; that is the
+  feedback loop working. A bar past the rule would mean a dose that could not be made safe.
+</p>`;
 
-    <br>
-    {% if brainCbbPlot %}
-        <img src="data:image/png;base64, {{brainCbbPlot|safe}}" />
-    {% endif %}
+/* ---------------- PBPK explorer ---------------- */
+const SUBS = [
+  { key: 'v', label: 'Vascular' },
+  { key: 'e', label: 'Extravascular' },
+  { key: 'b', label: 'Bound' },
+];
+const ORGAN_STATES = {
+  ven_blood:  { label: 'Venous blood',   v: 'C_v',   e: 'C_rbcv', eLabel: 'Red cells' },
+  lung:       { label: 'Lung',           v: 'C_lv',  e: 'C_le',  b: 'C_lb' },
+  art_blood:  { label: 'Arterial blood', v: 'C_art', e: 'C_rbca', eLabel: 'Red cells' },
+  gut:        { label: 'Gut',            v: 'C_gv' },
+  brain:      { label: 'Brain',          v: 'C_bv',  e: 'C_be',  b: 'C_bb' },
+  spleen:     { label: 'Spleen',         v: 'C_sv',  e: 'C_se',  b: 'C_sb' },
+  liver:      { label: 'Liver',          v: 'C_liv', e: 'C_lie', b: 'C_lib' },
+  heart:      { label: 'Heart',          v: 'C_hv',  e: 'C_he',  b: 'C_hb' },
+  kidney:     { label: 'Kidney',         v: 'C_kv',  e: 'C_ke',  b: 'C_kb' },
+  muscle:     { label: 'Muscle',         v: 'C_mv',  e: 'C_me',  b: 'C_mb' },
+  fat:        { label: 'Fat',            v: 'C_fv',  e: 'C_fe',  b: 'C_fb' },
+  tumor:      { label: 'Tumour',         v: 'C_tv',  e: 'C_te',  b: 'C_tb' },
+  others:     { label: 'Other tissue',   v: 'C_ov',  e: 'C_oe',  b: 'C_ob' },
+};
 
-    <br>
-    {% if spleenCsvPlot %}
-        <img src="data:image/png;base64, {{spleenCsvPlot|safe}}" />
-    {% endif %}
+const pick = document.getElementById('organ-pick');
+pick.innerHTML = DATA.organs.map(o =>
+  `<option value="${o.key}"${o.binding ? ' data-binding="1"' : ''}>${o.label}${o.binding ? ' — dose-limiting' : ''}</option>`
+).join('');
+const binding = DATA.organs.find(o => o.binding);
+pick.value = binding ? binding.key : 'ven_blood';
 
-    <br>
-    {% if spleenCsePlot %}
-        <img src="data:image/png;base64, {{spleenCsePlot|safe}}" />
-    {% endif %}
+let sub = 'v';
+const segEl = document.getElementById('sub-toggle');
 
-    <br>
-    {% if spleenCsbPlot %}
-        <img src="data:image/png;base64, {{spleenCsbPlot|safe}}" />
-    {% endif %}
+function renderSegs() {
+  const spec = ORGAN_STATES[pick.value];
+  const avail = SUBS.filter(s => spec[s.key]);
+  if (!avail.some(s => s.key === sub)) sub = avail[0].key;
+  segEl.innerHTML = avail.map(s => {
+    const label = (s.key === 'e' && spec.eLabel) ? spec.eLabel : s.label;
+    return `<button data-sub="${s.key}" class="${s.key === sub ? 'on' : ''}">${label}</button>`;
+  }).join('');
+  segEl.querySelectorAll('button').forEach(b =>
+    b.addEventListener('click', () => { sub = b.dataset.sub; renderSegs(); renderPBPK(); }));
+}
 
-    <br>
-    {% if liverClivPlot %}
-        <img src="data:image/png;base64, {{liverClivPlot|safe}}" />
-    {% endif %}
+function renderPBPK() {
+  const spec = ORGAN_STATES[pick.value];
+  const stateName = spec[sub];
+  const t = DATA.pbpk.t_hours;
+  const traces = DATA.pbpk.cycles.map((c, i) => ({
+    x: t, y: c.states[stateName], mode: 'lines',
+    name: `Cycle ${c.index} (${c.dose.toFixed(1)})`,
+    line: { color: CYCLE_COLORS[i % CYCLE_COLORS.length], width: 1.8 },
+    hovertemplate: '%{y:.3f}<extra>cycle ' + c.index + '</extra>',
+  }));
+  const organ = DATA.organs.find(o => o.key === pick.value);
+  const shapes = [];
+  if (sub === 'v' && organ) {
+    shapes.push({ type: 'line', x0: 0, x1: t[t.length - 1], y0: organ.limit, y1: organ.limit,
+                  line: { color: C.danger, width: 1, dash: 'dash' } });
+  }
+  draw(document.getElementById('c-pbpk'), traces, {
+    showlegend: true,
+    xaxis: { title: 'Hours after dose', gridcolor: C.grid, dtick: 6 },
+    yaxis: { title: stateName + ' concentration', gridcolor: C.grid },
+    shapes: shapes,
+  });
+}
 
-    <br>
-    {% if liverCliePlot %}
-        <img src="data:image/png;base64, {{liverCliePlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if liverClibPlot %}
-        <img src="data:image/png;base64, {{liverClibPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if kidneyCkvPlot %}
-        <img src="data:image/png;base64, {{kidneyCkvPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if kidneyCkePlot %}
-        <img src="data:image/png;base64, {{kidneyCkePlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if kidneyCkbPlot %}
-        <img src="data:image/png;base64, {{kidneyCkbPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if muscleCmvPlot %}
-        <img src="data:image/png;base64, {{muscleCmvPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if muscleCmePlot %}
-        <img src="data:image/png;base64, {{muscleCmePlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if muscleCmbPlot %}
-        <img src="data:image/png;base64, {{muscleCmbPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if fatCfvPlot %}
-        <img src="data:image/png;base64, {{fatCfvPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if fatCfePlot %}
-        <img src="data:image/png;base64, {{fatCfePlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if fatCfbPlot %}
-        <img src="data:image/png;base64, {{fatCfbPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if tumorCtvPlot %}
-        <img src="data:image/png;base64, {{tumorCtvPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if tumorCtePlot %}
-        <img src="data:image/png;base64, {{tumorCtePlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if tumorCtbPlot %}
-        <img src="data:image/png;base64, {{tumorCtbPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if heartChvPlot %}
-        <img src="data:image/png;base64, {{heartChvPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if heartChePlot %}
-        <img src="data:image/png;base64, {{heartChePlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if heartChbPlot %}
-        <img src="data:image/png;base64, {{heartChbPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if otherCovPlot %}
-        <img src="data:image/png;base64, {{otherCovPlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if otherCoePlot %}
-        <img src="data:image/png;base64, {{otherCoePlot|safe}}" />
-    {% endif %}
-
-    <br>
-    {% if otherCobPlot %}
-        <img src="data:image/png;base64, {{otherCobPlot|safe}}" />
-    {% endif %}
-
-
-
-
-
-
-
-
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
-    <script>
-        // MDB Lightbox Init
-        $('img[data-enlargeable]').addClass('img-enlargeable').click(function() {
-            var src = $(this).attr('src');
-            var modal;
-          
-            function removeModal() {
-              modal.remove();
-              $('body').off('keyup.modal-close');
-            }
-            modal = $('<div>').css({
-              background: 'RGBA(0,0,0,.5) url(' + src + ') no-repeat center',
-              backgroundSize: 'contain',
-              width: '100%',
-              height: '100%',
-              position: 'fixed',
-              zIndex: '10000',
-              top: '0',
-              left: '0',
-              cursor: 'zoom-out'
-            }).click(function() {
-              removeModal();
-            }).appendTo('body');
-            //handling ESC
-            $('body').on('keyup.modal-close', function(e) {
-              if (e.key === 'Escape') {
-                removeModal();
-              }
-            });
-          });
-    </script>
-
-
+pick.addEventListener('change', () => { renderSegs(); renderPBPK(); });
+renderSegs();
+renderPBPK();
+</script>
+{% endif %}
 {% endblock %}

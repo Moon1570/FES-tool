@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block nav_explore %}active{% endblock %}
+{% block title %}{{ sweep.patient_name }} — Regimen explorer{% endblock %}
+
+{% block content %}
+{% if sweep.status == 'pending' or sweep.status == 'running' %}
+  <div class="progress-wrap" id="progress">
+    <div class="spinner"></div>
+    <h1 style="font-size:1.2rem">Exploring {{ sweep.point_count }} regimens</h1>
+    <div class="bar"><div class="fill" id="p-fill"></div></div>
+    <div class="stage" id="p-stage">Starting…</div>
+  </div>
+
+{% elif sweep.status == 'error' %}
+  <div class="page-head"><h1>Exploration failed</h1></div>
+  <div class="notice bad">{{ sweep.error|linebreaksbr }}</div>
+  <a class="btn btn-ghost" href="{% url 'explore' %}">Back</a>
+
+{% else %}
+  <div class="page-head hstack">
+    <div>
+      <h1>{{ sweep.patient_name }}</h1>
+      <div class="sub">
+        {{ sweep.weight_kg|floatformat:1 }} kg ·
+        {{ burden.mass }} tumour ({{ burden.log10|floatformat:1 }} log₁₀ cells) ·
+        {{ sweep.point_count }} regimens over {{ sweep.horizon_days }} days
+        {% if sweep.duration_ms %} · {{ sweep.duration_ms }} ms{% endif %}
+      </div>
+    </div>
+    <div class="controls no-print">
+      <button class="btn btn-ghost" onclick="window.print()">Print</button>
+      <a class="btn btn-primary" href="{% url 'explore' %}">New exploration</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <header>
+      <h2>Efficacy against toxicity</h2>
+      <span class="hint">Each point is one complete simulated regimen</span>
+    </header>
+    <div class="body"><div class="chart tall" id="c-front"></div></div>
+  </div>
+
+  <div class="notice info">
+    The outlined points form the <strong>trade-off frontier</strong> — regimens that no
+    other regimen in this grid beats on both tumour kill and peak toxicity. Which of them
+    is acceptable depends on the patient and is a clinical judgement; the tool does not rank them.
+  </div>
+
+  <div class="card">
+    <header><h2>All regimens</h2><span class="hint">Click any row to run it in full</span></header>
+    <div class="body tight">
+      <div class="table-scroll"><table id="grid">
+        <thead><tr>
+          <th class="num">Interval</th><th>Limit profile</th>
+          <th class="num">Log kill</th><th class="num">Peak toxicity</th>
+          <th class="num">Doses reduced</th><th class="num">Cumulative dose</th>
+          <th>Dose-limiting</th><th>Frontier</th><th></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <form method="post" action="{% url 'run_from_sweep' sweep.id %}" id="open-form" class="no-print">
+    {% csrf_token %}
+    <input type="hidden" name="interval" id="of-interval">
+    <input type="hidden" name="preset" id="of-preset">
+  </form>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if sweep.status == 'pending' or sweep.status == 'running' %}
+<script>
+const STATUS_URL = "{% url 'sweep_status' sweep.id %}";
+let misses = 0;
+async function poll() {
+  try {
+    const r = await fetch(STATUS_URL, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+    const d = await r.json();
+    if (d.progress !== undefined) document.getElementById('p-fill').style.width = (d.progress * 100) + '%';
+    if (d.message) document.getElementById('p-stage').textContent = d.message;
+    if (d.status === 'done' || d.status === 'error') { location.reload(); return; }
+    misses = 0;
+  } catch (e) {
+    if (++misses > 20) { document.getElementById('p-stage').textContent = 'Lost contact with the server.'; return; }
+  }
+  setTimeout(poll, 400);
+}
+poll();
+</script>
+
+{% elif sweep.status == 'done' %}
+<script src="{% static 'js/charts.js' %}"></script>
+<script>
+const DATA = {{ payload_json|safe }};
+const { C, CYCLE_COLORS, draw } = FES;
+
+const PRESET_COLOR = {
+  legacy: '#7a8796', standard: '#1f6feb', renal: '#1a7f52', cardiac: '#c0392b',
+};
+
+/* ---- frontier scatter: x = peak toxicity, y = log kill ---- */
+const byPreset = {};
+DATA.points.forEach(p => { (byPreset[p.preset] ||= []).push(p); });
+
+const traces = Object.entries(byPreset).map(([key, pts]) => ({
+  x: pts.map(p => p.peak_toxicity),
+  y: pts.map(p => p.log_reduction),
+  text: pts.map(p => `${p.interval}d`),
+  customdata: pts.map(p => [p.interval, p.preset_label, p.cycles_adjusted, p.cycles_total, p.limiting || '—']),
+  mode: 'markers+text', type: 'scatter', name: pts[0].preset_label,
+  textposition: 'top center', textfont: { size: 9, color: C.text2 },
+  marker: {
+    size: pts.map(p => p.on_front ? 15 : 10),
+    color: PRESET_COLOR[key] || C.accent,
+    line: { width: pts.map(p => p.on_front ? 2.5 : 0), color: '#11181f' },
+    opacity: pts.map(p => p.on_front ? 1 : 0.55),
+  },
+  hovertemplate:
+    '<b>%{customdata[0]}-day · %{customdata[1]}</b><br>' +
+    'Log kill %{y:.2f}<br>Peak toxicity %{x:.1f}<br>' +
+    'Reduced %{customdata[2]} of %{customdata[3]} doses<br>' +
+    'Limited by %{customdata[4]}<extra></extra>',
+}));
+
+const xs = DATA.points.map(p => p.peak_toxicity);
+draw(document.getElementById('c-front'), traces, {
+  showlegend: true, hovermode: 'closest',
+  xaxis: { title: 'Peak cumulative toxicity', gridcolor: C.grid },
+  yaxis: { title: 'Tumour reduction (log₁₀)', gridcolor: C.grid },
+  shapes: [{
+    type: 'line', y0: 0, y1: 1, yref: 'paper',
+    x0: DATA.toxicity_reference, x1: DATA.toxicity_reference,
+    line: { color: C.danger, width: 1, dash: 'dash' },
+  }],
+  annotations: (Math.max(...xs) > DATA.toxicity_reference ? [{
+    x: DATA.toxicity_reference, y: 1, yref: 'paper', xanchor: 'left', yanchor: 'top',
+    text: ' model toxicity reference', showarrow: false,
+    font: { size: 10, color: C.danger },
+  }] : []),
+});
+
+/* ---- table ---- */
+const sorted = DATA.points.slice().sort((a, b) => b.log_reduction - a.log_reduction);
+document.querySelector('#grid tbody').innerHTML = sorted.map(p => `
+  <tr style="cursor:pointer" data-interval="${p.interval}" data-preset="${p.preset}">
+    <td class="num"><strong>${p.interval} d</strong></td>
+    <td><span class="dot" style="display:inline-block;width:8px;height:8px;border-radius:99px;
+         background:${PRESET_COLOR[p.preset] || '#1f6feb'};margin-right:7px"></span>${p.preset_label}</td>
+    <td class="num">${p.log_reduction.toFixed(2)}</td>
+    <td class="num ${p.peak_toxicity > DATA.toxicity_reference ? '' : ''}">${p.peak_toxicity.toFixed(1)}${
+      p.peak_toxicity > DATA.toxicity_reference
+        ? ' <span class="chip bad">over reference</span>' : ''}</td>
+    <td class="num">${p.cycles_adjusted}/${p.cycles_total}</td>
+    <td class="num">${p.total_delivered.toFixed(0)}</td>
+    <td class="muted">${p.limiting || '—'}</td>
+    <td>${p.on_front ? '<span class="chip ok">on frontier</span>' : ''}</td>
+    <td class="muted">Run →</td>
+  </tr>`).join('');
+
+document.querySelectorAll('#grid tbody tr').forEach(tr => tr.addEventListener('click', () => {
+  document.getElementById('of-interval').value = tr.dataset.interval;
+  document.getElementById('of-preset').value = tr.dataset.preset;
+  document.getElementById('open-form').submit();
+}));
+</script>
+{% endif %}
+{% endblock %}

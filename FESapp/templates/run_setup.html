@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% block nav_new %}active{% endblock %}
+{% block title %}New run — Decision Support System{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>New simulation</h1>
+  <div class="sub">
+    A two-stage fuzzy expert system sets a dose each cycle; a 35-compartment PBPK model
+    then checks every dose against per-organ exposure ceilings and reduces it until it passes.
+  </div>
+</div>
+
+<form id="run-form" method="post" action="{% url 'create_run' %}">
+  {% csrf_token %}
+
+  <div class="grid cols-2">
+    <div class="card">
+      <header><h2>Patient</h2></header>
+      <div class="body">
+        <div class="field">
+          <label for="f-name">Patient name or identifier</label>
+          <input type="text" id="f-name" name="name" placeholder="e.g. Case 01" autocomplete="off">
+          <div class="help">Use a made-up label such as "Case 01". Do not enter real patient information{% if public %} — this demo is public{% endif %}.</div>
+        </div>
+        <div class="inline">
+          <div class="field">
+            <label for="f-weight">Body weight (kg)</label>
+            <input type="number" id="f-weight" name="weight" value="{{ defaults.weight }}"
+                   min="1" max="400" step="0.5">
+          </div>
+          <div class="field">
+            <label>Body surface area</label>
+            <input type="text" id="f-bsa" value="—" readonly tabindex="-1"
+                   style="background:var(--surface-2);color:var(--text-2)">
+            <div class="help">Costeff formula, (4W + 7) / (W + 90)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <header><h2>Regimen</h2></header>
+      <div class="body">
+        <div class="inline">
+          <div class="field">
+            <label for="f-interval">Cycle interval (days)</label>
+            <input type="number" id="f-interval" name="intervalTime"
+                   value="{{ defaults.interval }}" min="{{ bounds.interval.0 }}" max="{{ bounds.interval.1 }}" step="1">
+          </div>
+          <div class="field">
+            <label for="f-horizon">Treatment horizon (days)</label>
+            <input type="number" id="f-horizon" name="horizon"
+                   value="{{ defaults.horizon }}" min="{{ bounds.horizon.0 }}" max="{{ bounds.horizon.1 }}" step="1">
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-cycles">Resulting cycles</label>
+          <input type="text" id="f-cycles" value="—" readonly tabindex="-1"
+                 style="background:var(--surface-2);color:var(--text-2)">
+          <div class="help">The drug is given on the cycle day and the day after.</div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label for="f-burden">Initial tumour burden</label>
+          <select id="f-burden" name="burden">
+            {% for b in burdens %}
+            <option value="{{ b.key }}" data-cells="{{ b.cells }}" data-detail="{{ b.detail }}"
+                    data-fuzzy="{{ b.fuzzy_term }}"
+                    {% if b.key == default_burden %}selected{% endif %}>
+              {{ b.label }} — {{ b.mass }} ({{ b.cells|stringformat:".0e" }} cells)
+            </option>
+            {% endfor %}
+            <option value="custom" data-detail="Enter an explicit cell count.">Custom…</option>
+          </select>
+          <div class="help" id="f-burden-help"></div>
+          <div id="f-burden-custom" style="margin-top:8px" hidden>
+            <input type="number" name="n0_custom" id="f-n0" value="1e10"
+                   step="any" min="100" max="1e11" placeholder="cells, e.g. 5e9">
+            <div class="help">Between 1e2 and 1e11 cells.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <header>
+      <h2>Organ exposure limits</h2>
+      <span class="hint">Peak concentration ceiling per organ over the 48 h after each dose</span>
+    </header>
+    <div class="body">
+      <div class="notice warn" style="margin-bottom:14px">
+        The source model defines no per-organ ceilings and its concentration units are not
+        calibrated to clinical exposure limits. These presets are <strong>illustrative</strong>,
+        chosen to exercise the safety feedback loop.
+      </div>
+
+      <div class="presets">
+        {% for p in presets %}
+        <button type="button" class="preset{% if p.key == default_preset %} sel{% endif %}"
+                data-preset="{{ p.key }}">
+          <strong>{{ p.label }}</strong>
+          <span>{{ p.description }}</span>
+        </button>
+        {% endfor %}
+      </div>
+      <input type="hidden" name="preset" id="f-preset" value="{{ default_preset }}">
+
+      <details class="advanced">
+        <summary>Fine-tune individual organs</summary>
+        <div class="limit-grid">
+          {% for organ in organs %}
+          <div class="field">
+            <label for="f-{{ organ.key }}">{{ organ.label }}</label>
+            <input type="number" id="f-{{ organ.key }}" name="{{ organ.key }}_max"
+                   class="organ-limit" data-organ="{{ organ.key }}" step="any" min="0.0001">
+          </div>
+          {% endfor %}
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="hstack">
+    <button type="submit" class="btn btn-primary btn-lg" id="f-submit">Run simulation</button>
+    <span class="muted" style="font-size:.86rem">Typically completes in under a second.</span>
+  </div>
+</form>
+
+{% if recent %}
+<div class="card" style="margin-top:26px">
+  <header><h2>Recent runs</h2></header>
+  <div class="body tight">
+    <div class="table-scroll"><table>
+      <thead><tr>
+        <th>Patient</th><th>Preset</th><th class="num">Interval</th>
+        <th class="num">Log kill</th><th class="num">Adjusted</th><th>When</th>
+      </tr></thead>
+      <tbody>
+      {% for r in recent %}
+        <tr>
+          <td><a href="{% url 'result' r.id %}">{{ r.patient_name }}</a></td>
+          <td class="muted">{{ r.preset_label }}</td>
+          <td class="num">{{ r.interval_days }} d</td>
+          <td class="num">{% if r.summary %}{{ r.summary.log_reduction|floatformat:2 }}{% else %}—{% endif %}</td>
+          <td class="num">{% if r.summary %}{{ r.summary.cycles_adjusted }}/{{ r.summary.cycles_total }}{% else %}—{% endif %}</td>
+          <td class="muted">{{ r.created_at|date:"j M, H:i" }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+const PRESETS = {{ presets_json|safe }};
+
+const $ = (s) => document.querySelector(s);
+const weight = $('#f-weight'), interval = $('#f-interval'), horizon = $('#f-horizon');
+
+function refreshDerived() {
+  const w = parseFloat(weight.value);
+  $('#f-bsa').value = (w > 0) ? (((w * 4) + 7) / (90 + w)).toFixed(3) + ' m²' : '—';
+  const iv = parseInt(interval.value, 10), hz = parseInt(horizon.value, 10);
+  $('#f-cycles').value = (iv > 0 && hz > 0) ? (Math.floor(hz / iv) + 1) + ' cycles' : '—';
+}
+
+const burdenSel = $('#f-burden');
+function refreshBurden() {
+  const opt = burdenSel.selectedOptions[0];
+  const custom = burdenSel.value === 'custom';
+  $('#f-burden-custom').hidden = !custom;
+  let help = opt.dataset.detail || '';
+  if (!custom && opt.dataset.fuzzy && opt.dataset.fuzzy !== 'None') {
+    help += ` Reads as “${opt.dataset.fuzzy}” to the fuzzy controller.`;
+  }
+  $('#f-burden-help').textContent = help;
+}
+burdenSel.addEventListener('change', refreshBurden);
+refreshBurden();
+
+function applyPreset(key) {
+  $('#f-preset').value = key;
+  document.querySelectorAll('.preset').forEach(b => b.classList.toggle('sel', b.dataset.preset === key));
+  const limits = PRESETS[key] || {};
+  document.querySelectorAll('.organ-limit').forEach(inp => {
+    if (limits[inp.dataset.organ] !== undefined) inp.value = limits[inp.dataset.organ];
+  });
+}
+
+document.querySelectorAll('.preset').forEach(b =>
+  b.addEventListener('click', () => applyPreset(b.dataset.preset)));
+[weight, interval, horizon].forEach(el => el.addEventListener('input', refreshDerived));
+
+applyPreset('{{ default_preset }}');
+refreshDerived();
+
+$('#run-form').addEventListener('submit', () => {
+  const btn = $('#f-submit');
+  btn.disabled = true;
+  btn.textContent = 'Starting…';
+});
+</script>
+{% endblock %}

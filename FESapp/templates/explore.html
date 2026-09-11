@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block nav_explore %}active{% endblock %}
+{% block title %}Regimen explorer — Decision Support System{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Regimen explorer</h1>
+  <div class="sub">
+    Simulate a grid of cycle intervals against a set of organ-limit profiles for one
+    patient, and see the trade-off between tumour kill and peak toxicity.
+  </div>
+</div>
+
+<form method="post" action="{% url 'create_sweep' %}" id="sweep-form">
+  {% csrf_token %}
+  <div class="grid cols-2">
+    <div class="card">
+      <header><h2>Patient</h2></header>
+      <div class="body">
+        <div class="field">
+          <label for="f-name">Patient name or identifier</label>
+          <input type="text" id="f-name" name="name" placeholder="e.g. Case 01" autocomplete="off">
+          <div class="help">Use a made-up label such as "Case 01". Do not enter real patient information{% if max_points %} — this demo is public{% endif %}.</div>
+        </div>
+        <div class="inline">
+          <div class="field">
+            <label for="f-weight">Body weight (kg)</label>
+            <input type="number" id="f-weight" name="weight" value="70" min="1" max="400" step="0.5">
+          </div>
+          <div class="field">
+            <label for="f-horizon">Horizon (days)</label>
+            <input type="number" id="f-horizon" name="horizon" value="120" min="30" max="365">
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label for="f-burden">Initial tumour burden</label>
+          <select id="f-burden" name="burden">
+            {% for b in burdens %}
+            <option value="{{ b.key }}"{% if b.key == default_burden %} selected{% endif %}>
+              {{ b.label }} — {{ b.mass }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <header><h2>Grid to explore</h2><span class="hint" id="grid-count"></span></header>
+      <div class="body">
+        <div class="field">
+          <label>Cycle intervals (days)</label>
+          <div class="hstack">
+            {% for iv in intervals %}
+            <label class="chip muted" style="cursor:pointer;padding:5px 11px">
+              <input type="checkbox" name="intervals" value="{{ iv }}"
+                     {% if iv in default_intervals %}checked{% endif %}
+                     class="grid-input" style="margin-right:5px;width:auto"> {{ iv }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Organ-limit profiles</label>
+          <div class="hstack">
+            {% for p in presets %}
+            <label class="chip muted" style="cursor:pointer;padding:5px 11px">
+              <input type="checkbox" name="preset_keys" value="{{ p.key }}" checked
+                     class="grid-input" style="margin-right:5px;width:auto"> {{ p.label }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hstack">
+    <button type="submit" class="btn btn-primary btn-lg" id="f-submit">Explore regimens</button>
+    <span class="muted" style="font-size:.86rem" id="eta"></span>
+  </div>
+</form>
+
+{% if recent %}
+<div class="card" style="margin-top:26px">
+  <header><h2>Recent explorations</h2></header>
+  <div class="body tight">
+    <div class="table-scroll"><table>
+      <thead><tr><th>Patient</th><th class="num">Weight</th><th class="num">Regimens</th><th>When</th></tr></thead>
+      <tbody>
+      {% for s in recent %}
+        <tr>
+          <td><a href="{% url 'sweep_detail' s.id %}">{{ s.patient_name }}</a></td>
+          <td class="num">{{ s.weight_kg|floatformat:1 }} kg</td>
+          <td class="num">{{ s.point_count }}</td>
+          <td class="muted">{{ s.created_at|date:"j M, H:i" }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function refreshCount() {
+  const iv = document.querySelectorAll('input[name=intervals]:checked').length;
+  const pr = document.querySelectorAll('input[name=preset_keys]:checked').length;
+  const n = iv * pr;
+  const cap = {{ max_points|default:0 }};
+  const tooMany = cap && n > cap;
+  document.getElementById('grid-count').textContent = n + ' regimen' + (n === 1 ? '' : 's');
+  document.getElementById('eta').textContent =
+    !n ? 'Select at least one of each.'
+    : tooMany ? 'The public demo explores up to ' + cap + ' regimens at a time — untick a few.'
+    : 'About ' + Math.max(1, Math.round(n * 0.38)) + ' s to simulate.';
+  document.getElementById('f-submit').disabled = n === 0 || tooMany;
+}
+document.querySelectorAll('.grid-input').forEach(el => el.addEventListener('change', refreshCount));
+refreshCount();
+document.getElementById('sweep-form').addEventListener('submit', () => {
+  const b = document.getElementById('f-submit');
+  b.disabled = true; b.textContent = 'Starting…';
+});
+</script>
+{% endblock %}
