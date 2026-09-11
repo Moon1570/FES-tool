@@ -55,11 +55,30 @@ Go to <https://www.pythonanywhere.com> → **Pricing & signup** → create the *
 
 ```bash
 git clone --depth 1 https://github.com/Moon1570/FES-tool.git
-mkvirtualenv --python=/usr/bin/python3.11 fes
+python3.11 -m venv ~/.virtualenvs/fes
+source ~/.virtualenvs/fes/bin/activate
+python -c "import _posixsubprocess, sys; print('venv ok', sys.version.split()[0])"
+
+# numpy and scipy first, then drop the test suites they bundle, then the rest
+pip install --no-cache-dir numpy==1.23.5 scipy==1.9.3
+find ~/.virtualenvs/fes/lib/python3.11/site-packages -type d -name tests -prune -exec rm -rf {} +
 pip install --no-cache-dir -r ~/FES-tool/FESapp/requirements.txt
+find ~/.virtualenvs/fes/lib/python3.11/site-packages -type d -name tests -prune -exec rm -rf {} +
+
+# must print: engine ok, 9 cycles, 12.27 log kill
+cd ~/FES-tool/FESapp
+python -c "from app.engine import runner; r = runner.run(runner.RunConfig()); print('engine ok,', len(r.cycles), 'cycles,', round(r.metrics['log_reduction'],2), 'log kill')"
 ```
 
-Takes a few minutes. Installed, it uses roughly **350–390 MB of the 512 MB** free quota.
+Create the virtualenv with Python's own `venv` module, from the `python3.11` on your
+PATH, so the interpreter and its standard library come from the same installation.
+**Don't use `mkvirtualenv --python=/usr/bin/python3.11`**: on current PythonAnywhere
+images that mixes two installations, and pip then fails with
+`No module named '_posixsubprocess'`. The `venv ok` line must print before you install.
+If `-m venv` reports that *ensurepip is not available*, use
+`virtualenv -p "$(which python3.11)" ~/.virtualenvs/fes` instead.
+
+Takes a few minutes. The finished install is about **380 MB of the 512 MB** free quota, but pip briefly needs more than that while it unpacks. Installing it in this order, and deleting the packages' bundled test suites (about 50 MB the app never uses), keeps the peak under the limit.
 
 - Keep `--no-cache-dir`. Without it pip keeps a second copy of every download and you
   run out of space.
@@ -78,7 +97,7 @@ python manage.py collectstatic --noinput
 python -c "import secrets; print(secrets.token_urlsafe(50))"
 ```
 
-`seed_demo` creates the four demo cases and the 28-schedule comparison that every visitor
+`seed_demo` creates the three demo cases and the 28-schedule comparison that every visitor
 sees. **Copy the long random string** the last command prints; you need it in step 6.
 
 ### 5. Create the web app
@@ -121,7 +140,7 @@ Open `https://YOURNAME.pythonanywhere.com` on your laptop **and on your phone**:
 
 - [ ] The page is styled (blue header, cards). If it is plain text, see *Troubleshooting*.
 - [ ] **Run simulation** with the defaults opens a finished result straight away.
-- [ ] **History** lists the four "Case 0x" demo cases.
+- [ ] **History** lists the three "Case 0x" demo cases.
 - [ ] **Explore** lists "Case 01 — regimen sweep", and it opens.
 - [ ] Open the site in a private window: your test run should **not** appear in its History.
 
@@ -246,6 +265,7 @@ Start with **Web** tab → **Error log** (the newest lines are at the bottom).
 | **403 Forbidden** when you press Run | You're on `http://`. Turn on **Force HTTPS** (step 6) and use `https://`. |
 | Page loads with no styling | The static files row is wrong, or `collectstatic` wasn't run (steps 4 and 6). |
 | `No module named 'django'` in the error log | The virtualenv path is wrong (step 6), or the install failed (step 3). |
-| **Disk quota exceeded** during `pip install` | Run `rm -rf ~/.cache/pip`, then repeat step 3 with `--no-cache-dir`. |
+| `No module named '_posixsubprocess'` when running pip | The virtualenv's interpreter and standard library come from different Python installations. `deactivate`, `rm -rf ~/.virtualenvs/fes`, and recreate it as in step 3. |
+| **Disk quota exceeded** during `pip install` | Run the `find … -name tests …` line from step 3 and `rm -rf ~/.cache/pip`, then run the same `pip install --no-cache-dir -r …` again; it only installs what is missing. Then run `pip install --no-cache-dir --force-reinstall --no-deps matplotlib==3.6.2` and `pip check`, in case the last package was cut short. |
 | The console gets very slow | Free accounts get 100 CPU-seconds a day for consoles. The allowance resets daily and **does not affect the website**. |
 | The site stopped working after a few weeks | It expired. Click **Run until … from today** (step 8). |

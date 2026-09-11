@@ -25,6 +25,21 @@ def _num(value, nd=ROUND):
     return round(v, nd) if math.isfinite(v) else None
 
 
+def _sig(value, sig=4):
+    """Round to ``sig`` significant figures, mapping non-finite values to None.
+
+    PBPK compartments span five orders of magnitude: a lung's vascular part peaks near
+    13 while bound parts peak around 1e-4 to 1e-6. Fixed decimal places stored those
+    small parts as exactly zero; significant figures keep them readable.
+    """
+    v = float(value)
+    if not math.isfinite(v):
+        return None
+    if v == 0.0:
+        return 0.0
+    return round(v, sig - 1 - int(math.floor(math.log10(abs(v)))))
+
+
 def _series(values, nd=ROUND):
     return [_num(v, nd) for v in values]
 
@@ -100,7 +115,7 @@ def serialize(result):
         pbpk_cycles.append({
             "index": c.index,
             "dose": _num(c.delivered_dose, 4),
-            "states": {name: _series(c.profile.y[i], 4)
+            "states": {name: [_sig(v) for v in c.profile.y[i]]
                        for i, name in enumerate(STATE_NAMES)},
         })
 

@@ -13,6 +13,7 @@ urlpatterns = [
     path("explore/<uuid:sweep_id>", views.sweep_detail, name="sweep_detail"),
     path("explore/<uuid:sweep_id>/status", views.sweep_status, name="sweep_status"),
     path("explore/<uuid:sweep_id>/run", views.run_from_sweep, name="run_from_sweep"),
+    path("features", views.features, name="features"),
     path("history", views.history, name="history"),
     path("compare", views.compare, name="compare"),
 ]

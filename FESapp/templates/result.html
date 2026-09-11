@@ -21,12 +21,12 @@
     <div>
       <h1>{{ run.patient_name }}</h1>
       <div class="sub">
-        {{ run.weight_kg|floatformat:1 }} kg ·
-        BSA {{ run.result.patient.bsa_m2|floatformat:2 }} m² ·
+        {{ run.weight_kg|floatformat:0 }} kg ·
+        body surface {{ run.result.patient.bsa_m2|floatformat:2 }} m² ·
         {{ run.burden_label }} ({{ run.result.patient.burden.mass }}) ·
-        {{ run.interval_days }}-day cycles over {{ run.horizon_days }} days ·
-        {{ run.preset_label }} limits
-        {% if run.duration_ms %} · solved in {{ run.duration_ms }} ms{% endif %}
+        a dose every {{ run.interval_days }} days for {{ run.horizon_days }} days ·
+        {{ run.preset_label }} organ limits
+        {% if run.duration_ms %} · worked out in {{ run.duration_ms|floatformat:0 }} ms{% endif %}
       </div>
     </div>
     <div class="controls no-print">
@@ -39,8 +39,8 @@
 
   {% if run.result.metrics.any_infeasible %}
   <div class="notice bad">
-    One or more cycles could not be brought under their organ ceilings even at the
-    minimum dose. Those cycles are flagged in the schedule below.
+    One or more doses could not be made safe for every organ, even at the smallest
+    dose. They are marked in the plan below and need a clinician's review.
   </div>
   {% endif %}
 
@@ -48,15 +48,15 @@
 
   <div class="card">
     <header>
-      <h2>Treatment schedule</h2>
-      <span class="hint">What the fuzzy controller asked for, and what the safety check allowed</span>
+      <h2>The recommended treatment plan</h2>
+      <span class="hint">What the system first suggested for each dose, and what it recommends after checking every organ</span>
     </header>
     <div class="body tight">
       <div class="table-scroll"><table id="calendar">
         <thead><tr>
-          <th>Cycle</th><th class="num">Day</th><th class="num">Planned</th>
-          <th class="num">Delivered</th><th class="num">Change</th>
-          <th>Dose-limiting organ</th><th>Status</th>
+          <th>Dose</th><th class="num">Day</th><th class="num">First suggestion</th>
+          <th class="num">Recommended</th><th class="num">Change</th>
+          <th>Organ that limited it</th><th>Status</th>
         </tr></thead>
         <tbody></tbody>
       </table></div>
@@ -65,9 +65,9 @@
 
   <div class="card">
     <header>
-      <h2>How each dose was decided</h2>
+      <h2>How the system chose each dose</h2>
       <div class="controls no-print">
-        <label for="why-pick">Cycle</label>
+        <label for="why-pick">Dose</label>
         <select id="why-pick"></select>
       </div>
     </header>
@@ -76,38 +76,45 @@
 
   <div class="grid cols-2">
     <div class="card">
-      <header><h2>Tumour burden</h2><span class="hint">log₁₀ cells</span></header>
+      <header><h2>How the tumour shrinks</h2><span class="hint">Number of tumour cells (each step down is 10× fewer)</span></header>
       <div class="body"><div class="chart" id="c-tumour"></div></div>
     </div>
     <div class="card">
-      <header><h2>Cumulative toxicity</h2></header>
+      <header><h2>Side-effect load over time</h2><span class="hint">Rises after each dose, recovers in between</span></header>
       <div class="body"><div class="chart" id="c-tox"></div></div>
     </div>
   </div>
 
   <div class="card">
-    <header><h2>Dose schedule</h2><span class="hint">Delivered dose per day</span></header>
+    <header><h2>Doses over the treatment</h2><span class="hint">Grey: first suggestion · blue: recommended</span></header>
     <div class="body"><div class="chart" id="c-dose"></div></div>
   </div>
 
   <div class="card">
     <header>
-      <h2>Organ safety</h2>
-      <span class="hint">Worst peak concentration across all cycles, against its ceiling</span>
+      <h2>How much drug reaches each organ</h2>
+      <span class="hint">The check that keeps every dose safe</span>
     </header>
-    <div class="body" id="safety"></div>
-  </div>
-
-  <div class="card">
-    <header>
-      <h2>PBPK compartment explorer</h2>
-      <div class="controls no-print">
-        <label for="organ-pick">Organ</label>
-        <select id="organ-pick"></select>
-        <span class="seg" id="sub-toggle"></span>
+    <div class="body">
+      <p class="section-lead">
+        Before a dose is given, the system predicts how much of the drug will build up in
+        each of <strong>13 organs</strong> over the next two days, and compares it with a safe
+        limit for that organ. If any organ would go over its limit, the dose is lowered first.
+        Each chart below is one organ; the <span class="lim-key">red dashed line</span> is its
+        safe limit, and a line that stays below it means that dose was safe for that organ.
+      </p>
+      <div class="dose-key" id="dose-key"></div>
+      <div class="hstack no-print" style="margin:-4px 0 14px">
+        <span class="muted" style="font-size:.82rem">Show</span>
+        <span class="seg" id="part-toggle"></span>
+        <span class="muted" id="part-note" style="font-size:.8rem"></span>
       </div>
-    </header>
-    <div class="body"><div class="chart tall" id="c-pbpk"></div></div>
+      <div class="organ-grid" id="organ-grid"></div>
+      <p class="muted" style="font-size:.8rem;margin-top:12px">
+        Drug levels are in the model's own units. They are predicted by a physiologically
+        based pharmacokinetic (PBPK) model that follows the drug through the whole body.
+      </p>
+    </div>
   </div>
 {% endif %}
 {% endblock %}
@@ -139,60 +146,81 @@ poll();
 const DATA = {{ payload_json|safe }};
 const { C, CYCLE_COLORS, draw } = FES;
 
+/* ---------------- plain-language helpers ---------------- */
+// log10(cells) -> words: 10 -> "10 billion", 6.4 -> "2.5 million", -0.9 -> "fewer than 1".
+function cellsInWords(log10) {
+  if (log10 === null || log10 === undefined) return '—';
+  if (log10 < 0) return 'fewer than 1';
+  const n = Math.pow(10, log10);
+  for (const [unit, word] of [[1e9, 'billion'], [1e6, 'million'], [1e3, 'thousand']]) {
+    if (n >= unit) {
+      const x = n / unit;
+      return (x >= 10 ? Math.round(x) : x.toFixed(1).replace(/\.0$/, '')) + ' ' + word;
+    }
+  }
+  return String(Math.round(n));
+}
+// FES-2's body-size input is BSA x 100, centred on an average adult (1.8 m2). The model
+// names its terms after dose levels; on screen they are described as what they measure.
+const BODY_SIZE = { LD: 'below average', ND: 'average', OD: 'above average', VOD: 'well above average' };
+const lower = s => s ? s.charAt(0).toLowerCase() + s.slice(1) : s;
+
 /* ---------------- KPIs ---------------- */
 const m = DATA.metrics;
 const doseDays = DATA.final.days.filter((d, i) => DATA.final.dose_by_day[i] > 0);
 const toxPct = m.peak_toxicity / m.toxicity_limit;
+const lessPct = m.total_planned > m.total_delivered ? 100 * (1 - m.total_delivered / m.total_planned) : 0;
 const kpis = [
-  { k: 'Tumour reduction', v: m.log_reduction.toFixed(2) + ' log₁₀',
-    d: m.log10_n_start.toFixed(1) + ' → ' + m.log10_n_end.toFixed(1) + ' log₁₀ cells',
+  { k: 'Tumour cells left', v: m.log10_n_end < 0 ? '&lt; 1' : cellsInWords(m.log10_n_end),
+    d: 'down from ' + cellsInWords(m.log10_n_start) + ' at the start (a ' +
+       m.log_reduction.toFixed(1) + '-log reduction)',
     cls: m.log_reduction >= 6 ? 'good' : (m.log_reduction >= 3 ? 'warn' : 'bad') },
-  { k: 'Peak toxicity', v: m.peak_toxicity.toFixed(1),
-    d: (toxPct * 100).toFixed(0) + '% of the model reference (' + m.toxicity_limit + ')',
+  { k: 'Side-effect load', v: Math.round(m.peak_toxicity) + ' / ' + m.toxicity_limit,
+    d: 'highest level during treatment; ' + m.toxicity_limit + " is the model's reference maximum",
     cls: toxPct >= 1 ? 'bad' : (toxPct >= 0.85 ? 'warn' : 'good') },
-  { k: 'Doses reduced', v: m.cycles_adjusted + ' / ' + m.cycles_total,
-    d: m.cycles_adjusted ? 'cut to respect organ ceilings' : 'no cycle hit a ceiling',
-    cls: m.cycles_adjusted ? 'warn' : 'good' },
-  { k: 'Cumulative dose', v: m.total_delivered.toFixed(0),
-    d: (m.total_planned > m.total_delivered
-        ? (100 * (1 - m.total_delivered / m.total_planned)).toFixed(1) + '% below plan'
-        : 'delivered as planned'), cls: '' },
+  { k: 'Doses made safer', v: m.cycles_adjusted + ' of ' + m.cycles_total,
+    d: m.cycles_adjusted ? 'lowered before being given, to protect an organ'
+                         : 'every dose was safe as first suggested', cls: '' },
+  { k: 'Total drug given', v: m.total_delivered.toFixed(0),
+    d: lessPct ? lessPct.toFixed(0) + '% less than first suggested' : 'as first suggested', cls: '' },
 ];
 document.getElementById('kpis').innerHTML = kpis.map(x =>
   `<div class="kpi ${x.cls}"><div class="k">${x.k}</div><div class="v">${x.v}</div><div class="d">${x.d}</div></div>`
 ).join('');
 
-/* ---------------- treatment calendar ---------------- */
+/* ---------------- treatment plan ---------------- */
 document.querySelector('#calendar tbody').innerHTML = DATA.cycles.map(c => {
-  let chip = '<span class="chip ok">Delivered in full</span>';
-  if (c.infeasible) chip = '<span class="chip bad">Infeasible</span>';
-  else if (c.adjusted) chip = `<span class="chip cut">Reduced ${c.reduction_pct.toFixed(1)}%</span>`;
+  let chip = '<span class="chip ok">Given as suggested</span>';
+  if (c.infeasible) chip = '<span class="chip bad">Could not be made safe</span>';
+  else if (c.adjusted) chip = `<span class="chip cut">Lowered ${c.reduction_pct.toFixed(0)}%</span>`;
   const lim = c.limiting_label
-    ? `${c.limiting_label} <span class="muted mono">${c.limiting_peak.toFixed(1)} / ${c.limiting_limit.toFixed(1)}</span>`
+    ? `${c.limiting_label} <span class="muted">(would reach ${c.limiting_peak.toFixed(1)}, limit ${c.limiting_limit.toFixed(1)})</span>`
     : '<span class="muted">—</span>';
   return `<tr>
     <td><strong>${c.index}</strong></td>
     <td class="num">${c.day}</td>
-    <td class="num">${c.planned.toFixed(2)}</td>
-    <td class="num"><strong>${c.delivered.toFixed(2)}</strong></td>
+    <td class="num">${c.planned.toFixed(1)}</td>
+    <td class="num"><strong>${c.delivered.toFixed(1)}</strong></td>
     <td class="num">${c.adjusted ? '−' + c.reduction_pct.toFixed(1) + '%' : '—'}</td>
     <td>${lim}</td>
     <td>${chip}</td>
   </tr>`;
 }).join('');
 
-/* ---------------- why each dose was decided ---------------- */
+/* ---------------- how each dose was chosen ---------------- */
 const explained = DATA.cycles.filter(c => c.why);
 const whyPick = document.getElementById('why-pick');
 whyPick.innerHTML = explained.map(c =>
-  `<option value="${c.index}">Cycle ${c.index} — day ${c.day}</option>`).join('');
+  `<option value="${c.index}">Dose ${c.index} — day ${c.day}</option>`).join('');
 
-function terms(list) {
-  if (!list || !list.length) return '<span class="muted">none</span>';
+// Fuzzy terms as word chips; the exact degree of fit stays in the tooltip for experts.
+function termChips(list) {
+  if (!list || !list.length) return '<span class="muted">—</span>';
   return list.map(t =>
-    `<span class="chip muted" style="margin-right:4px">${t.label} <span class="mono">${t.mu.toFixed(2)}</span></span>`
+    `<span class="chip muted" style="margin-right:4px" title="degree of fit ${t.mu.toFixed(2)}">${lower(t.label)}</span>`
   ).join('');
 }
+const strongest = list => (list && list.length) ? list.reduce((a, b) => (b.mu > a.mu ? b : a)) : null;
 
 function step(n, title, body) {
   return `<div style="display:grid;grid-template-columns:26px 1fr;gap:11px;padding:10px 0;
@@ -208,33 +236,44 @@ function step(n, title, body) {
 function renderWhy() {
   const c = explained.find(x => String(x.index) === whyPick.value) || explained[0];
   if (!c) { document.getElementById('why').innerHTML =
-    '<p class="muted">Cycle 1 uses a fixed starting dose rather than a fuzzy decision.</p>'; return; }
+    '<p class="muted">The first dose is a fixed starting amount, so there is no decision to explain.</p>'; return; }
   const w = c.why;
-  let html = '';
-  html += step(1, `State at day ${c.day}`,
-    `Tumour burden <strong>${w.log10_cells.toFixed(2)} log₁₀ cells</strong> &nbsp;
-     ${terms(w.fes1_inputs.tumor)}<br>
-     Cumulative toxicity <strong>${w.toxicity.toFixed(1)}</strong> &nbsp;
-     ${terms(w.fes1_inputs.toxicity)}`);
-  html += step(2, `FES-1 proposed ${w.fes1_dose.toFixed(2)}`,
-    `From tumour size and toxicity alone, across 21 Mamdani rules.`);
-  html += step(3, `FES-2 adjusted by ${(w.fes2_increase * 100).toFixed(1)}%`,
-    `Body-size input (BSA × 100 = ${DATA.patient.bsa_scaled.toFixed(1)}) reads as
-     ${terms(w.fes2_inputs.bsa)} &rarr; dose becomes <strong>${w.raw.toFixed(2)}</strong>.`);
+  const bsaTerm = strongest(w.fes2_inputs.bsa);
+  const size = bsaTerm ? (BODY_SIZE[bsaTerm.term] || lower(bsaTerm.label)) : 'average';
+  const pct = w.fes2_increase * 100;
+  const organ = lower(c.limiting_label);
+  let html = `<p class="muted" style="font-size:.82rem;margin:0 0 2px">
+    The rules describe each measurement in words, the way a clinician would.</p>`;
+  html += step(1, `Where things stand on day ${c.day}`,
+    `Tumour: about <strong>${cellsInWords(w.log10_cells)} cells</strong> — read as ${termChips(w.fes1_inputs.tumor)}<br>
+     Side-effect load so far: <strong>${w.toxicity.toFixed(0)}</strong> — read as ${termChips(w.fes1_inputs.toxicity)}`);
+  html += step(2, `Expert rules suggest ${w.fes1_dose.toFixed(1)}`,
+    `Based on tumour size and side effects so far, using 21 rules written the way an oncologist
+     reasons — for example, “tumour very big and side effects low → give a very high dose”.`);
+  html += step(3, pct > 0.05 ? `Adjusted for body size: +${pct.toFixed(1)}% → ${w.raw.toFixed(1)}`
+                             : 'Checked for body size: no change',
+    `This patient's body surface area (${DATA.patient.bsa_m2.toFixed(2)} m²) counts as ${size},
+     so a second set of 30 rules ${pct > 0.05 ? 'raises the dose slightly' : 'leaves the dose as it is'}.`);
+  let n = 4;
   if (w.capped) {
-    html += step(4, `Soft cap applied`,
-      `Above ${w.soft_cap}, so scaled by ${w.shrink} to
-       <strong>${c.planned.toFixed(2)}</strong>.`);
+    html += step(n++, `Kept under the upper limit: ${w.raw.toFixed(1)} → ${c.planned.toFixed(1)}`,
+      `Any suggestion above ${w.soft_cap} is trimmed by ${Math.round((1 - w.shrink) * 100)}%,
+       a built-in brake in the original model.`);
   }
-  const n = w.capped ? 5 : 4;
-  if (c.adjusted) {
-    html += step(n, `${c.limiting_label} ceiling cut it ${c.reduction_pct.toFixed(1)}%`,
-      `Peak ${c.limiting_peak.toFixed(2)} exceeded the ${c.limiting_limit.toFixed(2)} ceiling;
-       the dose was reduced by 5% ${c.iterations} time${c.iterations === 1 ? '' : 's'}
-       until every organ passed. <strong>Delivered ${c.delivered.toFixed(2)}</strong>.`);
+  if (c.infeasible) {
+    html += step(n, 'Could not be made safe',
+      `Even lowered as far as allowed, the ${organ} would stay above its safe limit.
+       <strong>This dose needs a clinician's review.</strong>`);
+  } else if (c.adjusted) {
+    html += step(n, `Lowered to protect the ${organ}: ${c.planned.toFixed(1)} → ${c.delivered.toFixed(1)}`,
+      `At ${c.planned.toFixed(1)}, the ${organ} would reach a drug level of ${c.limiting_peak.toFixed(1)},
+       above its safe limit of ${c.limiting_limit.toFixed(1)}. The dose was lowered in 5% steps
+       (${c.iterations} time${c.iterations === 1 ? '' : 's'}) until every organ was within its limit.
+       <strong>Recommended dose: ${c.delivered.toFixed(1)}</strong>.`);
   } else {
-    html += step(n, `All 13 organ ceilings passed`,
-      `No reduction needed. <strong>Delivered ${c.delivered.toFixed(2)}</strong>.`);
+    html += step(n, 'Safe for all 13 organs',
+      `No organ would go over its safe limit, so the dose stays as suggested.
+       <strong>Recommended dose: ${c.delivered.toFixed(1)}</strong>.`);
   }
   document.getElementById('why').innerHTML = html;
 }
@@ -243,161 +282,175 @@ renderWhy();
 
 /* ---------------- headline charts ---------------- */
 const days = DATA.final.days;
-const doseMarkers = {
-  x: doseDays, y: doseDays.map(d => DATA.final.log10N[days.indexOf(d)]),
-  mode: 'markers', type: 'scatter', name: 'Dose day',
-  marker: { size: 6, color: C.accent, symbol: 'circle-open', line: { width: 1.5 } },
-  hovertemplate: 'Day %{x}<br>%{y:.2f} log₁₀ cells<extra>dose</extra>',
-};
+const inWords = arr => arr.map(cellsInWords);
+// log10 axis, labelled in words so nobody has to read powers of ten.
+const CELL_AXIS = { title: 'Tumour cells', gridcolor: C.grid, automargin: true,
+  tickvals: [10, 8, 6, 4, 2, 0],
+  ticktext: ['10 billion', '100 million', '1 million', '10 thousand', '100', '1'] };
+const doseAt = d => DATA.final.log10N[days.indexOf(d)];
 
 draw(document.getElementById('c-tumour'), [
-  { x: days, y: DATA.planned.log10N, mode: 'lines', name: 'Before safety check',
-    line: { color: C.grey, width: 1.5, dash: 'dot' },
-    hovertemplate: '%{y:.2f}<extra>planned</extra>' },
-  { x: days, y: DATA.final.log10N, mode: 'lines', name: 'Delivered',
-    line: { color: C.accent, width: 2.5 },
-    hovertemplate: '%{y:.2f}<extra>delivered</extra>' },
-  doseMarkers,
-], { showlegend: true, xaxis: { title: 'Day', gridcolor: C.grid },
-     yaxis: { title: 'log₁₀ tumour cells', gridcolor: C.grid } });
+  { x: days, y: DATA.planned.log10N, customdata: inWords(DATA.planned.log10N),
+    mode: 'lines', name: 'First suggestion', line: { color: C.grey, width: 1.5, dash: 'dot' },
+    hovertemplate: '%{customdata} cells<extra>first suggestion</extra>' },
+  { x: days, y: DATA.final.log10N, customdata: inWords(DATA.final.log10N),
+    mode: 'lines', name: 'Recommended', line: { color: C.accent, width: 2.5 },
+    hovertemplate: '%{customdata} cells<extra>recommended</extra>' },
+  { x: doseDays, y: doseDays.map(doseAt), customdata: doseDays.map(d => cellsInWords(doseAt(d))),
+    mode: 'markers', type: 'scatter', name: 'Dose given',
+    marker: { size: 6, color: C.accent, symbol: 'circle-open', line: { width: 1.5 } },
+    hovertemplate: 'Day %{x}: %{customdata} cells<extra>dose given</extra>' },
+], { showlegend: true, xaxis: { title: 'Day', gridcolor: C.grid }, yaxis: CELL_AXIS });
 
 draw(document.getElementById('c-tox'), [
-  { x: days, y: DATA.planned.toxicity, mode: 'lines', name: 'Before safety check',
+  { x: days, y: DATA.planned.toxicity, mode: 'lines', name: 'First suggestion',
     line: { color: C.grey, width: 1.5, dash: 'dot' },
-    hovertemplate: '%{y:.1f}<extra>planned</extra>' },
-  { x: days, y: DATA.final.toxicity, mode: 'lines', name: 'Delivered',
+    hovertemplate: '%{y:.0f}<extra>first suggestion</extra>' },
+  { x: days, y: DATA.final.toxicity, mode: 'lines', name: 'Recommended',
     line: { color: C.warn, width: 2.5 }, fill: 'tozeroy', fillcolor: 'rgba(178,106,0,.10)',
-    hovertemplate: '%{y:.1f}<extra>delivered</extra>' },
+    hovertemplate: '%{y:.0f}<extra>recommended</extra>' },
 ], { showlegend: true, xaxis: { title: 'Day', gridcolor: C.grid },
-     yaxis: { title: 'Cumulative toxicity', gridcolor: C.grid },
+     yaxis: { title: 'Side-effect load', gridcolor: C.grid },
      shapes: [{ type: 'line', x0: 0, x1: days[days.length - 1],
                 y0: m.toxicity_limit, y1: m.toxicity_limit,
                 line: { color: C.danger, width: 1, dash: 'dash' } }],
      annotations: [{ x: days[days.length - 1], y: m.toxicity_limit, xanchor: 'right',
-                     yanchor: 'bottom', text: 'model reference ' + m.toxicity_limit,
+                     yanchor: 'bottom', text: 'reference maximum ' + m.toxicity_limit,
                      showarrow: false, font: { size: 10, color: C.danger } }] });
 
-const plannedByDay = DATA.planned.dose_by_day;
 draw(document.getElementById('c-dose'), [
-  { x: days, y: plannedByDay, type: 'bar', name: 'Planned',
-    marker: { color: 'rgba(122,135,150,.35)' }, hovertemplate: '%{y:.2f}<extra>planned</extra>' },
-  { x: days, y: DATA.final.dose_by_day, type: 'bar', name: 'Delivered',
-    marker: { color: C.accent }, hovertemplate: '%{y:.2f}<extra>delivered</extra>' },
+  { x: days, y: DATA.planned.dose_by_day, type: 'bar', name: 'First suggestion',
+    marker: { color: 'rgba(122,135,150,.35)' }, hovertemplate: '%{y:.1f}<extra>first suggestion</extra>' },
+  { x: days, y: DATA.final.dose_by_day, type: 'bar', name: 'Recommended',
+    marker: { color: C.accent }, hovertemplate: '%{y:.1f}<extra>recommended</extra>' },
 ], { showlegend: true, barmode: 'overlay', bargap: 0.55,
      xaxis: { title: 'Day', gridcolor: C.grid },
      yaxis: { title: 'Dose', gridcolor: C.grid } });
 
-/* ---------------- organ safety panel ----------------
-   The repair loop shrinks each dose until it just fits, so after correction every
-   binding organ sits a whisker under its ceiling. High utilisation is therefore the
-   algorithm working, not a warning: colour on breach only, and call out separately
-   which organs actually forced a reduction. */
-const bindingOrgans = DATA.organs.filter(o => o.binding).map(o => o.label);
-document.getElementById('safety').innerHTML =
-  (bindingOrgans.length
-    ? `<div class="notice info" style="margin-bottom:14px">
-         <strong>${bindingOrgans.join(' and ')}</strong>
-         ${bindingOrgans.length > 1 ? 'were' : 'was'} dose-limiting —
-         ${m.cycles_adjusted} of ${m.cycles_total} cycles ${m.cycles_adjusted === 1 ? 'was' : 'were'}
-         reduced to stay under ${bindingOrgans.length > 1 ? 'those ceilings' : 'that ceiling'}.
-       </div>`
-    : `<div class="notice info" style="margin-bottom:14px">
-         Every dose stayed under all 13 organ ceilings; no reduction was needed.
-       </div>`) +
-  DATA.organs.map(o => {
-    const u = o.utilisation === null ? 0 : o.utilisation;
-    const over = u > 1.0000001;
-    const width = Math.min(u, 1.3) / 1.3 * 100;
-    const limitPos = (1 / 1.3) * 100;
-    return `<div class="organ-row">
-      <div class="organ-name ${o.binding ? 'binding' : ''}"><span class="dot"></span>${o.label}${
-        o.binding ? ' <span class="chip cut" style="margin-left:4px">dose-limiting</span>' : ''}</div>
-      <div class="meter">
-        <div class="fill ${over ? 'over' : ''}" style="width:${width}%"></div>
-        <div class="limit" style="left:${limitPos}%"></div>
-      </div>
-      <div class="organ-num">${o.peak.toFixed(2)} / ${o.limit.toFixed(2)}
-        <span class="muted">(${(u * 100).toFixed(0)}%)</span></div>
-    </div>`;
-  }).join('') +
-`<p class="muted" style="font-size:.8rem;margin-top:12px">
-  Bars show the worst peak concentration reached across all delivered cycles; the
-  vertical rule is that organ's ceiling. Because each dose is reduced only until it
-  fits, a dose-limiting organ will sit just below its rule &mdash; that is the
-  feedback loop working. A bar past the rule would mean a dose that could not be made safe.
-</p>`;
+/* ---------------- drug level in each organ ----------------
+   Small multiples: one chart per organ, all visible at once. Each plots the organ's
+   total concentration - the sum of its compartments, exactly what the safety check
+   compares with the limit - for every delivered dose. The organ list comes from the
+   server (safety.ORGANS), so it cannot drift from the check itself. */
+const ORGAN_STATES = {{ organ_states_json|safe }};
+const hours = DATA.pbpk.t_hours;
+const lastHour = hours[hours.length - 1];
+const doseColour = i => CYCLE_COLORS[i % CYCLE_COLORS.length];
+const num = (v, dp) => (v === null || v === undefined) ? '—' : Number(v).toFixed(dp);
 
-/* ---------------- PBPK explorer ---------------- */
-const SUBS = [
-  { key: 'v', label: 'Vascular' },
-  { key: 'e', label: 'Extravascular' },
-  { key: 'b', label: 'Bound' },
+document.getElementById('dose-key').innerHTML =
+  '<span>Each line is one dose:</span>' +
+  DATA.pbpk.cycles.map((c, i) =>
+    `<span><i style="background:${doseColour(i)}"></i>Dose ${c.index}</span>`).join('');
+
+function organTotal(cycle, key) {
+  const names = ORGAN_STATES[key];
+  return cycle.states[names[0]].map((_, k) =>
+    names.reduce((sum, n) => sum + (cycle.states[n][k] || 0), 0));
+}
+
+// The organ that limited the dose first, then the rest by how close they came.
+const ordered = DATA.organs.slice().sort((a, b) =>
+  (Number(b.binding) - Number(a.binding)) || ((b.utilisation || 0) - (a.utilisation || 0)));
+
+document.getElementById('organ-grid').innerHTML = ordered.map(o => {
+  const over = (o.utilisation || 0) > 1.0000001;
+  const chip = over ? '<span class="chip bad">Over its limit</span>'
+    : o.binding ? '<span class="chip cut">Limited the dose</span>'
+    : '<span class="chip ok">Within its limit</span>';
+  return `<div class="organ-cell${o.binding ? ' limiting' : ''}">
+    <div class="organ-cell-head"><strong>${o.label}</strong>${chip}</div>
+    <div class="organ-cell-sub">Highest level ${num(o.peak, 1)} &middot; safe limit ${num(o.limit, 1)}</div>
+    <div class="mini" id="g-${o.key}"></div>
+  </div>`;
+}).join('');
+
+// Which part of an organ to plot. Safety limits apply to the whole organ (the sum
+// of its parts), so the red limit line is drawn only in that view. Each organ's
+// parts are listed vascular, extravascular, bound (safety.ORGANS); for the two blood
+// entries the second part is the red blood cells, and the gut has a vascular part only.
+const PARTS = [
+  { key: 'whole', label: 'Whole organ' },
+  { key: 'v', label: 'Vascular', index: 0 },
+  { key: 'e', label: 'Extravascular', index: 1 },
+  { key: 'b', label: 'Bound', index: 2 },
 ];
-const ORGAN_STATES = {
-  ven_blood:  { label: 'Venous blood',   v: 'C_v',   e: 'C_rbcv', eLabel: 'Red cells' },
-  lung:       { label: 'Lung',           v: 'C_lv',  e: 'C_le',  b: 'C_lb' },
-  art_blood:  { label: 'Arterial blood', v: 'C_art', e: 'C_rbca', eLabel: 'Red cells' },
-  gut:        { label: 'Gut',            v: 'C_gv' },
-  brain:      { label: 'Brain',          v: 'C_bv',  e: 'C_be',  b: 'C_bb' },
-  spleen:     { label: 'Spleen',         v: 'C_sv',  e: 'C_se',  b: 'C_sb' },
-  liver:      { label: 'Liver',          v: 'C_liv', e: 'C_lie', b: 'C_lib' },
-  heart:      { label: 'Heart',          v: 'C_hv',  e: 'C_he',  b: 'C_hb' },
-  kidney:     { label: 'Kidney',         v: 'C_kv',  e: 'C_ke',  b: 'C_kb' },
-  muscle:     { label: 'Muscle',         v: 'C_mv',  e: 'C_me',  b: 'C_mb' },
-  fat:        { label: 'Fat',            v: 'C_fv',  e: 'C_fe',  b: 'C_fb' },
-  tumor:      { label: 'Tumour',         v: 'C_tv',  e: 'C_te',  b: 'C_tb' },
-  others:     { label: 'Other tissue',   v: 'C_ov',  e: 'C_oe',  b: 'C_ob' },
-};
+const BLOOD = new Set(['ven_blood', 'art_blood']);
+const MINI_CONFIG = { displayModeBar: false, responsive: true };
+let part = 'whole';
 
-const pick = document.getElementById('organ-pick');
-pick.innerHTML = DATA.organs.map(o =>
-  `<option value="${o.key}"${o.binding ? ' data-binding="1"' : ''}>${o.label}${o.binding ? ' — dose-limiting' : ''}</option>`
-).join('');
-const binding = DATA.organs.find(o => o.binding);
-pick.value = binding ? binding.key : 'ven_blood';
+// Parts of an organ can hold very little drug (the lung's bound part peaks near 0.001),
+// so small values keep two significant figures instead of rounding to 0.0.
+const sig = v => (v === null || v === undefined) ? '—'
+  : v >= 10 ? v.toFixed(1) : v >= 1 ? v.toFixed(2) : Number(v.toPrecision(2)).toString();
 
-let sub = 'v';
-const segEl = document.getElementById('sub-toggle');
-
-function renderSegs() {
-  const spec = ORGAN_STATES[pick.value];
-  const avail = SUBS.filter(s => spec[s.key]);
-  if (!avail.some(s => s.key === sub)) sub = avail[0].key;
-  segEl.innerHTML = avail.map(s => {
-    const label = (s.key === 'e' && spec.eLabel) ? spec.eLabel : s.label;
-    return `<button data-sub="${s.key}" class="${s.key === sub ? 'on' : ''}">${label}</button>`;
-  }).join('');
-  segEl.querySelectorAll('button').forEach(b =>
-    b.addEventListener('click', () => { sub = b.dataset.sub; renderSegs(); renderPBPK(); }));
+function partName(organKey, p) {
+  if (p.key === 'e' && BLOOD.has(organKey)) return 'red blood cells';
+  return { v: 'vascular part', e: 'extravascular part', b: 'bound part' }[p.key];
 }
 
-function renderPBPK() {
-  const spec = ORGAN_STATES[pick.value];
-  const stateName = spec[sub];
-  const t = DATA.pbpk.t_hours;
-  const traces = DATA.pbpk.cycles.map((c, i) => ({
-    x: t, y: c.states[stateName], mode: 'lines',
-    name: `Cycle ${c.index} (${c.dose.toFixed(1)})`,
-    line: { color: CYCLE_COLORS[i % CYCLE_COLORS.length], width: 1.8 },
-    hovertemplate: '%{y:.3f}<extra>cycle ' + c.index + '</extra>',
-  }));
-  const organ = DATA.organs.find(o => o.key === pick.value);
-  const shapes = [];
-  if (sub === 'v' && organ) {
-    shapes.push({ type: 'line', x0: 0, x1: t[t.length - 1], y0: organ.limit, y1: organ.limit,
-                  line: { color: C.danger, width: 1, dash: 'dash' } });
+function drawOrgan(o) {
+  const el = document.getElementById('g-' + o.key);
+  const sub = el.parentElement.querySelector('.organ-cell-sub');
+  const p = PARTS.find(x => x.key === part);
+  const names = ORGAN_STATES[o.key];
+  let series;
+  if (p.key === 'whole') {
+    series = DATA.pbpk.cycles.map(c => organTotal(c, o.key));
+    sub.innerHTML = `Highest level ${num(o.peak, 1)} &middot; safe limit ${num(o.limit, 1)}`;
+  } else if (p.index < names.length) {
+    series = DATA.pbpk.cycles.map(c => c.states[names[p.index]]);
+    const hi = Math.max(...series.map(y => Math.max(...y)));
+    sub.innerHTML = `Highest ${sig(hi)} in the ${partName(o.key, p)}`;
+  } else {
+    Plotly.purge(el);
+    el.innerHTML = `<div class="muted" style="height:100%;display:grid;place-items:center;
+      font-size:.8rem;text-align:center">The model has no ${p.label.toLowerCase()} part<br>for this organ.</div>`;
+    sub.innerHTML = '&nbsp;';
+    if (el._fesFsBtn) el._fesFsBtn.hidden = true;
+    return;
   }
-  draw(document.getElementById('c-pbpk'), traces, {
-    showlegend: true,
-    xaxis: { title: 'Hours after dose', gridcolor: C.grid, dtick: 6 },
-    yaxis: { title: stateName + ' concentration', gridcolor: C.grid },
-    shapes: shapes,
-  });
+  const top = Math.max(p.key === 'whole' ? (o.limit || 0) : 0,
+                       ...series.map(y => Math.max(...y))) * 1.12 || 1;
+  const traces = series.map((y, i) => ({
+    x: hours, y, mode: 'lines', name: `Dose ${DATA.pbpk.cycles[i].index}`,
+    line: { color: doseColour(i), width: 1.6 },
+    hovertemplate: `Dose ${DATA.pbpk.cycles[i].index}: %{y:.3g} at %{x:.0f} h<extra></extra>`,
+  }));
+  if (!el.querySelector('.main-svg')) el.innerHTML = '';
+  Plotly.react(el, traces, FES.layout({
+    height: 150, margin: { l: 34, r: 22, t: 6, b: 24 }, hovermode: 'closest',   // r: room for '48 h'
+    font: Object.assign({}, FES.FONT, { size: 10 }),
+    // Unit once, at the end; no '0' label, which would collide with the y axis's.
+    xaxis: { range: [0, lastHour], tickvals: [0, 12, 24, 36, 48],
+             ticktext: ['', '12', '24', '36', '48 h'], gridcolor: C.grid, zeroline: false },
+    yaxis: { range: [0, top], nticks: 4, gridcolor: C.grid, zeroline: false },
+    shapes: p.key === 'whole' ? [{ type: 'line', x0: 0, x1: lastHour, y0: o.limit, y1: o.limit,
+                                   line: { color: C.danger, width: 1.5, dash: 'dash' } }] : [],
+  }), MINI_CONFIG).then(() => FES.attachFullscreen(el, {
+    mount: el.parentElement.querySelector('.organ-cell-head'),
+    unifiedHover: true,
+    meta: () => {
+      const cur = PARTS.find(x => x.key === part);
+      return { title: o.label + (cur.key === 'whole' ? '' : ' — ' + partName(o.key, cur)),
+               subtitle: sub.textContent.trim() + ' · drug level over the 48 hours after each dose' };
+    },
+  }));
 }
 
-pick.addEventListener('change', () => { renderSegs(); renderPBPK(); });
-renderSegs();
-renderPBPK();
+function renderParts() {
+  const seg = document.getElementById('part-toggle');
+  seg.innerHTML = PARTS.map(p =>
+    `<button type="button" data-part="${p.key}" class="${p.key === part ? 'on' : ''}">${p.label}</button>`).join('');
+  seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    part = b.dataset.part; renderParts(); ordered.forEach(drawOrgan);
+  }));
+  document.getElementById('part-note').textContent = part === 'whole' ? ''
+    : 'Safe limits apply to the whole organ, so the red line is shown only in that view.';
+}
+
+renderParts();
+ordered.forEach(drawOrgan);
 </script>
 {% endif %}
 {% endblock %}

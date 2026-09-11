@@ -16,7 +16,6 @@ SCENARIOS = [
     ("Case 01 — standard", 70.0, 14, "standard"),
     ("Case 01 — 21-day cycles", 70.0, 21, "standard"),
     ("Case 02 — reduced renal", 82.0, 14, "renal"),
-    ("Case 03 — published limits", 70.0, 14, "legacy"),
 ]
 
 

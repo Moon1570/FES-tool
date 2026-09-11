@@ -8,10 +8,11 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>&#129516;</text></svg>">
 </head>
 <body>
-  <div class="disclaimer">
+  <div class="disclaimer credits">
     <div class="wrap">
-      <strong>Simulation output</strong>
-      <span>— for research and evaluation. Not a medical device; not for clinical decision-making.</span>
+      <span>University of Barishal - Dr Rahat Hossain Faisal - Md. Minhaj Ul Islam</span>
+      <a class="pub" href="https://www.sciencedirect.com/science/article/pii/S2772442523000060"
+         target="_blank" rel="noopener">Published in Healthcare Analytics (Q1, IF=11.47)</a>
     </div>
   </div>
 
@@ -27,6 +28,7 @@
         <a href="{% url 'explore' %}" class="{% block nav_explore %}{% endblock %}">Explore</a>
         <a href="{% url 'history' %}" class="{% block nav_history %}{% endblock %}">History</a>
         <a href="{% url 'compare' %}" class="{% block nav_compare %}{% endblock %}">Compare</a>
+        <a href="{% url 'features' %}" class="{% block nav_features %}{% endblock %}">Key features</a>
       </nav>
     </div>
   </header>
@@ -37,6 +39,13 @@
     </div>
   </main>
 
+  <script>
+    // On phones the menu scrolls sideways; bring the current page's item into view.
+    (function () {
+      var nav = document.querySelector('.nav'), on = nav && nav.querySelector('a.active');
+      if (on && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = on.offsetLeft - 16;
+    })();
+  </script>
   <script src="{% static 'js/plotly-basic.min.js' %}"></script>
   {% block scripts %}{% endblock %}
 </body>

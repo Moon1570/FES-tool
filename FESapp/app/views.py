@@ -185,8 +185,27 @@ def result(request, run_id):
     return render(request, "result.html", {
         "run": run,
         "organs": safety.ORGANS,
+        # The same organ -> compartments map the safety check sums, so each chart
+        # in the organ grid plots exactly the quantity compared with its limit.
+        "organ_states_json": json.dumps({o.key: list(o.states) for o in safety.ORGANS}),
         "payload_json": json.dumps(run.result) if run.result else "null",
         "toxicity_limit": safety.LEGACY_DEFAULT_LIMIT,
+    })
+
+
+@require_GET
+def features(request):
+    """Static 'Key features' page. Its example links point at the seeded demo cases
+    when they exist, and simply fall back to the setup page when they don't."""
+    demo = Run.objects.filter(is_demo=True, status=Run.Status.DONE)
+    example = demo.filter(patient_name="Case 01 — standard").first() or demo.first()
+    # The card describes 14-day against 21-day cycles, so prefer that demo pair.
+    other = (demo.filter(patient_name="Case 01 — 21-day cycles").first()
+             or (demo.exclude(pk=example.pk).first() if example else None))
+    return render(request, "features.html", {
+        "example": example,
+        "compare_pair": (example, other) if example and other else None,
+        "demo_sweep": Sweep.objects.filter(is_demo=True, status="done").first(),
     })
 
 

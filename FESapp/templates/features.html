@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block nav_features %}active{% endblock %}
+{% block title %}Key features — Decision Support System{% endblock %}
+
+{% block content %}
+{% url 'home' as new_run_url %}
+
+<section class="kf-hero">
+  <div class="kf-eyebrow">Key features</div>
+  <h1>Maximum effect on the tumour, Minimum harm to the patient.</h1>
+  <p class="kf-lead">
+    A decision support system that helps oncologists choose each chemotherapy dose for a
+    solid tumour, and see what that dose will do to the tumour and to every major organ
+    <strong>before it is given</strong>.
+  </p>
+  <div class="hstack">
+    <a class="btn btn-primary btn-lg" href="{{ new_run_url }}">Run a simulation</a>
+    {% if example %}
+    <a class="btn btn-ghost btn-lg" href="{% url 'result' example.id %}">See an example plan</a>
+    {% endif %}
+  </div>
+</section>
+
+<section class="kf-stats" aria-label="The system in numbers">
+  <div class="kf-stat"><div class="n">13</div><div class="l">organs checked before every dose</div></div>
+  <div class="kf-stat"><div class="n">51</div><div class="l">expert rules behind each dose decision</div></div>
+  <div class="kf-stat"><div class="n">35</div><div class="l">body compartments followed after each dose</div></div>
+  <div class="kf-stat"><div class="n">&lt;&nbsp;1&nbsp;s</div><div class="l">to plan a full 120-day course</div></div>
+  <div class="kf-stat"><div class="n">28</div><div class="l">schedules compared on a single chart</div></div>
+</section>
+
+<h2 class="kf-section">Why it matters for doctors</h2>
+
+<section class="kf-grid">
+
+  <article class="kf-card">
+    <div class="kf-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M8.5 6.5h7"/>
+        <path d="M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M8.5 18h.01M12 18h.01"/>
+        <path d="M15 16.5l1.3 1.3 2.4-2.6"/>
+      </svg>
+    </div>
+    <h3>Fewer calculation mistakes</h3>
+    <ul>
+      <li>Body surface area is worked out from the patient's weight automatically — no formulas by hand.</li>
+      <li>Every adjustment to a dose (body size, upper limit, organ safety) is calculated and shown, not done on paper.</li>
+      <li>The same patient details always give the same plan, so every result can be checked and reproduced.</li>
+    </ul>
+    {% if example %}<a class="kf-link" href="{% url 'result' example.id %}#why">See a dose worked out step by step →</a>{% endif %}
+  </article>
+
+  <article class="kf-card">
+    <div class="kf-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>
+      </svg>
+    </div>
+    <h3>See the impact before the first dose</h3>
+    <ul>
+      <li>How the tumour is expected to shrink over the whole course, from the first dose to day 120.</li>
+      <li>The side-effect load after every dose, and how it recovers in between.</li>
+      <li>Change the weight, the interval or the organ tolerance and see the new plan in under a second.</li>
+    </ul>
+    {% if example %}<a class="kf-link" href="{% url 'result' example.id %}#c-tumour">See the projected response →</a>{% endif %}
+  </article>
+
+  <article class="kf-card">
+    <div class="kf-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 2.5l8 3v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6l8-3z"/><path d="M8.5 12l2.4 2.4 4.6-4.9"/>
+      </svg>
+    </div>
+    <h3>Every dose checked against 13 organs</h3>
+    <ul>
+      <li>Predicts how much drug builds up in the lungs, heart, kidneys, liver, brain and 8 more over the 48 hours after each dose.</li>
+      <li>Lowers a dose <strong>before</strong> it is given if any organ would go past its safe limit.</li>
+      <li>Names the organ that limited each dose — for example, “lung: would reach 15.0, limit 13.0”.</li>
+    </ul>
+    {% if example %}<a class="kf-link" href="{% url 'result' example.id %}#organ-grid">See the organ checks →</a>{% endif %}
+  </article>
+
+  <article class="kf-card">
+    <div class="kf-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.5"/><circle cx="4.5" cy="12" r="1.5"/><circle cx="4.5" cy="18" r="1.5"/>
+      </svg>
+    </div>
+    <h3>Reasoning a doctor can follow</h3>
+    <ul>
+      <li>Each dose comes with a plain explanation: where the patient stands, what the rules suggest, and why it changed.</li>
+      <li>51 rules written the way an oncologist reasons — “tumour very big and side effects low → give a very high dose”.</li>
+      <li>No black box: every recommended dose can be traced back, step by step, to its cause.</li>
+    </ul>
+    {% if example %}<a class="kf-link" href="{% url 'result' example.id %}#why">Read an explanation →</a>{% endif %}
+  </article>
+
+  <article class="kf-card">
+    <div class="kf-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="7.5" r="4"/><path d="M4 21c.8-4.2 4-6.5 8-6.5s7.2 2.3 8 6.5"/>
+      </svg>
+    </div>
+    <h3>Personalised to each patient</h3>
+    <ul>
+      <li>Adjusts for body size, and for how much tumour there is — from molecular remission to very bulky disease.</li>
+      <li>Tolerance profiles for patients with reduced kidney or heart function.</li>
+      <li>Doses ease off as the tumour responds, instead of repeating one fixed amount.</li>
+    </ul>
+    <a class="kf-link" href="{{ new_run_url }}">Plan for your own case →</a>
+  </article>
+
+  <article class="kf-card">
+    <div class="kf-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2.5" y="4" width="8" height="16" rx="2"/><rect x="13.5" y="4" width="8" height="16" rx="2"/>
+        <path d="M5.5 14l1.5-3 1.5 2M16.5 13l1.5 2 1.5-4"/>
+      </svg>
+    </div>
+    <h3>Compare options before deciding</h3>
+    <ul>
+      <li>Put two plans side by side — for example, a dose every 14 days against every 21 days.</li>
+      <li>See exactly what each choice gains in tumour control and costs in side effects.</li>
+      <li>Explore many schedules on one chart to find the best balance for this patient.</li>
+    </ul>
+    {% if compare_pair %}
+      <a class="kf-link" href="{% url 'compare' %}?a={{ compare_pair.0.id }}&b={{ compare_pair.1.id }}">Compare two plans →</a>
+    {% elif demo_sweep %}
+      <a class="kf-link" href="{% url 'sweep_detail' demo_sweep.id %}">Explore schedules →</a>
+    {% endif %}
+  </article>
+
+</section>
+
+<section class="kf-also">
+  <h2 class="kf-section" style="margin-top:0">Also built in</h2>
+  <ul class="kf-checks">
+    <li>Every plan is saved and reopens instantly from <a href="{% url 'history' %}">History</a>.</li>
+    <li>Download the full plan as a spreadsheet (CSV), or print it.</li>
+    <li>Open any chart full screen to zoom in, and save it as a high-resolution picture.</li>
+    <li>Works on a phone, tablet or laptop — nothing to install.</li>
+    {% if demo_sweep %}<li>See 28 schedules on one efficacy-against-side-effects chart in the <a href="{% url 'sweep_detail' demo_sweep.id %}">regimen explorer</a>.</li>{% endif %}
+    <li>Each plan is worked out in well under a second, so options can be tried live, in front of the patient.</li>
+  </ul>
+</section>
+
+<h2 class="kf-section">How it works</h2>
+<section class="kf-steps">
+  <div class="kf-step"><div class="n">1</div><div><strong>Enter the patient's details</strong><span>Weight, tumour size, dosing interval and organ tolerance.</span></div></div>
+  <div class="kf-step"><div class="n">2</div><div><strong>Review the recommended plan</strong><span>Every dose, the expected tumour response, and the safety margin on 13 organs.</span></div></div>
+  <div class="kf-step"><div class="n">3</div><div><strong>Compare options and decide</strong><span>Try another schedule, compare the two, and choose.</span></div></div>
+</section>
+
+<section class="kf-grid kf-grid-2">
+  <article class="kf-card kf-plain">
+    <h3>Under the hood</h3>
+    <p>
+      Two fuzzy expert systems (FES-1 and FES-2, 51 rules in all) set each dose from tumour
+      size, side-effect load and body size. A physiologically based pharmacokinetic (PBPK)
+      model with 35 compartments predicts how the drug spreads through 13 organs, and a
+      tumour growth model projects the response over the course.
+    </p>
+    <a class="kf-link" href="https://www.sciencedirect.com/science/article/pii/S2772442523000060"
+       target="_blank" rel="noopener">Read the paper in Healthcare Analytics →</a>
+  </article>
+  <article class="kf-card kf-plain">
+    <h3>Research status</h3>
+    <p>
+      A research prototype built on a peer-reviewed model. The organ safe limits are
+      illustrative, and the model has not yet been calibrated against patient data, so any
+      clinical use would first need validation.
+    </p>
+  </article>
+</section>
+
+<section class="kf-credit">
+  <div>University of Barishal - Dr Rahat Hossain Faisal - Md. Minhaj Ul Islam</div>
+  <a class="btn btn-primary" href="{{ new_run_url }}">Run a simulation</a>
+</section>
+{% endblock %}
