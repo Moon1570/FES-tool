@@ -2,235 +2,216 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Decision Support System for Cancer Chemotherapy — Innovation Fair BD 2026</title>
+<title>Decision Support System for Cancer Chemotherapy — Innovation Fair BD 2026 — 3 × 4 ft poster</title>
 <style>
-  @page { size: 594mm 841mm; margin: 0; }
+  /* 3 ft wide x 4 ft tall, portrait. Every size is in mm so the PDF is exact. */
+  @page { size: 914.4mm 1219.2mm; margin: 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --blue:  #1B4EE0;
-    --coral: #E8543F;
-    --ink:   #16202B;
-    --grey:  #5A6675;
-    --line:  #D8DEE7;
-    --wash:  #F4F6FA;
+    --blue: #1B4EE0; --blue-d: #1640B8; --coral: #E8543F; --amber: #B26A00;
+    --ink: #16202B; --grey: #5A6675; --muted: #8A94A3; --line: #D8DEE7; --wash: #F4F6FA; --ok: #1A7F52;
   }
   html, body {
-    width: 594mm; height: 841mm;
-    background: #fff; color: var(--ink);
+    width: 914.4mm; height: 1219.2mm; background: #fff; color: var(--ink);
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
-    -webkit-font-smoothing: antialiased;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; -webkit-font-smoothing: antialiased;
   }
   body { display: flex; flex-direction: column; overflow: hidden; }
+  .pad { padding-left: 44mm; padding-right: 44mm; }
 
   /* ---------------- header ---------------- */
-  header { background: var(--blue); color: #fff; padding: 20mm 30mm 17mm; }
-  .eyebrow { display: flex; align-items: center; gap: 9mm; margin-bottom: 11mm; }
-  .mark {
-    width: 26mm; height: 26mm; border-radius: 5mm; background: #fff; color: var(--blue);
-    display: grid; place-items: center; font-size: 11.5mm; font-weight: 800;
-    letter-spacing: -0.02em;
-  }
-  .event {
-    font-size: 6.6mm; font-weight: 700; letter-spacing: 0.34em;
-    text-transform: uppercase; color: rgba(255,255,255,.82);
-  }
-  h1 { font-size: 28.5mm; line-height: 1.03; font-weight: 800; letter-spacing: -0.022em; }
-  .tagline {
-    margin-top: 8mm; font-size: 11.8mm; font-weight: 300; line-height: 1.25;
-    color: rgba(255,255,255,.93); letter-spacing: -0.008em;
-  }
+  header { background: var(--blue); color: #fff; padding: 26mm 44mm 22mm; }
+  .top { display: flex; align-items: center; gap: 11mm; margin-bottom: 14mm; }
+  .mark { width: 34mm; height: 34mm; border-radius: 7mm; background: #fff; color: var(--blue);
+          display: grid; place-items: center; font-size: 15mm; font-weight: 800; letter-spacing: -0.02em; }
+  .event { font-size: 9mm; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,.85); }
+  .pub { margin-left: auto; font-size: 9mm; font-weight: 700; color: var(--blue); background: #fff;
+         border-radius: 99mm; padding: 4mm 11mm; }
+  h1 { font-size: 44mm; line-height: 1.03; font-weight: 800; letter-spacing: -0.022em; }
+  .tagline { margin-top: 11mm; font-size: 20mm; font-weight: 300; line-height: 1.2; color: rgba(255,255,255,.95); }
 
-  /* ---------------- hero ---------------- */
-  .hero {
-    flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center;
-    padding: 9mm 26mm 7mm;
-  }
-  .hero-label {
-    font-size: 6mm; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase;
-    color: var(--grey); margin-bottom: 7mm;
-  }
-  .hero svg { display: block; width: 100%; height: auto; }
-  .hero-note {
-    margin-top: 8mm; font-size: 8.4mm; line-height: 1.4; font-weight: 500; max-width: 480mm;
-  }
-  .hero-note b { font-weight: 800; }
+  /* ---------------- case study ---------------- */
+  .case { padding-top: 24mm; padding-bottom: 10mm; }
+  .kicker { font-size: 8.4mm; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--blue); }
+  .case h2 { font-size: 18mm; line-height: 1.12; font-weight: 800; letter-spacing: -0.015em; margin: 3mm 0 3mm; }
+  .case-sub { font-size: 10mm; line-height: 1.38; color: var(--grey); margin-bottom: 11mm; }
+  .panels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14mm; }
+  .panel { border: 0.8mm solid var(--line); border-radius: 6mm; padding: 9mm 9mm 6mm; }
+  .pk { font-size: 7.4mm; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); }
+  .big { font-size: 16.5mm; font-weight: 800; letter-spacing: -0.025em; line-height: 1.08; margin: 4mm 0 3mm; }
+  .big.good { color: var(--ok); }
+  .cap { font-size: 8.4mm; line-height: 1.36; color: var(--grey); min-height: 34mm; }
+  .panel svg, .organ svg { display: block; width: 100%; height: auto; }
+  .legend { display: flex; flex-wrap: wrap; gap: 2mm 9mm; font-size: 7.4mm; color: var(--grey); margin-top: 2mm; }
+  .legend i { display: inline-block; width: 12mm; height: 1.8mm; border-radius: 1mm; margin-right: 3mm; vertical-align: middle; }
+  .legend i.dash { background: repeating-linear-gradient(90deg, var(--coral) 0 4mm, transparent 4mm 6.5mm); }
+  .legend i.dot  { background: repeating-linear-gradient(90deg, #7A8796 0 1.6mm, transparent 1.6mm 3.6mm); }
+  .legend i.box  { width: 7mm; height: 7mm; border-radius: 1.2mm; }
 
-  /* ---------------- three columns ---------------- */
-  .cols {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14mm;
-    padding: 12mm 30mm 13mm;
-  }
-  .col { border-top: 1.6mm solid var(--ink); padding-top: 7mm; }
-  .col.accent { border-top-color: var(--blue); }
-  .col.coral  { border-top-color: var(--coral); }
-  .col svg { display: block; margin-bottom: 6mm; }
-  .col h2 {
-    font-size: 9mm; font-weight: 800; letter-spacing: 0.13em;
-    text-transform: uppercase; margin-bottom: 4.5mm;
-  }
-  .col p { font-size: 8mm; line-height: 1.44; color: var(--grey); }
-  .col p b { color: var(--ink); font-weight: 700; }
+  .organs-head { display: flex; align-items: baseline; gap: 12mm; margin: 13mm 0 3mm; flex-wrap: wrap; }
+  .organs-head h3 { font-size: 11mm; font-weight: 800; letter-spacing: -0.01em; }
+  .organs-head span { font-size: 9mm; color: var(--grey); }
+  .dose-key { display: flex; flex-wrap: wrap; gap: 2mm 8mm; font-size: 7.8mm; color: var(--grey); margin-bottom: 6mm; }
+  .dose-key i { display: inline-block; width: 10mm; height: 1.8mm; border-radius: 1mm; margin-right: 2.5mm; vertical-align: middle; }
+  .organs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14mm; }
+  .organ { border: 0.8mm solid var(--line); border-radius: 6mm; padding: 7mm 8mm 3mm; }
+  .organ.limiting { border-color: #F1B9AD; background: #FFFAF8; }
+  .organ-head { display: flex; align-items: center; justify-content: space-between; gap: 6mm; }
+  .organ-head strong { font-size: 10mm; }
+  .chip { font-size: 6.8mm; font-weight: 700; border-radius: 99mm; padding: 1.5mm 6mm; white-space: nowrap; }
+  .chip.cut { background: #FDF1DE; color: var(--amber); }
+  .chip.ok  { background: #E3F5EC; color: var(--ok); }
+  .organ-sub { font-size: 7.4mm; color: var(--grey); margin: 2mm 0 1mm; }
 
-  /* ---------------- clinician workflow ---------------- */
-  .process {
-    background: var(--wash); padding: 16mm 30mm;
-    display: flex; align-items: center;
-  }
-  .step { flex: 1; display: flex; align-items: center; gap: 6mm; }
-  .step .n {
-    flex: 0 0 auto; width: 19mm; height: 19mm; border-radius: 50%;
-    background: var(--blue); color: #fff; display: grid; place-items: center;
-    font-size: 9.6mm; font-weight: 800;
-  }
-  .step .t { font-size: 8.8mm; font-weight: 600; line-height: 1.26; }
-  .arrow { flex: 0 0 auto; padding: 0 6mm; }
+  /* ---------------- problem / solution / impact ---------------- */
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16mm; padding-top: 20mm; padding-bottom: 18mm; }
+  .col { border-top: 2mm solid var(--ink); padding-top: 8mm; }
+  .col.coral { border-top-color: var(--coral); }
+  .col.blue  { border-top-color: var(--blue); }
+  .col h2 { font-size: 11mm; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4mm; }
+  .col p { font-size: 10mm; line-height: 1.42; color: var(--grey); }
+  .col p b { color: var(--ink); }
 
-  /* ---------------- results ---------------- */
-  .results {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    padding: 16mm 30mm 15mm; gap: 12mm;
-  }
-  .kpi .v {
-    font-size: 60mm; line-height: .88; font-weight: 800; letter-spacing: -0.045em;
-    color: var(--blue); font-variant-numeric: tabular-nums;
-  }
-  .kpi .v small { font-size: 24mm; font-weight: 700; letter-spacing: -0.02em; }
-  .kpi .c {
-    margin-top: 7mm; font-size: 8mm; line-height: 1.36; color: var(--grey);
-    font-weight: 500; max-width: 158mm;
-  }
-  .kpi .c b { color: var(--ink); font-weight: 700; }
+  /* ---------------- why it matters ---------------- */
+  .why { background: var(--wash); padding-top: 18mm; padding-bottom: 18mm; }
+  .why h2 { font-size: 13mm; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 9mm; }
+  .bgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10mm 16mm; }
+  .b { display: flex; gap: 7mm; align-items: flex-start; }
+  .b .ic { flex: 0 0 auto; width: 22mm; height: 22mm; border-radius: 5mm; background: #E7EEFE; color: var(--blue);
+           display: grid; place-items: center; }
+  .b .ic svg { width: 12mm; height: 12mm; }
+  .b h3 { font-size: 10.6mm; font-weight: 800; margin-bottom: 1.5mm; line-height: 1.15; }
+  .b p { font-size: 9.2mm; line-height: 1.38; color: var(--grey); }
+
+  /* ---------------- how it works ---------------- */
+  .process { display: flex; align-items: center; padding-top: 16mm; padding-bottom: 16mm; }
+  .step { flex: 1; display: flex; align-items: center; gap: 7mm; }
+  .step .n { flex: 0 0 auto; width: 26mm; height: 26mm; border-radius: 50%; background: var(--blue); color: #fff;
+             display: grid; place-items: center; font-size: 12mm; font-weight: 800; }
+  .step .t { font-size: 11mm; font-weight: 700; line-height: 1.22; }
+  .arrow { flex: 0 0 auto; padding: 0 7mm; }
 
   /* ---------------- footer ---------------- */
-  footer {
-    margin-top: auto; border-top: 0.8mm solid var(--line);
-    padding: 15mm 30mm 16mm; display: flex; align-items: flex-end; gap: 16mm;
-  }
-  .team { flex: 1; }
-  .team .lbl {
-    font-size: 5.6mm; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--grey); margin-bottom: 4mm;
-  }
-  .team .names {
-    font-size: 9.6mm; font-weight: 700; line-height: 1.3; color: #A9B3C0;
-    border: 0.7mm dashed var(--line); border-radius: 2.5mm; padding: 4.5mm 6mm;
-    display: inline-block;
-  }
-  .disclaim { margin-top: 5mm; font-size: 5.4mm; color: var(--grey); line-height: 1.4; max-width: 250mm; }
-  .slot {
-    flex: 0 0 auto; width: 52mm; height: 52mm; border: 0.7mm dashed var(--line);
-    border-radius: 3mm; display: grid; place-items: center; text-align: center;
-    font-size: 4.9mm; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-    color: #A9B3C0; line-height: 1.35;
-  }
+  footer { margin-top: auto; border-top: 1mm solid var(--line); padding-top: 13mm; padding-bottom: 18mm;
+           display: flex; align-items: center; gap: 18mm; }
+  .team { flex: 1; min-width: 0; }
+  .team .lbl { font-size: 7.4mm; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey); margin-bottom: 3mm; }
+  .team .names { font-size: 13mm; font-weight: 800; line-height: 1.2; }
+  .team .inst { font-size: 10mm; color: var(--grey); margin-top: 2mm; }
+  .team .status { font-size: 6.6mm; color: var(--muted); margin-top: 6mm; line-height: 1.4; max-width: 420mm; }
+  .logo { flex: 0 0 auto; width: 80mm; height: 80mm; display: grid; place-items: center; }
+  .logo img { max-width: 100%; max-height: 100%; }
+  .logo .slot { width: 100%; height: 100%; border: 0.9mm dashed var(--line); border-radius: 4mm; display: grid;
+                place-items: center; text-align: center; font-size: 6.4mm; font-weight: 700; letter-spacing: 0.08em;
+                text-transform: uppercase; color: #A9B3C0; line-height: 1.4; }
+  .qr { flex: 0 0 auto; display: flex; align-items: center; gap: 8mm; }
+  .qr svg { width: 104mm; height: 104mm; display: block; }
+  .qr-cap { font-size: 9mm; line-height: 1.35; color: var(--grey); }
+  .qr-cap b { display: block; color: var(--ink); font-size: 9.4mm; margin-top: 2mm; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="eyebrow">
+  <div class="top">
     <div class="mark">FES</div>
     <div class="event">Innovation Fair BD 2026</div>
+    <div class="pub">Published in Healthcare Analytics (Q1, IF=11.47)</div>
   </div>
   <h1>Decision Support System<br>for Cancer Chemotherapy</h1>
   <div class="tagline">Maximum effect on the tumour, Minimum harm to the patient.</div>
 </header>
 
-<section class="hero">
-  <div class="hero-label">What the clinician sees</div>
-  <svg viewBox="0 0 1600 690" role="img"
-       aria-label="A clinician's view: the expected tumour response over 120 days, the safety margin on every organ with the lung shown as dose-limiting, and the full nine-dose plan with four doses lowered in advance.">
-    @@HERO@@
-  </svg>
-  <div class="hero-note">
-    The whole course of treatment is laid out before the first dose — how the tumour is
-    expected to respond, and how close each dose comes to every organ's safe limit.
-    Here <b>@@ADJUSTED@@ of @@TOTAL@@ doses were lowered in advance</b>, because the lung
-    would otherwise have been pushed past its limit.
+<section class="case pad">
+  <div class="kicker">Case study</div>
+  <h2>@@CASE_HEADING@@</h2>
+  <p class="case-sub">@@CASE_SUB@@</p>
+  <div class="panels">
+    <div class="panel">
+      <div class="pk">Maximum effect on the tumour</div>
+      <div class="big good">@@P1_BIG@@</div>
+      <div class="cap">@@P1_CAP@@</div>
+      @@P1_SVG@@
+      <div class="legend"><span><i class="dash"></i>No treatment</span><span><i style="background:#1B4EE0"></i>Recommended plan</span></div>
+    </div>
+    <div class="panel">
+      <div class="pk">Minimum harm to the patient</div>
+      <div class="big good">@@P2_BIG@@</div>
+      <div class="cap">@@P2_CAP@@</div>
+      @@P2_SVG@@
+      <div class="legend"><span><i class="dot"></i>First suggestion</span><span><i style="background:#B26A00"></i>Recommended plan</span></div>
+    </div>
+    <div class="panel">
+      <div class="pk">Safer doses, chosen in advance</div>
+      <div class="big">@@P3_BIG@@</div>
+      <div class="cap">@@P3_CAP@@</div>
+      @@P3_SVG@@
+      <div class="legend"><span><i class="box" style="background:rgba(122,135,150,.4)"></i>First suggestion</span><span><i class="box" style="background:#1B4EE0"></i>Recommended plan</span></div>
+    </div>
   </div>
+
+  <div class="organs-head">
+    <h3>Drug level in key organs after each dose</h3>
+    <span>The red dashed line is each organ's safe limit — every dose stays below it.</span>
+  </div>
+  <div class="dose-key">@@DOSE_KEY@@</div>
+  <div class="organs">@@ORGANS@@</div>
 </section>
 
-<section class="cols">
+<section class="cols pad">
   <div class="col coral">
-    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-      <path d="M26 5 L49 45 H3 Z" stroke="#E8543F" stroke-width="4.5" stroke-linejoin="round"/>
-      <path d="M26 20 V32" stroke="#E8543F" stroke-width="4.5" stroke-linecap="round"/>
-      <circle cx="26" cy="39" r="2.6" fill="#E8543F"/>
-    </svg>
     <h2>Problem</h2>
-    <p>Chemotherapy has to shrink the tumour without harming healthy organs — but the dose
-    is usually lowered only <b>after</b> the patient already has side effects.</p>
+    <p>Chemotherapy has to shrink the tumour without harming healthy organs — but the dose is
+    usually lowered only <b>after</b> the patient already has side effects.</p>
   </div>
-  <div class="col accent">
-    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-      <circle cx="26" cy="26" r="21" stroke="#1B4EE0" stroke-width="4.5"/>
-      <path d="M16 27 l7 7 l13 -15" stroke="#1B4EE0" stroke-width="4.5"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+  <div class="col blue">
     <h2>Solution</h2>
-    <p>Before a dose is given, the clinician can see what it is expected to do to the tumour
-    and to <b>each major organ</b> — and which organ is limiting it.</p>
+    <p>Before a dose is given, the clinician sees what it is expected to do to the tumour and to
+    <b>each major organ</b> — and which organ is limiting it.</p>
   </div>
   <div class="col">
-    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-      <path d="M5 40 L18 26 L29 34 L47 12" stroke="#16202B" stroke-width="4.5"
-            stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M35 12 H47 V24" stroke="#16202B" stroke-width="4.5"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
     <h2>Impact</h2>
-    <p>The full course can be reviewed and alternatives compared <b>before treatment starts</b>,
-    so the dose is decided in advance rather than in reaction.</p>
+    <p>The full course is reviewed and alternatives compared <b>before treatment starts</b>, so
+    the dose is decided in advance rather than in reaction.</p>
   </div>
 </section>
 
-<section class="process">
+<section class="why pad">
+  <h2>Why it matters for doctors</h2>
+  <div class="bgrid">
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M8.5 6.5h7M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M8.5 18h.01M12 18h.01"/><path d="M15 16.5l1.3 1.3 2.4-2.6"/></svg></div>
+      <div><h3>Fewer calculation mistakes</h3><p>Body size and every dose adjustment are worked out automatically, not by hand.</p></div></div>
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div><h3>See the impact first</h3><p>The tumour's response and the side effects are projected over the whole course.</p></div></div>
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8 3v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6l8-3z"/><path d="M8.5 12l2.4 2.4 4.6-4.9"/></svg></div>
+      <div><h3>13 organs checked</h3><p>A dose that would push any organ past its safe limit is lowered before it is given.</p></div></div>
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.5"/><circle cx="4.5" cy="12" r="1.5"/><circle cx="4.5" cy="18" r="1.5"/></svg></div>
+      <div><h3>Thinks the way a doctor does</h3><p>Mimics how an oncologist reasons, and explains every dose in plain words.</p></div></div>
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="4"/><path d="M4 21c.8-4.2 4-6.5 8-6.5s7.2 2.3 8 6.5"/></svg></div>
+      <div><h3>Personalised to each patient</h3><p>Adjusts for body size, tumour burden and organ tolerance.</p></div></div>
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="8" height="16" rx="2"/><rect x="13.5" y="4" width="8" height="16" rx="2"/><path d="M5.5 14l1.5-3 1.5 2M16.5 13l1.5 2 1.5-4"/></svg></div>
+      <div><h3>Compare before deciding</h3><p>Put schedules side by side and choose the best balance for the patient.</p></div></div>
+  </div>
+</section>
+
+<section class="process pad">
   <div class="step"><div class="n">1</div><div class="t">Enter the<br>patient's details</div></div>
-  <div class="arrow">
-    <svg width="60" height="30" viewBox="0 0 46 26" fill="none">
-      <path d="M2 13 H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/>
-      <path d="M31 4 L42 13 L31 22" stroke="#1B4EE0" stroke-width="4.5"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
-  <div class="step"><div class="n">2</div><div class="t">Review the<br>projected plan</div></div>
-  <div class="arrow">
-    <svg width="60" height="30" viewBox="0 0 46 26" fill="none">
-      <path d="M2 13 H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/>
-      <path d="M31 4 L42 13 L31 22" stroke="#1B4EE0" stroke-width="4.5"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
+  <div class="arrow"><svg width="76" height="38" viewBox="0 0 46 26" fill="none"><path d="M2 13H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/><path d="M31 4L42 13L31 22" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="step"><div class="n">2</div><div class="t">Review the<br>recommended plan</div></div>
+  <div class="arrow"><svg width="76" height="38" viewBox="0 0 46 26" fill="none"><path d="M2 13H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/><path d="M31 4L42 13L31 22" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   <div class="step"><div class="n">3</div><div class="t">Compare options<br>and decide</div></div>
 </section>
 
-<section class="results">
-  <div class="kpi">
-    <div class="v">13</div>
-    <div class="c"><b>organs checked</b> before every single dose is given</div>
-  </div>
-  <div class="kpi">
-    <div class="v">@@ADJUSTED@@<small> of @@TOTAL@@</small></div>
-    <div class="c">doses <b>lowered in advance</b>, before any side effect had appeared</div>
-  </div>
-  <div class="kpi">
-    <div class="v">28</div>
-    <div class="c"><b>alternative schedules</b> compared before treatment begins</div>
-  </div>
-</section>
-
-<footer>
+<footer class="pad">
   <div class="team">
-    <div class="lbl">Team &amp; Institution</div>
-    <div class="names">Author names — Institution / Department</div>
-    <div class="disclaim">
-      Simulation output, for research and evaluation. Not a medical device and not for
-      clinical decision-making. Organ safety limits shown are illustrative.
-    </div>
+    <div class="lbl">Team</div>
+    <div class="names">Dr Rahat Hossain Faisal · Md. Minhaj Ul Islam</div>
+    <div class="inst">University of Barishal</div>
+    <div class="status">Research prototype built on a peer-reviewed model. Organ safe limits are illustrative
+      and not yet validated against patient data.</div>
   </div>
-  <div class="slot">Institution<br>logo</div>
-  <div class="slot">QR code<br>to demo</div>
+  <div class="logo">@@LOGO@@</div>
+  <div class="qr">@@QR_SVG@@<div class="qr-cap">Scan to try it<b>@@QR_TEXT@@</b></div></div>
 </footer>
 
 </body>

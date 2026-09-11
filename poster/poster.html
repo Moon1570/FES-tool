@@ -2,324 +2,216 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Decision Support System for Cancer Chemotherapy — Innovation Fair BD 2026</title>
+<title>Decision Support System for Cancer Chemotherapy — Innovation Fair BD 2026 — 3 × 4 ft poster</title>
 <style>
-  @page { size: 594mm 841mm; margin: 0; }
+  /* 3 ft wide x 4 ft tall, portrait. Every size is in mm so the PDF is exact. */
+  @page { size: 914.4mm 1219.2mm; margin: 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --blue:  #1B4EE0;
-    --coral: #E8543F;
-    --ink:   #16202B;
-    --grey:  #5A6675;
-    --line:  #D8DEE7;
-    --wash:  #F4F6FA;
+    --blue: #1B4EE0; --blue-d: #1640B8; --coral: #E8543F; --amber: #B26A00;
+    --ink: #16202B; --grey: #5A6675; --muted: #8A94A3; --line: #D8DEE7; --wash: #F4F6FA; --ok: #1A7F52;
   }
   html, body {
-    width: 594mm; height: 841mm;
-    background: #fff; color: var(--ink);
+    width: 914.4mm; height: 1219.2mm; background: #fff; color: var(--ink);
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
-    -webkit-font-smoothing: antialiased;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; -webkit-font-smoothing: antialiased;
   }
   body { display: flex; flex-direction: column; overflow: hidden; }
+  .pad { padding-left: 44mm; padding-right: 44mm; }
 
   /* ---------------- header ---------------- */
-  header { background: var(--blue); color: #fff; padding: 20mm 30mm 17mm; }
-  .eyebrow { display: flex; align-items: center; gap: 9mm; margin-bottom: 11mm; }
-  .mark {
-    width: 26mm; height: 26mm; border-radius: 5mm; background: #fff; color: var(--blue);
-    display: grid; place-items: center; font-size: 11.5mm; font-weight: 800;
-    letter-spacing: -0.02em;
-  }
-  .event {
-    font-size: 6.6mm; font-weight: 700; letter-spacing: 0.34em;
-    text-transform: uppercase; color: rgba(255,255,255,.82);
-  }
-  h1 { font-size: 28.5mm; line-height: 1.03; font-weight: 800; letter-spacing: -0.022em; }
-  .tagline {
-    margin-top: 8mm; font-size: 11.8mm; font-weight: 300; line-height: 1.25;
-    color: rgba(255,255,255,.93); letter-spacing: -0.008em;
-  }
+  header { background: var(--blue); color: #fff; padding: 26mm 44mm 22mm; }
+  .top { display: flex; align-items: center; gap: 11mm; margin-bottom: 14mm; }
+  .mark { width: 34mm; height: 34mm; border-radius: 7mm; background: #fff; color: var(--blue);
+          display: grid; place-items: center; font-size: 15mm; font-weight: 800; letter-spacing: -0.02em; }
+  .event { font-size: 9mm; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,.85); }
+  .pub { margin-left: auto; font-size: 9mm; font-weight: 700; color: var(--blue); background: #fff;
+         border-radius: 99mm; padding: 4mm 11mm; }
+  h1 { font-size: 44mm; line-height: 1.03; font-weight: 800; letter-spacing: -0.022em; }
+  .tagline { margin-top: 11mm; font-size: 20mm; font-weight: 300; line-height: 1.2; color: rgba(255,255,255,.95); }
 
-  /* ---------------- hero ---------------- */
-  .hero {
-    flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center;
-    padding: 9mm 26mm 7mm;
-  }
-  .hero-label {
-    font-size: 6mm; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase;
-    color: var(--grey); margin-bottom: 7mm;
-  }
-  .hero svg { display: block; width: 100%; height: auto; }
-  .hero-note {
-    margin-top: 8mm; font-size: 8.4mm; line-height: 1.4; font-weight: 500; max-width: 480mm;
-  }
-  .hero-note b { font-weight: 800; }
+  /* ---------------- case study ---------------- */
+  .case { padding-top: 24mm; padding-bottom: 10mm; }
+  .kicker { font-size: 8.4mm; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--blue); }
+  .case h2 { font-size: 18mm; line-height: 1.12; font-weight: 800; letter-spacing: -0.015em; margin: 3mm 0 3mm; }
+  .case-sub { font-size: 10mm; line-height: 1.38; color: var(--grey); margin-bottom: 11mm; }
+  .panels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14mm; }
+  .panel { border: 0.8mm solid var(--line); border-radius: 6mm; padding: 9mm 9mm 6mm; }
+  .pk { font-size: 7.4mm; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); }
+  .big { font-size: 16.5mm; font-weight: 800; letter-spacing: -0.025em; line-height: 1.08; margin: 4mm 0 3mm; }
+  .big.good { color: var(--ok); }
+  .cap { font-size: 8.4mm; line-height: 1.36; color: var(--grey); min-height: 34mm; }
+  .panel svg, .organ svg { display: block; width: 100%; height: auto; }
+  .legend { display: flex; flex-wrap: wrap; gap: 2mm 9mm; font-size: 7.4mm; color: var(--grey); margin-top: 2mm; }
+  .legend i { display: inline-block; width: 12mm; height: 1.8mm; border-radius: 1mm; margin-right: 3mm; vertical-align: middle; }
+  .legend i.dash { background: repeating-linear-gradient(90deg, var(--coral) 0 4mm, transparent 4mm 6.5mm); }
+  .legend i.dot  { background: repeating-linear-gradient(90deg, #7A8796 0 1.6mm, transparent 1.6mm 3.6mm); }
+  .legend i.box  { width: 7mm; height: 7mm; border-radius: 1.2mm; }
 
-  /* ---------------- three columns ---------------- */
-  .cols {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14mm;
-    padding: 12mm 30mm 13mm;
-  }
-  .col { border-top: 1.6mm solid var(--ink); padding-top: 7mm; }
-  .col.accent { border-top-color: var(--blue); }
-  .col.coral  { border-top-color: var(--coral); }
-  .col svg { display: block; margin-bottom: 6mm; }
-  .col h2 {
-    font-size: 9mm; font-weight: 800; letter-spacing: 0.13em;
-    text-transform: uppercase; margin-bottom: 4.5mm;
-  }
-  .col p { font-size: 8mm; line-height: 1.44; color: var(--grey); }
-  .col p b { color: var(--ink); font-weight: 700; }
+  .organs-head { display: flex; align-items: baseline; gap: 12mm; margin: 13mm 0 3mm; flex-wrap: wrap; }
+  .organs-head h3 { font-size: 11mm; font-weight: 800; letter-spacing: -0.01em; }
+  .organs-head span { font-size: 9mm; color: var(--grey); }
+  .dose-key { display: flex; flex-wrap: wrap; gap: 2mm 8mm; font-size: 7.8mm; color: var(--grey); margin-bottom: 6mm; }
+  .dose-key i { display: inline-block; width: 10mm; height: 1.8mm; border-radius: 1mm; margin-right: 2.5mm; vertical-align: middle; }
+  .organs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14mm; }
+  .organ { border: 0.8mm solid var(--line); border-radius: 6mm; padding: 7mm 8mm 3mm; }
+  .organ.limiting { border-color: #F1B9AD; background: #FFFAF8; }
+  .organ-head { display: flex; align-items: center; justify-content: space-between; gap: 6mm; }
+  .organ-head strong { font-size: 10mm; }
+  .chip { font-size: 6.8mm; font-weight: 700; border-radius: 99mm; padding: 1.5mm 6mm; white-space: nowrap; }
+  .chip.cut { background: #FDF1DE; color: var(--amber); }
+  .chip.ok  { background: #E3F5EC; color: var(--ok); }
+  .organ-sub { font-size: 7.4mm; color: var(--grey); margin: 2mm 0 1mm; }
 
-  /* ---------------- clinician workflow ---------------- */
-  .process {
-    background: var(--wash); padding: 16mm 30mm;
-    display: flex; align-items: center;
-  }
-  .step { flex: 1; display: flex; align-items: center; gap: 6mm; }
-  .step .n {
-    flex: 0 0 auto; width: 19mm; height: 19mm; border-radius: 50%;
-    background: var(--blue); color: #fff; display: grid; place-items: center;
-    font-size: 9.6mm; font-weight: 800;
-  }
-  .step .t { font-size: 8.8mm; font-weight: 600; line-height: 1.26; }
-  .arrow { flex: 0 0 auto; padding: 0 6mm; }
+  /* ---------------- problem / solution / impact ---------------- */
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16mm; padding-top: 20mm; padding-bottom: 18mm; }
+  .col { border-top: 2mm solid var(--ink); padding-top: 8mm; }
+  .col.coral { border-top-color: var(--coral); }
+  .col.blue  { border-top-color: var(--blue); }
+  .col h2 { font-size: 11mm; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4mm; }
+  .col p { font-size: 10mm; line-height: 1.42; color: var(--grey); }
+  .col p b { color: var(--ink); }
 
-  /* ---------------- results ---------------- */
-  .results {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    padding: 16mm 30mm 15mm; gap: 12mm;
-  }
-  .kpi .v {
-    font-size: 60mm; line-height: .88; font-weight: 800; letter-spacing: -0.045em;
-    color: var(--blue); font-variant-numeric: tabular-nums;
-  }
-  .kpi .v small { font-size: 24mm; font-weight: 700; letter-spacing: -0.02em; }
-  .kpi .c {
-    margin-top: 7mm; font-size: 8mm; line-height: 1.36; color: var(--grey);
-    font-weight: 500; max-width: 158mm;
-  }
-  .kpi .c b { color: var(--ink); font-weight: 700; }
+  /* ---------------- why it matters ---------------- */
+  .why { background: var(--wash); padding-top: 18mm; padding-bottom: 18mm; }
+  .why h2 { font-size: 13mm; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 9mm; }
+  .bgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10mm 16mm; }
+  .b { display: flex; gap: 7mm; align-items: flex-start; }
+  .b .ic { flex: 0 0 auto; width: 22mm; height: 22mm; border-radius: 5mm; background: #E7EEFE; color: var(--blue);
+           display: grid; place-items: center; }
+  .b .ic svg { width: 12mm; height: 12mm; }
+  .b h3 { font-size: 10.6mm; font-weight: 800; margin-bottom: 1.5mm; line-height: 1.15; }
+  .b p { font-size: 9.2mm; line-height: 1.38; color: var(--grey); }
+
+  /* ---------------- how it works ---------------- */
+  .process { display: flex; align-items: center; padding-top: 16mm; padding-bottom: 16mm; }
+  .step { flex: 1; display: flex; align-items: center; gap: 7mm; }
+  .step .n { flex: 0 0 auto; width: 26mm; height: 26mm; border-radius: 50%; background: var(--blue); color: #fff;
+             display: grid; place-items: center; font-size: 12mm; font-weight: 800; }
+  .step .t { font-size: 11mm; font-weight: 700; line-height: 1.22; }
+  .arrow { flex: 0 0 auto; padding: 0 7mm; }
 
   /* ---------------- footer ---------------- */
-  footer {
-    margin-top: auto; border-top: 0.8mm solid var(--line);
-    padding: 15mm 30mm 16mm; display: flex; align-items: flex-end; gap: 16mm;
-  }
-  .team { flex: 1; }
-  .team .lbl {
-    font-size: 5.6mm; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--grey); margin-bottom: 4mm;
-  }
-  .team .names {
-    font-size: 9.6mm; font-weight: 700; line-height: 1.3; color: #A9B3C0;
-    border: 0.7mm dashed var(--line); border-radius: 2.5mm; padding: 4.5mm 6mm;
-    display: inline-block;
-  }
-  .disclaim { margin-top: 5mm; font-size: 5.4mm; color: var(--grey); line-height: 1.4; max-width: 250mm; }
-  .slot {
-    flex: 0 0 auto; width: 52mm; height: 52mm; border: 0.7mm dashed var(--line);
-    border-radius: 3mm; display: grid; place-items: center; text-align: center;
-    font-size: 4.9mm; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-    color: #A9B3C0; line-height: 1.35;
-  }
+  footer { margin-top: auto; border-top: 1mm solid var(--line); padding-top: 13mm; padding-bottom: 18mm;
+           display: flex; align-items: center; gap: 18mm; }
+  .team { flex: 1; min-width: 0; }
+  .team .lbl { font-size: 7.4mm; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey); margin-bottom: 3mm; }
+  .team .names { font-size: 13mm; font-weight: 800; line-height: 1.2; }
+  .team .inst { font-size: 10mm; color: var(--grey); margin-top: 2mm; }
+  .team .status { font-size: 6.6mm; color: var(--muted); margin-top: 6mm; line-height: 1.4; max-width: 420mm; }
+  .logo { flex: 0 0 auto; width: 80mm; height: 80mm; display: grid; place-items: center; }
+  .logo img { max-width: 100%; max-height: 100%; }
+  .logo .slot { width: 100%; height: 100%; border: 0.9mm dashed var(--line); border-radius: 4mm; display: grid;
+                place-items: center; text-align: center; font-size: 6.4mm; font-weight: 700; letter-spacing: 0.08em;
+                text-transform: uppercase; color: #A9B3C0; line-height: 1.4; }
+  .qr { flex: 0 0 auto; display: flex; align-items: center; gap: 8mm; }
+  .qr svg { width: 104mm; height: 104mm; display: block; }
+  .qr-cap { font-size: 9mm; line-height: 1.35; color: var(--grey); }
+  .qr-cap b { display: block; color: var(--ink); font-size: 9.4mm; margin-top: 2mm; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="eyebrow">
+  <div class="top">
     <div class="mark">FES</div>
     <div class="event">Innovation Fair BD 2026</div>
+    <div class="pub">Published in Healthcare Analytics (Q1, IF=11.47)</div>
   </div>
   <h1>Decision Support System<br>for Cancer Chemotherapy</h1>
-  <div class="tagline">Decide the right dose, before side effects appear.</div>
+  <div class="tagline">Maximum effect on the tumour, Minimum harm to the patient.</div>
 </header>
 
-<section class="hero">
-  <div class="hero-label">What the clinician sees</div>
-  <svg viewBox="0 0 1600 690" role="img"
-       aria-label="A clinician's view: the expected tumour response over 120 days, the safety margin on every organ with the lung shown as dose-limiting, and the full nine-dose plan with four doses lowered in advance.">
-    <rect x="0" y="0" width="960" height="420" rx="24" fill="#F4F6FA"/>
-    <text x="34" y="56" font-size="24" font-weight="800" fill="#5A6675" letter-spacing="2.6">EXPECTED TUMOUR RESPONSE</text>
-    <line x1="190" y1="117.7" x2="920" y2="117.7" stroke="#DDE3EC" stroke-width="2"/>
-    <text x="176" y="124.7" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="end">10 billion cells</text>
-    <line x1="190" y1="215.2" x2="920" y2="215.2" stroke="#DDE3EC" stroke-width="2"/>
-    <text x="176" y="222.2" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="end">100 000 cells</text>
-    <line x1="190" y1="312.6" x2="920" y2="312.6" stroke="#DDE3EC" stroke-width="2"/>
-    <text x="176" y="319.6" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="end">1 cell</text>
-    <polyline points="190.0,117.7 196.1,119.5 202.2,123.5 208.2,126.0 214.3,127.4 220.4,127.9 226.5,127.9 232.6,127.8 238.7,127.7 244.8,127.7 250.8,127.6 256.9,127.6 263.0,127.5 269.1,127.5 275.2,127.4 281.2,129.4 287.3,137.4 293.4,146.4 299.5,152.8 305.6,157.0 311.7,159.7 317.8,161.2 323.8,161.8 329.9,161.8 336.0,161.7 342.1,161.6 348.2,161.5 354.2,161.4 360.3,161.3 366.4,163.3 372.5,171.3 378.6,180.2 384.7,186.4 390.8,190.6 396.8,193.2 402.9,194.6 409.0,195.1 415.1,195.0 421.2,194.9 427.2,194.8 433.3,194.7 439.4,194.5 445.5,194.4 451.6,196.3 457.7,204.1 463.8,212.8 469.8,218.8 475.9,222.9 482.0,225.4 488.1,226.7 494.2,227.1 500.2,227.0 506.3,226.8 512.4,226.7 518.5,226.5 524.6,226.4 530.7,226.2 536.8,228.1 542.8,235.8 548.9,244.4 555.0,250.3 561.1,254.3 567.2,256.8 573.2,258.0 579.3,258.4 585.4,258.2 591.5,258.0 597.6,257.9 603.7,257.7 609.8,257.5 615.8,257.3 621.9,258.9 628.0,266.1 634.1,274.1 640.2,279.7 646.2,283.3 652.3,285.5 658.4,286.6 664.5,286.8 670.6,286.6 676.7,286.4 682.8,286.1 688.8,285.9 694.9,285.7 701.0,285.5 707.1,286.9 713.2,293.5 719.2,300.9 725.3,306.0 731.4,309.2 737.5,311.1 743.6,312.0 749.7,312.0 755.8,311.7 761.8,311.5 767.9,311.2 774.0,311.0 780.1,310.7 786.2,310.5 792.2,311.2 798.3,315.9 804.4,321.2 810.5,324.7 816.6,326.7 822.7,327.7 828.8,327.8 834.8,327.5 840.9,327.2 847.0,327.0 853.1,326.7 859.2,326.4 865.2,326.2 871.3,325.9 877.4,325.8 883.5,327.5 889.6,329.5 895.7,330.5 901.8,330.6 907.8,330.4 913.9,330.1 920.0,329.8" fill="none" stroke="#1B4EE0" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
-    <circle cx="190.0" cy="117.7" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
-    <circle cx="275.2" cy="127.4" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
-    <circle cx="360.3" cy="161.3" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
-    <circle cx="445.5" cy="194.4" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
-    <circle cx="530.7" cy="226.2" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
-    <circle cx="615.8" cy="257.3" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
-    <circle cx="701.0" cy="285.5" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
-    <circle cx="786.2" cy="310.5" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
-    <circle cx="871.3" cy="325.9" r="8" fill="#fff" stroke="#1B4EE0" stroke-width="4"/>
-    <text x="190" y="382" font-size="20" font-weight="600" fill="#8A94A3">day 0</text>
-    <text x="920" y="382" font-size="20" font-weight="600" fill="#8A94A3" text-anchor="end">day 120</text>
-    <text x="555" y="382" font-size="20" font-weight="700" fill="#1B4EE0" text-anchor="middle">○ each planned dose</text>
-    <rect x="1000" y="0" width="600" height="420" rx="24" fill="#fff" stroke="#D8DEE7" stroke-width="3"/>
-    <text x="1034" y="56" font-size="24" font-weight="800" fill="#5A6675" letter-spacing="2.6">SAFETY MARGIN, EVERY ORGAN</text>
-    <text x="1468" y="92" font-size="19" font-weight="800" fill="#16202B" text-anchor="end">SAFE LIMIT</text>
-    <text x="1034" y="129" font-size="23" font-weight="800" fill="#E8543F">Lung</text>
-    <rect x="1200" y="114" width="268" height="16" rx="8" fill="#EDF0F5"/>
-    <rect x="1200" y="114" width="266.0" height="16" rx="8" fill="#E8543F"/>
-    <text x="1034" y="163" font-size="23" font-weight="600" fill="#5A6675">Kidney</text>
-    <rect x="1200" y="148" width="268" height="16" rx="8" fill="#EDF0F5"/>
-    <rect x="1200" y="148" width="256.7" height="16" rx="8" fill="#1B4EE0"/>
-    <text x="1034" y="197" font-size="23" font-weight="600" fill="#5A6675">Heart</text>
-    <rect x="1200" y="182" width="268" height="16" rx="8" fill="#EDF0F5"/>
-    <rect x="1200" y="182" width="260.8" height="16" rx="8" fill="#1B4EE0"/>
-    <text x="1034" y="231" font-size="23" font-weight="600" fill="#5A6675">Brain</text>
-    <rect x="1200" y="216" width="268" height="16" rx="8" fill="#EDF0F5"/>
-    <rect x="1200" y="216" width="257.6" height="16" rx="8" fill="#1B4EE0"/>
-    <text x="1034" y="265" font-size="23" font-weight="600" fill="#5A6675">Gut</text>
-    <rect x="1200" y="250" width="268" height="16" rx="8" fill="#EDF0F5"/>
-    <rect x="1200" y="250" width="256.2" height="16" rx="8" fill="#1B4EE0"/>
-    <text x="1034" y="299" font-size="23" font-weight="600" fill="#5A6675">Muscle</text>
-    <rect x="1200" y="284" width="268" height="16" rx="8" fill="#EDF0F5"/>
-    <rect x="1200" y="284" width="255.5" height="16" rx="8" fill="#1B4EE0"/>
-    <text x="1034" y="333" font-size="23" font-weight="600" fill="#5A6675">Liver</text>
-    <rect x="1200" y="318" width="268" height="16" rx="8" fill="#EDF0F5"/>
-    <rect x="1200" y="318" width="141.1" height="16" rx="8" fill="#1B4EE0"/>
-    <line x1="1468" y1="102" x2="1468" y2="338" stroke="#16202B" stroke-width="3"/>
-    <rect x="1034" y="364" width="336" height="40" rx="20" fill="#FCE8E4"/>
-    <text x="1202" y="391" font-size="21" font-weight="800" fill="#E8543F" text-anchor="middle">Lung is limiting this dose</text>
-    <text x="1034" y="442" font-size="21" font-weight="600" fill="#8A94A3">+ 6 more organs monitored, all within limits</text>
-    <text x="0" y="478" font-size="24" font-weight="800" fill="#5A6675" letter-spacing="2.6">THE PLAN THE CLINICIAN REVIEWS · 9 DOSES OVER 120 DAYS</text>
-    <rect x="0" y="506" width="158" height="150" rx="18" fill="#FFF3F0" stroke="#E8543F" stroke-width="3"/>
-    <text x="79.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 0</text>
-    <text x="79.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">36.1</text>
-    <text x="79.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
-    <text x="79.0" y="646" font-size="18" font-weight="800" fill="#E8543F" text-anchor="middle">lowered</text>
-    <rect x="180" y="506" width="158" height="150" rx="18" fill="#FFF3F0" stroke="#E8543F" stroke-width="3"/>
-    <text x="259.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 14</text>
-    <text x="259.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">36.5</text>
-    <text x="259.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
-    <text x="259.0" y="646" font-size="18" font-weight="800" fill="#E8543F" text-anchor="middle">lowered</text>
-    <rect x="360" y="506" width="158" height="150" rx="18" fill="#FFF3F0" stroke="#E8543F" stroke-width="3"/>
-    <text x="439.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 28</text>
-    <text x="439.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">35.8</text>
-    <text x="439.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
-    <text x="439.0" y="646" font-size="18" font-weight="800" fill="#E8543F" text-anchor="middle">lowered</text>
-    <rect x="540" y="506" width="158" height="150" rx="18" fill="#FFF3F0" stroke="#E8543F" stroke-width="3"/>
-    <text x="619.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 42</text>
-    <text x="619.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">35.1</text>
-    <text x="619.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
-    <text x="619.0" y="646" font-size="18" font-weight="800" fill="#E8543F" text-anchor="middle">lowered</text>
-    <rect x="720" y="506" width="158" height="150" rx="18" fill="#F4F6FA" stroke="#DDE3EC" stroke-width="3"/>
-    <text x="799.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 56</text>
-    <text x="799.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">35.0</text>
-    <text x="799.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
-    <rect x="900" y="506" width="158" height="150" rx="18" fill="#F4F6FA" stroke="#DDE3EC" stroke-width="3"/>
-    <text x="979.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 70</text>
-    <text x="979.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">33.3</text>
-    <text x="979.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
-    <rect x="1080" y="506" width="158" height="150" rx="18" fill="#F4F6FA" stroke="#DDE3EC" stroke-width="3"/>
-    <text x="1159.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 84</text>
-    <text x="1159.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">31.4</text>
-    <text x="1159.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
-    <rect x="1260" y="506" width="158" height="150" rx="18" fill="#F4F6FA" stroke="#DDE3EC" stroke-width="3"/>
-    <text x="1339.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 98</text>
-    <text x="1339.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">24.7</text>
-    <text x="1339.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
-    <rect x="1440" y="506" width="158" height="150" rx="18" fill="#F4F6FA" stroke="#DDE3EC" stroke-width="3"/>
-    <text x="1519.0" y="542" font-size="20" font-weight="700" fill="#8A94A3" text-anchor="middle">day 112</text>
-    <text x="1519.0" y="594" font-size="40" font-weight="800" fill="#16202B" text-anchor="middle">14.3</text>
-    <text x="1519.0" y="622" font-size="19" font-weight="600" fill="#8A94A3" text-anchor="middle">mg</text>
-  </svg>
-  <div class="hero-note">
-    The whole course of treatment is laid out before the first dose — how the tumour is
-    expected to respond, and how close each dose comes to every organ's safe limit.
-    Here <b>4 of 9 doses were lowered in advance</b>, because the lung
-    would otherwise have been pushed past its limit.
+<section class="case pad">
+  <div class="kicker">Case study</div>
+  <h2>A 70 kg adult with bulky disease, treated for 120 days</h2>
+  <p class="case-sub">About 10 billion tumour cells at the start (~10 g of tumour), a dose every 14 days, and standard adult organ limits. Every figure here is the system's own output for this case.</p>
+  <div class="panels">
+    <div class="panel">
+      <div class="pk">Maximum effect on the tumour</div>
+      <div class="big good">10 billion → fewer than 1</div>
+      <div class="cap">tumour cells after 120 days. Without treatment, the same tumour grows to about 18 billion.</div>
+      <svg viewBox="0 0 800 480" role="img" aria-label="Tumour cells over the course: no treatment against the recommended plan" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"><line x1="170" y1="56.7" x2="778" y2="56.7" stroke="#DDE3EC" stroke-width="2"/><text x="160" y="65.6" font-size="26" fill="#8A94A3" text-anchor="end">10 billion</text><line x1="170" y1="185.9" x2="778" y2="185.9" stroke="#DDE3EC" stroke-width="2"/><text x="160" y="194.7" font-size="26" fill="#8A94A3" text-anchor="end">1 million</text><line x1="170" y1="315.0" x2="778" y2="315.0" stroke="#DDE3EC" stroke-width="2"/><text x="160" y="323.8" font-size="26" fill="#8A94A3" text-anchor="end">100</text><line x1="170" y1="379.6" x2="778" y2="379.6" stroke="#DDE3EC" stroke-width="2"/><text x="160" y="388.4" font-size="26" fill="#8A94A3" text-anchor="end">1</text><text x="170.0" y="460.5" font-size="26" fill="#8A94A3" text-anchor="start">day 0</text><text x="474.0" y="460.5" font-size="26" fill="#8A94A3" text-anchor="middle">day 60</text><text x="778.0" y="460.5" font-size="26" fill="#8A94A3" text-anchor="end">day 120</text><polyline points="170.0,56.7 175.1,56.7 180.1,56.6 185.2,56.5 190.3,56.5 195.3,56.4 200.4,56.3 205.5,56.2 210.5,56.2 215.6,56.1 220.7,56.0 225.7,56.0 230.8,55.9 235.9,55.8 240.9,55.8 246.0,55.7 251.1,55.6 256.1,55.6 261.2,55.5 266.3,55.4 271.3,55.3 276.4,55.3 281.5,55.2 286.5,55.1 291.6,55.1 296.7,55.0 301.7,54.9 306.8,54.9 311.9,54.8 316.9,54.7 322.0,54.7 327.1,54.6 332.1,54.5 337.2,54.5 342.3,54.4 347.3,54.3 352.4,54.3 357.5,54.2 362.5,54.1 367.6,54.1 372.7,54.0 377.7,53.9 382.8,53.9 387.9,53.8 392.9,53.7 398.0,53.7 403.1,53.6 408.1,53.5 413.2,53.5 418.3,53.4 423.3,53.3 428.4,53.3 433.5,53.2 438.5,53.1 443.6,53.1 448.7,53.0 453.7,52.9 458.8,52.9 463.9,52.8 468.9,52.7 474.0,52.7 479.1,52.6 484.1,52.5 489.2,52.5 494.3,52.4 499.3,52.3 504.4,52.3 509.5,52.2 514.5,52.1 519.6,52.1 524.7,52.0 529.7,51.9 534.8,51.9 539.9,51.8 544.9,51.7 550.0,51.7 555.1,51.6 560.1,51.5 565.2,51.5 570.3,51.4 575.3,51.4 580.4,51.3 585.5,51.2 590.5,51.2 595.6,51.1 600.7,51.0 605.7,51.0 610.8,50.9 615.9,50.8 620.9,50.8 626.0,50.7 631.1,50.6 636.1,50.6 641.2,50.5 646.3,50.5 651.3,50.4 656.4,50.3 661.5,50.3 666.5,50.2 671.6,50.1 676.7,50.1 681.7,50.0 686.8,50.0 691.9,49.9 696.9,49.8 702.0,49.8 707.1,49.7 712.1,49.6 717.2,49.6 722.3,49.5 727.3,49.5 732.4,49.4 737.5,49.3 742.5,49.3 747.6,49.2 752.7,49.1 757.7,49.1 762.8,49.0 767.9,49.0 772.9,48.9 778.0,48.8" fill="none" stroke="#E8543F" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="16 11"/><polyline points="170.0,56.7 175.1,59.7 180.1,66.3 185.2,70.5 190.3,72.7 195.3,73.5 200.4,73.5 205.5,73.4 210.5,73.3 215.6,73.2 220.7,73.1 225.7,73.0 230.8,73.0 235.9,72.9 240.9,72.8 246.0,76.0 251.1,89.3 256.1,104.3 261.2,114.8 266.3,121.8 271.3,126.3 276.4,128.8 281.5,129.7 286.5,129.7 291.6,129.5 296.7,129.4 301.7,129.2 306.8,129.1 311.9,128.9 316.9,132.3 322.0,145.5 327.1,160.2 332.1,170.5 337.2,177.4 342.3,181.7 347.3,184.1 352.4,184.9 357.5,184.8 362.5,184.6 367.6,184.4 372.7,184.2 377.7,184.0 382.8,183.8 387.9,186.9 392.9,199.8 398.0,214.2 403.1,224.2 408.1,230.9 413.2,235.0 418.3,237.2 423.3,238.0 428.4,237.8 433.5,237.5 438.5,237.2 443.6,236.9 448.7,236.7 453.7,236.4 458.8,239.5 463.9,252.3 468.9,266.5 474.0,276.4 479.1,283.0 484.1,287.0 489.2,289.1 494.3,289.8 499.3,289.5 504.4,289.2 509.5,288.9 514.5,288.5 519.6,288.2 524.7,287.9 529.7,290.6 534.8,302.5 539.9,315.8 544.9,325.0 550.0,331.0 555.1,334.6 560.1,336.4 565.2,336.8 570.3,336.4 575.3,336.1 580.4,335.7 585.5,335.3 590.5,334.9 595.6,334.6 600.7,336.9 605.7,347.9 610.8,360.2 615.9,368.6 620.9,374.0 626.0,377.1 631.1,378.5 636.1,378.6 641.2,378.1 646.3,377.7 651.3,377.3 656.4,376.9 661.5,376.4 666.5,376.0 671.6,377.3 676.7,385.0 681.7,393.9 686.8,399.6 691.9,402.9 696.9,404.5 702.0,404.7 707.1,404.3 712.1,403.8 717.2,403.4 722.3,402.9 727.3,402.5 732.4,402.0 737.5,401.6 742.5,401.4 747.6,404.2 752.7,407.6 757.7,409.2 762.8,409.4 767.9,409.0 772.9,408.5 778.0,408.1" fill="none" stroke="#1B4EE0" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <div class="legend"><span><i class="dash"></i>No treatment</span><span><i style="background:#1B4EE0"></i>Recommended plan</span></div>
+    </div>
+    <div class="panel">
+      <div class="pk">Minimum harm to the patient</div>
+      <div class="big good">83 instead of 97</div>
+      <div class="cap">peak side-effect load with the recommended plan, against the system's first suggestion.</div>
+      <svg viewBox="0 0 800 480" role="img" aria-label="Side-effect load over the course: first suggestion against the recommended plan" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"><line x1="82" y1="428.0" x2="778" y2="428.0" stroke="#DDE3EC" stroke-width="2"/><text x="72" y="436.8" font-size="26" fill="#8A94A3" text-anchor="end">0</text><line x1="82" y1="245.0" x2="778" y2="245.0" stroke="#DDE3EC" stroke-width="2"/><text x="72" y="253.8" font-size="26" fill="#8A94A3" text-anchor="end">50</text><line x1="82" y1="61.9" x2="778" y2="61.9" stroke="#DDE3EC" stroke-width="2"/><text x="72" y="70.8" font-size="26" fill="#8A94A3" text-anchor="end">100</text><text x="82.0" y="460.5" font-size="26" fill="#8A94A3" text-anchor="start">day 0</text><text x="430.0" y="460.5" font-size="26" fill="#8A94A3" text-anchor="middle">day 60</text><text x="778.0" y="460.5" font-size="26" fill="#8A94A3" text-anchor="end">day 120</text><line x1="82" y1="61.9" x2="778" y2="61.9" stroke="#E8543F" stroke-width="4" stroke-dasharray="14 10"/><polyline points="82.0,428.0 87.8,369.2 93.6,296.8 99.4,269.9 105.2,268.5 111.0,280.2 116.8,297.8 122.6,316.9 128.4,335.4 134.2,352.0 140.0,366.5 145.8,378.7 151.6,388.7 157.4,397.0 163.2,403.6 169.0,346.4 174.8,211.0 180.6,108.2 186.4,80.4 192.2,93.4 198.0,126.1 203.8,166.4 209.6,207.4 215.4,245.6 221.2,279.4 227.0,308.3 232.8,332.4 238.6,352.2 244.4,368.2 250.2,319.8 256.0,193.1 261.8,97.2 267.6,74.0 273.4,89.7 279.2,124.1 285.0,165.4 290.8,207.0 296.6,245.6 302.4,279.5 308.2,308.5 314.0,332.6 319.8,352.4 325.6,368.4 331.4,321.1 337.2,196.9 343.0,103.6 348.8,81.1 354.6,96.7 360.4,130.5 366.2,171.0 372.0,211.8 377.8,249.5 383.6,282.8 389.4,311.1 395.2,334.7 401.0,354.1 406.8,369.7 412.6,330.9 418.4,225.9 424.2,146.8 430.0,128.3 435.8,142.2 441.6,171.6 447.4,206.6 453.2,241.8 459.0,274.4 464.8,303.0 470.6,327.4 476.4,347.7 482.2,364.4 488.0,377.9 493.8,339.8 499.6,239.3 505.4,164.2 511.2,146.3 517.0,159.2 522.8,186.7 528.6,219.6 534.4,252.7 540.2,283.3 546.0,310.3 551.8,333.2 557.6,352.4 563.4,368.1 569.2,380.8 575.0,344.8 580.8,249.9 586.6,178.4 592.4,161.3 598.2,173.3 604.0,199.4 609.8,230.5 615.6,261.9 621.4,290.9 627.2,316.4 633.0,338.2 638.8,356.3 644.6,371.2 650.4,383.2 656.2,356.5 662.0,283.1 667.8,227.9 673.6,215.2 679.4,225.4 685.2,246.4 691.0,271.3 696.8,296.2 702.6,319.3 708.4,339.6 714.2,356.8 720.0,371.2 725.8,383.0 731.6,392.5 737.4,379.1 743.2,338.2 749.0,307.5 754.8,301.2 760.6,307.8 766.4,320.6 772.2,335.5 778.0,350.4" fill="none" stroke="#7A8796" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="3 9"/><polygon points="82.0,428.0 82.0,428.0 87.8,375.0 93.6,309.5 99.4,285.3 105.2,284.0 111.0,294.6 116.8,310.4 122.6,327.7 128.4,344.4 134.2,359.4 140.0,372.5 145.8,383.5 151.6,392.6 157.4,400.0 163.2,406.0 169.0,357.2 174.8,241.3 180.6,153.7 186.4,130.3 192.2,141.5 198.0,169.6 203.8,204.1 209.6,239.3 215.4,272.0 221.2,300.9 227.0,325.6 232.8,346.2 238.6,363.1 244.4,376.9 250.2,335.3 256.0,226.7 261.8,145.3 267.6,125.8 273.4,139.3 279.2,168.8 285.0,204.1 290.8,239.6 296.6,272.5 302.4,301.4 308.2,326.1 314.0,346.7 319.8,363.5 325.6,377.2 331.4,336.5 337.2,230.0 343.0,149.7 348.8,130.3 354.6,143.6 360.4,172.6 366.2,207.4 372.0,242.4 377.8,274.8 383.6,303.3 389.4,327.6 395.2,347.9 401.0,364.5 406.8,377.9 412.6,337.3 418.4,230.9 424.2,151.1 430.0,131.8 435.8,145.1 441.6,174.0 447.4,208.5 453.2,243.4 459.0,275.6 464.8,304.0 470.6,328.1 476.4,348.3 482.2,364.8 488.0,378.2 493.8,340.1 499.6,239.5 505.4,163.7 511.2,145.6 517.0,158.3 522.8,185.9 528.6,218.9 534.4,252.1 540.2,282.8 546.0,309.8 551.8,332.9 557.6,352.1 563.4,367.8 569.2,380.6 575.0,344.7 580.8,249.8 586.6,178.3 592.4,161.3 598.2,173.4 604.0,199.4 609.8,230.6 615.6,261.9 621.4,290.9 627.2,316.4 633.0,338.2 638.8,356.3 644.6,371.2 650.4,383.2 656.2,356.6 662.0,283.1 667.8,227.9 673.6,215.2 679.4,225.4 685.2,246.4 691.0,271.3 696.8,296.3 702.6,319.3 708.4,339.6 714.2,356.8 720.0,371.2 725.8,383.0 731.6,392.6 737.4,379.2 743.2,338.2 749.0,307.4 754.8,301.0 760.6,307.7 766.4,320.5 772.2,335.4 778.0,350.3 778.0,428.0" fill="rgba(178,106,0,0.12)"/><polyline points="82.0,428.0 87.8,375.0 93.6,309.5 99.4,285.3 105.2,284.0 111.0,294.6 116.8,310.4 122.6,327.7 128.4,344.4 134.2,359.4 140.0,372.5 145.8,383.5 151.6,392.6 157.4,400.0 163.2,406.0 169.0,357.2 174.8,241.3 180.6,153.7 186.4,130.3 192.2,141.5 198.0,169.6 203.8,204.1 209.6,239.3 215.4,272.0 221.2,300.9 227.0,325.6 232.8,346.2 238.6,363.1 244.4,376.9 250.2,335.3 256.0,226.7 261.8,145.3 267.6,125.8 273.4,139.3 279.2,168.8 285.0,204.1 290.8,239.6 296.6,272.5 302.4,301.4 308.2,326.1 314.0,346.7 319.8,363.5 325.6,377.2 331.4,336.5 337.2,230.0 343.0,149.7 348.8,130.3 354.6,143.6 360.4,172.6 366.2,207.4 372.0,242.4 377.8,274.8 383.6,303.3 389.4,327.6 395.2,347.9 401.0,364.5 406.8,377.9 412.6,337.3 418.4,230.9 424.2,151.1 430.0,131.8 435.8,145.1 441.6,174.0 447.4,208.5 453.2,243.4 459.0,275.6 464.8,304.0 470.6,328.1 476.4,348.3 482.2,364.8 488.0,378.2 493.8,340.1 499.6,239.5 505.4,163.7 511.2,145.6 517.0,158.3 522.8,185.9 528.6,218.9 534.4,252.1 540.2,282.8 546.0,309.8 551.8,332.9 557.6,352.1 563.4,367.8 569.2,380.6 575.0,344.7 580.8,249.8 586.6,178.3 592.4,161.3 598.2,173.4 604.0,199.4 609.8,230.6 615.6,261.9 621.4,290.9 627.2,316.4 633.0,338.2 638.8,356.3 644.6,371.2 650.4,383.2 656.2,356.6 662.0,283.1 667.8,227.9 673.6,215.2 679.4,225.4 685.2,246.4 691.0,271.3 696.8,296.3 702.6,319.3 708.4,339.6 714.2,356.8 720.0,371.2 725.8,383.0 731.6,392.6 737.4,379.2 743.2,338.2 749.0,307.4 754.8,301.0 760.6,307.7 766.4,320.5 772.2,335.4 778.0,350.3" fill="none" stroke="#B26A00" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <div class="legend"><span><i class="dot"></i>First suggestion</span><span><i style="background:#B26A00"></i>Recommended plan</span></div>
+    </div>
+    <div class="panel">
+      <div class="pk">Safer doses, chosen in advance</div>
+      <div class="big">4 of 9 doses lowered</div>
+      <div class="cap">before being given, so every organ stays within its safe limit — 7% less drug in total.</div>
+      <svg viewBox="0 0 800 480" role="img" aria-label="Dose given on each day: first suggestion against the recommended plan" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"><line x1="82" y1="428.0" x2="778" y2="428.0" stroke="#DDE3EC" stroke-width="2"/><text x="72" y="436.8" font-size="26" fill="#8A94A3" text-anchor="end">0</text><line x1="82" y1="255.9" x2="778" y2="255.9" stroke="#DDE3EC" stroke-width="2"/><text x="72" y="264.7" font-size="26" fill="#8A94A3" text-anchor="end">20</text><line x1="82" y1="83.8" x2="778" y2="83.8" stroke="#DDE3EC" stroke-width="2"/><text x="72" y="92.6" font-size="26" fill="#8A94A3" text-anchor="end">40</text><text x="82.0" y="460.5" font-size="26" fill="#8A94A3" text-anchor="start">day 0</text><text x="430.0" y="460.5" font-size="26" fill="#8A94A3" text-anchor="middle">day 60</text><text x="778.0" y="460.5" font-size="26" fill="#8A94A3" text-anchor="end">day 120</text><rect x="84.8" y="83.8" width="16.8" height="344.2" fill="rgba(122,135,150,0.40)"/><rect x="163.4" y="61.9" width="16.8" height="366.1" fill="rgba(122,135,150,0.40)"/><rect x="169.0" y="61.9" width="16.8" height="366.1" fill="rgba(122,135,150,0.40)"/><rect x="242.0" y="68.9" width="16.8" height="359.1" fill="rgba(122,135,150,0.40)"/><rect x="247.6" y="68.9" width="16.8" height="359.1" fill="rgba(122,135,150,0.40)"/><rect x="320.5" y="75.4" width="16.8" height="352.6" fill="rgba(122,135,150,0.40)"/><rect x="326.2" y="75.4" width="16.8" height="352.6" fill="rgba(122,135,150,0.40)"/><rect x="399.1" y="126.6" width="16.8" height="301.4" fill="rgba(122,135,150,0.40)"/><rect x="404.7" y="126.6" width="16.8" height="301.4" fill="rgba(122,135,150,0.40)"/><rect x="477.7" y="141.8" width="16.8" height="286.2" fill="rgba(122,135,150,0.40)"/><rect x="483.3" y="141.8" width="16.8" height="286.2" fill="rgba(122,135,150,0.40)"/><rect x="556.3" y="157.8" width="16.8" height="270.2" fill="rgba(122,135,150,0.40)"/><rect x="561.9" y="157.8" width="16.8" height="270.2" fill="rgba(122,135,150,0.40)"/><rect x="634.9" y="215.2" width="16.8" height="212.8" fill="rgba(122,135,150,0.40)"/><rect x="640.5" y="215.2" width="16.8" height="212.8" fill="rgba(122,135,150,0.40)"/><rect x="713.5" y="304.6" width="16.8" height="123.4" fill="rgba(122,135,150,0.40)"/><rect x="719.1" y="304.6" width="16.8" height="123.4" fill="rgba(122,135,150,0.40)"/><rect x="84.8" y="117.3" width="16.8" height="310.7" fill="#1B4EE0"/><rect x="163.4" y="114.1" width="16.8" height="313.9" fill="#1B4EE0"/><rect x="169.0" y="114.1" width="16.8" height="313.9" fill="#1B4EE0"/><rect x="242.0" y="120.2" width="16.8" height="307.8" fill="#1B4EE0"/><rect x="247.6" y="120.2" width="16.8" height="307.8" fill="#1B4EE0"/><rect x="320.5" y="125.7" width="16.8" height="302.3" fill="#1B4EE0"/><rect x="326.2" y="125.7" width="16.8" height="302.3" fill="#1B4EE0"/><rect x="399.1" y="126.6" width="16.8" height="301.4" fill="#1B4EE0"/><rect x="404.7" y="126.6" width="16.8" height="301.4" fill="#1B4EE0"/><rect x="477.7" y="141.8" width="16.8" height="286.2" fill="#1B4EE0"/><rect x="483.3" y="141.8" width="16.8" height="286.2" fill="#1B4EE0"/><rect x="556.3" y="157.8" width="16.8" height="270.2" fill="#1B4EE0"/><rect x="561.9" y="157.8" width="16.8" height="270.2" fill="#1B4EE0"/><rect x="634.9" y="215.2" width="16.8" height="212.8" fill="#1B4EE0"/><rect x="640.5" y="215.2" width="16.8" height="212.8" fill="#1B4EE0"/><rect x="713.5" y="304.6" width="16.8" height="123.4" fill="#1B4EE0"/><rect x="719.1" y="304.6" width="16.8" height="123.4" fill="#1B4EE0"/></svg>
+      <div class="legend"><span><i class="box" style="background:rgba(122,135,150,.4)"></i>First suggestion</span><span><i class="box" style="background:#1B4EE0"></i>Recommended plan</span></div>
+    </div>
   </div>
+
+  <div class="organs-head">
+    <h3>Drug level in key organs after each dose</h3>
+    <span>The red dashed line is each organ's safe limit — every dose stays below it.</span>
+  </div>
+  <div class="dose-key"><span><i style="background:#1f6feb"></i>Dose 1</span><span><i style="background:#2b8ae0"></i>Dose 2</span><span><i style="background:#22a0c8"></i>Dose 3</span><span><i style="background:#1fae9e"></i>Dose 4</span><span><i style="background:#3fae63"></i>Dose 5</span><span><i style="background:#8aa63a"></i>Dose 6</span><span><i style="background:#c09428"></i>Dose 7</span><span><i style="background:#cf6f24"></i>Dose 8</span><span><i style="background:#c0392b"></i>Dose 9</span></div>
+  <div class="organs"><div class="organ limiting"><div class="organ-head"><strong>Lung</strong><span class="chip cut">Limited the dose</span></div><div class="organ-sub">Highest level 12.9 · safe limit 13.0</div><svg viewBox="0 0 800 350" role="img" aria-label="Drug level in the lung over 48 hours after each dose" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"><line x1="64" y1="300.0" x2="766" y2="300.0" stroke="#DDE3EC" stroke-width="2"/><text x="54" y="308.8" font-size="26" fill="#8A94A3" text-anchor="end">0</text><line x1="64" y1="201.8" x2="766" y2="201.8" stroke="#DDE3EC" stroke-width="2"/><text x="54" y="210.6" font-size="26" fill="#8A94A3" text-anchor="end">5</text><line x1="64" y1="103.6" x2="766" y2="103.6" stroke="#DDE3EC" stroke-width="2"/><text x="54" y="112.4" font-size="26" fill="#8A94A3" text-anchor="end">10</text><text x="239.5" y="332.5" font-size="26" fill="#8A94A3" text-anchor="middle">12</text><text x="415.0" y="332.5" font-size="26" fill="#8A94A3" text-anchor="middle">24</text><text x="590.5" y="332.5" font-size="26" fill="#8A94A3" text-anchor="middle">36</text><text x="766.0" y="332.5" font-size="26" fill="#8A94A3" text-anchor="end">48 h</text><line x1="64" y1="44.6" x2="766" y2="44.6" stroke="#E8543F" stroke-width="4.5" stroke-dasharray="14 10"/><polyline points="64.0,300.0 78.6,292.7 93.2,280.1 107.9,267.7 122.5,256.5 137.1,246.5 151.8,237.7 166.4,230.0 181.0,223.2 195.6,217.2 210.2,211.9 224.9,207.2 239.5,203.1 254.1,199.4 268.8,196.2 283.4,193.4 298.0,190.9 312.6,188.7 327.2,186.7 341.9,185.0 356.5,183.5 371.1,182.1 385.8,180.9 400.4,179.8 415.0,178.8 429.6,170.6 444.2,157.4 458.9,144.3 473.5,132.4 488.1,121.9 502.8,112.6 517.4,104.4 532.0,97.1 546.6,90.8 561.2,85.2 575.9,80.1 590.5,75.7 605.1,71.9 619.8,68.3 634.4,65.3 649.0,62.5 663.6,60.1 678.2,58.1 692.9,56.1 707.5,54.4 722.1,52.8 736.8,51.6 751.4,50.3 766.0,49.1" fill="none" stroke="#1f6feb" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,292.6 93.2,279.9 107.9,267.4 122.5,256.1 137.1,246.0 151.8,237.1 166.4,229.3 181.0,222.4 195.6,216.3 210.2,211.0 224.9,206.2 239.5,202.1 254.1,198.4 268.8,195.2 283.4,192.3 298.0,189.8 312.6,187.6 327.2,185.6 341.9,183.8 356.5,182.3 371.1,180.9 385.8,179.7 400.4,178.6 415.0,177.6 429.6,169.3 444.2,155.9 458.9,142.7 473.5,130.7 488.1,120.1 502.8,110.7 517.4,102.4 532.0,95.1 546.6,88.6 561.2,82.9 575.9,77.9 590.5,73.5 605.1,69.5 619.8,65.9 634.4,62.9 649.0,60.1 663.6,57.7 678.2,55.5 692.9,53.7 707.5,51.9 722.1,50.2 736.8,49.0 751.4,47.8 766.0,46.5" fill="none" stroke="#2b8ae0" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,292.7 93.2,280.3 107.9,268.0 122.5,256.9 137.1,247.0 151.8,238.3 166.4,230.6 181.0,223.9 195.6,217.9 210.2,212.7 224.9,208.0 239.5,204.0 254.1,200.4 268.8,197.2 283.4,194.4 298.0,191.9 312.6,189.7 327.2,187.8 341.9,186.1 356.5,184.5 371.1,183.2 385.8,182.0 400.4,180.9 415.0,179.9 429.6,171.8 444.2,158.7 458.9,145.7 473.5,133.9 488.1,123.5 502.8,114.3 517.4,106.2 532.0,99.1 546.6,92.7 561.2,87.0 575.9,82.2 590.5,77.9 605.1,73.9 619.8,70.5 634.4,67.5 649.0,64.7 663.6,62.3 678.2,60.3 692.9,58.2 707.5,56.6 722.1,55.2 736.8,53.7 751.4,52.5 766.0,51.5" fill="none" stroke="#22a0c8" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,292.9 93.2,280.7 107.9,268.6 122.5,257.7 137.1,248.0 151.8,239.4 166.4,231.9 181.0,225.3 195.6,219.4 210.2,214.2 224.9,209.7 239.5,205.7 254.1,202.2 268.8,199.0 283.4,196.3 298.0,193.9 312.6,191.7 327.2,189.8 341.9,188.1 356.5,186.6 371.1,185.3 385.8,184.1 400.4,183.1 415.0,182.1 429.6,174.1 444.2,161.2 458.9,148.5 473.5,136.9 488.1,126.7 502.8,117.7 517.4,109.7 532.0,102.6 546.6,96.5 561.2,90.9 575.9,86.2 590.5,81.8 605.1,78.0 619.8,74.6 634.4,71.6 649.0,69.0 663.6,66.6 678.2,64.6 692.9,62.8 707.5,61.0 722.1,59.5 736.8,58.3 751.4,57.1 766.0,56.0" fill="none" stroke="#1fae9e" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,292.9 93.2,280.7 107.9,268.7 122.5,257.8 137.1,248.1 151.8,239.6 166.4,232.1 181.0,225.5 195.6,219.6 210.2,214.5 224.9,210.0 239.5,206.0 254.1,202.5 268.8,199.3 283.4,196.6 298.0,194.2 312.6,192.0 327.2,190.1 341.9,188.4 356.5,187.0 371.1,185.6 385.8,184.4 400.4,183.4 415.0,182.5 429.6,174.5 444.2,161.6 458.9,148.9 473.5,137.4 488.1,127.2 502.8,118.2 517.4,110.3 532.0,103.2 546.6,97.1 561.2,91.5 575.9,86.8 590.5,82.4 605.1,78.6 619.8,75.2 634.4,72.4 649.0,69.6 663.6,67.4 678.2,65.2 692.9,63.4 707.5,61.7 722.1,60.3 736.8,58.9 751.4,57.6 766.0,56.6" fill="none" stroke="#3fae63" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,293.2 93.2,281.7 107.9,270.3 122.5,260.0 137.1,250.8 151.8,242.7 166.4,235.5 181.0,229.2 195.6,223.7 210.2,218.8 224.9,214.5 239.5,210.7 254.1,207.4 268.8,204.4 283.4,201.8 298.0,199.5 312.6,197.5 327.2,195.7 341.9,194.1 356.5,192.7 371.1,191.4 385.8,190.3 400.4,189.3 415.0,188.4 429.6,180.9 444.2,168.6 458.9,156.6 473.5,145.6 488.1,136.0 502.8,127.4 517.4,119.8 532.0,113.2 546.6,107.3 561.2,102.2 575.9,97.4 590.5,93.4 605.1,89.9 619.8,86.7 634.4,83.9 649.0,81.3 663.6,79.1 678.2,77.0 692.9,75.4 707.5,73.8 722.1,72.4 736.8,71.1 751.4,69.9 766.0,68.9" fill="none" stroke="#8aa63a" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,293.6 93.2,282.7 107.9,271.9 122.5,262.2 137.1,253.5 151.8,245.9 166.4,239.1 181.0,233.2 195.6,228.0 210.2,223.4 224.9,219.3 239.5,215.7 254.1,212.5 268.8,209.8 283.4,207.3 298.0,205.1 312.6,203.2 327.2,201.5 341.9,200.0 356.5,198.7 371.1,197.5 385.8,196.4 400.4,195.5 415.0,194.6 429.6,187.5 444.2,176.0 458.9,164.6 473.5,154.3 488.1,145.1 502.8,137.0 517.4,129.9 532.0,123.6 546.6,118.1 561.2,113.1 575.9,108.8 590.5,105.0 605.1,101.5 619.8,98.5 634.4,95.9 649.0,93.5 663.6,91.5 678.2,89.5 692.9,87.9 707.5,86.4 722.1,85.0 736.8,84.0 751.4,82.8 766.0,81.9" fill="none" stroke="#c09428" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,295.0 93.2,286.4 107.9,277.9 122.5,270.2 137.1,263.4 151.8,257.4 166.4,252.0 181.0,247.4 195.6,243.3 210.2,239.6 224.9,236.4 239.5,233.6 254.1,231.1 268.8,228.9 283.4,227.0 298.0,225.3 312.6,223.7 327.2,222.4 341.9,221.2 356.5,220.2 371.1,219.2 385.8,218.4 400.4,217.7 415.0,217.0 429.6,211.4 444.2,202.3 458.9,193.3 473.5,185.2 488.1,178.0 502.8,171.6 517.4,166.0 532.0,161.1 546.6,156.7 561.2,152.8 575.9,149.4 590.5,146.4 605.1,143.7 619.8,141.4 634.4,139.3 649.0,137.4 663.6,135.7 678.2,134.2 692.9,132.9 707.5,131.8 722.1,130.7 736.8,129.8 751.4,128.9 766.0,128.2" fill="none" stroke="#cf6f24" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,297.1 93.2,292.1 107.9,287.2 122.5,282.7 137.1,278.8 151.8,275.3 166.4,272.2 181.0,269.5 195.6,267.1 210.2,265.0 224.9,263.1 239.5,261.5 254.1,260.1 268.8,258.8 283.4,257.7 298.0,256.7 312.6,255.8 327.2,255.0 341.9,254.3 356.5,253.7 371.1,253.2 385.8,252.7 400.4,252.3 415.0,251.9 429.6,248.6 444.2,243.4 458.9,238.2 473.5,233.4 488.1,229.3 502.8,225.6 517.4,222.3 532.0,219.5 546.6,216.9 561.2,214.7 575.9,212.7 590.5,210.9 605.1,209.4 619.8,208.0 634.4,206.8 649.0,205.7 663.6,204.7 678.2,203.9 692.9,203.1 707.5,202.5 722.1,201.9 736.8,201.3 751.4,200.8 766.0,200.4" fill="none" stroke="#c0392b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></svg></div><div class="organ"><div class="organ-head"><strong>Heart</strong><span class="chip ok">Within its limit</span></div><div class="organ-sub">Highest level 12.2 · safe limit 12.5</div><svg viewBox="0 0 800 350" role="img" aria-label="Drug level in the heart over 48 hours after each dose" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"><line x1="64" y1="300.0" x2="766" y2="300.0" stroke="#DDE3EC" stroke-width="2"/><text x="54" y="308.8" font-size="26" fill="#8A94A3" text-anchor="end">0</text><line x1="64" y1="197.9" x2="766" y2="197.9" stroke="#DDE3EC" stroke-width="2"/><text x="54" y="206.7" font-size="26" fill="#8A94A3" text-anchor="end">5</text><line x1="64" y1="95.7" x2="766" y2="95.7" stroke="#DDE3EC" stroke-width="2"/><text x="54" y="104.6" font-size="26" fill="#8A94A3" text-anchor="end">10</text><text x="239.5" y="332.5" font-size="26" fill="#8A94A3" text-anchor="middle">12</text><text x="415.0" y="332.5" font-size="26" fill="#8A94A3" text-anchor="middle">24</text><text x="590.5" y="332.5" font-size="26" fill="#8A94A3" text-anchor="middle">36</text><text x="766.0" y="332.5" font-size="26" fill="#8A94A3" text-anchor="end">48 h</text><line x1="64" y1="44.6" x2="766" y2="44.6" stroke="#E8543F" stroke-width="4.5" stroke-dasharray="14 10"/><polyline points="64.0,300.0 78.6,299.8 93.2,298.5 107.9,295.3 122.5,290.5 137.1,284.5 151.8,277.7 166.4,270.6 181.0,263.2 195.6,255.9 210.2,248.7 224.9,241.8 239.5,235.3 254.1,229.1 268.8,223.4 283.4,218.1 298.0,213.2 312.6,208.7 327.2,204.5 341.9,200.8 356.5,197.3 371.1,194.2 385.8,191.4 400.4,188.9 415.0,186.6 429.6,184.4 444.2,181.1 458.9,176.3 473.5,170.0 488.1,162.7 502.8,154.7 517.4,146.4 532.0,138.0 546.6,129.8 561.2,121.9 575.9,114.3 590.5,107.1 605.1,100.4 619.8,94.2 634.4,88.2 649.0,82.9 663.6,78.0 678.2,73.6 692.9,69.5 707.5,65.6 722.1,62.3 736.8,59.3 751.4,56.6 766.0,53.9" fill="none" stroke="#1f6feb" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.8 93.2,298.4 107.9,295.2 122.5,290.4 137.1,284.4 151.8,277.5 166.4,270.2 181.0,262.8 195.6,255.4 210.2,248.2 224.9,241.2 239.5,234.6 254.1,228.4 268.8,222.6 283.4,217.3 298.0,212.3 312.6,207.7 327.2,203.5 341.9,199.8 356.5,196.3 371.1,193.2 385.8,190.3 400.4,187.7 415.0,185.4 429.6,183.2 444.2,179.9 458.9,175.0 473.5,168.6 488.1,161.2 502.8,153.2 517.4,144.8 532.0,136.4 546.6,128.1 561.2,120.0 575.9,112.4 590.5,105.1 605.1,98.3 619.8,91.9 634.4,86.2 649.0,80.6 663.6,75.7 678.2,71.2 692.9,67.1 707.5,63.4 722.1,59.9 736.8,56.8 751.4,53.9 766.0,51.4" fill="none" stroke="#2b8ae0" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.8 93.2,298.5 107.9,295.3 122.5,290.6 137.1,284.7 151.8,278.0 166.4,270.8 181.0,263.5 195.6,256.3 210.2,249.2 224.9,242.4 239.5,235.9 254.1,229.8 268.8,224.1 283.4,218.8 298.0,214.0 312.6,209.5 327.2,205.4 341.9,201.7 356.5,198.3 371.1,195.2 385.8,192.4 400.4,189.9 415.0,187.6 429.6,185.4 444.2,182.2 458.9,177.4 473.5,171.2 488.1,163.9 502.8,156.0 517.4,147.8 532.0,139.5 546.6,131.4 561.2,123.5 575.9,116.0 590.5,108.9 605.1,102.2 619.8,96.0 634.4,90.3 649.0,84.9 663.6,80.0 678.2,75.7 692.9,71.6 707.5,67.9 722.1,64.6 736.8,61.5 751.4,58.6 766.0,56.2" fill="none" stroke="#22a0c8" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.8 93.2,298.5 107.9,295.4 122.5,290.8 137.1,284.9 151.8,278.3 166.4,271.4 181.0,264.2 195.6,257.0 210.2,250.1 224.9,243.4 239.5,237.1 254.1,231.1 268.8,225.5 283.4,220.3 298.0,215.5 312.6,211.1 327.2,207.1 341.9,203.5 356.5,200.1 371.1,197.1 385.8,194.4 400.4,191.9 415.0,189.7 429.6,187.5 444.2,184.3 458.9,179.6 473.5,173.5 488.1,166.4 502.8,158.6 517.4,150.5 532.0,142.4 546.6,134.4 561.2,126.7 575.9,119.3 590.5,112.3 605.1,105.8 619.8,99.7 634.4,93.9 649.0,88.8 663.6,84.1 678.2,79.6 692.9,75.7 707.5,72.0 722.1,68.7 736.8,65.8 751.4,63.1 766.0,60.7" fill="none" stroke="#1fae9e" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.8 93.2,298.5 107.9,295.4 122.5,290.8 137.1,285.0 151.8,278.4 166.4,271.4 181.0,264.3 195.6,257.2 210.2,250.2 224.9,243.6 239.5,237.2 254.1,231.3 268.8,225.7 283.4,220.5 298.0,215.8 312.6,211.4 327.2,207.4 341.9,203.7 356.5,200.4 371.1,197.4 385.8,194.7 400.4,192.2 415.0,190.0 429.6,187.8 444.2,184.7 458.9,180.0 473.5,173.9 488.1,166.8 502.8,159.0 517.4,151.0 532.0,142.9 546.6,134.9 561.2,127.2 575.9,119.8 590.5,112.9 605.1,106.3 619.8,100.3 634.4,94.6 649.0,89.4 663.6,84.7 678.2,80.4 692.9,76.3 707.5,72.8 722.1,69.5 736.8,66.4 751.4,63.7 766.0,61.3" fill="none" stroke="#3fae63" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.8 93.2,298.6 107.9,295.7 122.5,291.2 137.1,285.7 151.8,279.5 166.4,272.9 181.0,266.1 195.6,259.3 210.2,252.8 224.9,246.4 239.5,240.4 254.1,234.7 268.8,229.5 283.4,224.6 298.0,220.0 312.6,215.9 327.2,212.1 341.9,208.6 356.5,205.4 371.1,202.6 385.8,200.0 400.4,197.6 415.0,195.5 429.6,193.5 444.2,190.5 458.9,186.0 473.5,180.2 488.1,173.5 502.8,166.1 517.4,158.5 532.0,150.8 546.6,143.2 561.2,135.9 575.9,128.9 590.5,122.3 605.1,116.1 619.8,110.3 634.4,105.0 649.0,100.1 663.6,95.6 678.2,91.5 692.9,87.6 707.5,84.3 722.1,81.2 736.8,78.3 751.4,75.6 766.0,73.4" fill="none" stroke="#8aa63a" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.9 93.2,298.7 107.9,295.9 122.5,291.7 137.1,286.5 151.8,280.6 166.4,274.4 181.0,268.0 195.6,261.6 210.2,255.4 224.9,249.4 239.5,243.7 254.1,238.4 268.8,233.4 283.4,228.8 298.0,224.5 312.6,220.6 327.2,217.0 341.9,213.7 356.5,210.7 371.1,208.0 385.8,205.6 400.4,203.4 415.0,201.4 429.6,199.4 444.2,196.6 458.9,192.4 473.5,186.9 488.1,180.6 502.8,173.6 517.4,166.4 532.0,159.1 546.6,152.0 561.2,145.1 575.9,138.5 590.5,132.2 605.1,126.4 619.8,120.9 634.4,115.9 649.0,111.2 663.6,107.0 678.2,103.1 692.9,99.5 707.5,96.3 722.1,93.3 736.8,90.6 751.4,88.3 766.0,86.0" fill="none" stroke="#c09428" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.9 93.2,298.9 107.9,296.8 122.5,293.5 137.1,289.4 151.8,284.8 166.4,279.8 181.0,274.8 195.6,269.8 210.2,264.9 224.9,260.1 239.5,255.7 254.1,251.5 268.8,247.5 283.4,243.9 298.0,240.5 312.6,237.4 327.2,234.6 341.9,232.0 356.5,229.7 371.1,227.6 385.8,225.6 400.4,223.9 415.0,222.3 429.6,220.8 444.2,218.6 458.9,215.3 473.5,211.0 488.1,205.9 502.8,200.5 517.4,194.8 532.0,189.1 546.6,183.4 561.2,178.0 575.9,172.8 590.5,167.9 605.1,163.3 619.8,159.0 634.4,155.0 649.0,151.3 663.6,148.0 678.2,144.9 692.9,142.1 707.5,139.5 722.1,137.2 736.8,135.1 751.4,133.2 766.0,131.5" fill="none" stroke="#cf6f24" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.9 93.2,299.4 107.9,298.1 122.5,296.2 137.1,293.8 151.8,291.2 166.4,288.3 181.0,285.4 195.6,282.5 210.2,279.6 224.9,276.9 239.5,274.3 254.1,271.9 268.8,269.6 283.4,267.5 298.0,265.5 312.6,263.7 327.2,262.1 341.9,260.6 356.5,259.2 371.1,258.0 385.8,256.9 400.4,255.9 415.0,255.0 429.6,254.1 444.2,252.8 458.9,250.9 473.5,248.4 488.1,245.4 502.8,242.3 517.4,239.0 532.0,235.7 546.6,232.4 561.2,229.3 575.9,226.2 590.5,223.4 605.1,220.7 619.8,218.2 634.4,215.9 649.0,213.8 663.6,211.8 678.2,210.1 692.9,208.4 707.5,206.9 722.1,205.6 736.8,204.4 751.4,203.3 766.0,202.3" fill="none" stroke="#c0392b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></svg></div><div class="organ"><div class="organ-head"><strong>Kidney</strong><span class="chip ok">Within its limit</span></div><div class="organ-sub">Highest level 12.5 · safe limit 13.0</div><svg viewBox="0 0 800 350" role="img" aria-label="Drug level in the kidney over 48 hours after each dose" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"><line x1="64" y1="300.0" x2="766" y2="300.0" stroke="#DDE3EC" stroke-width="2"/><text x="54" y="308.8" font-size="26" fill="#8A94A3" text-anchor="end">0</text><line x1="64" y1="201.8" x2="766" y2="201.8" stroke="#DDE3EC" stroke-width="2"/><text x="54" y="210.6" font-size="26" fill="#8A94A3" text-anchor="end">5</text><line x1="64" y1="103.6" x2="766" y2="103.6" stroke="#DDE3EC" stroke-width="2"/><text x="54" y="112.4" font-size="26" fill="#8A94A3" text-anchor="end">10</text><text x="239.5" y="332.5" font-size="26" fill="#8A94A3" text-anchor="middle">12</text><text x="415.0" y="332.5" font-size="26" fill="#8A94A3" text-anchor="middle">24</text><text x="590.5" y="332.5" font-size="26" fill="#8A94A3" text-anchor="middle">36</text><text x="766.0" y="332.5" font-size="26" fill="#8A94A3" text-anchor="end">48 h</text><line x1="64" y1="44.6" x2="766" y2="44.6" stroke="#E8543F" stroke-width="4.5" stroke-dasharray="14 10"/><polyline points="64.0,300.0 78.6,299.9 93.2,299.1 107.9,297.1 122.5,293.6 137.1,288.9 151.8,283.2 166.4,276.9 181.0,270.1 195.6,263.2 210.2,256.3 224.9,249.5 239.5,243.0 254.1,236.8 268.8,230.9 283.4,225.4 298.0,220.2 312.6,215.4 327.2,211.0 341.9,207.0 356.5,203.2 371.1,199.9 385.8,196.7 400.4,193.9 415.0,191.3 429.6,188.9 444.2,186.0 458.9,182.0 473.5,176.7 488.1,170.4 502.8,163.2 517.4,155.5 532.0,147.5 546.6,139.5 561.2,131.6 575.9,123.9 590.5,116.4 605.1,109.4 619.8,102.8 634.4,96.5 649.0,90.9 663.6,85.4 678.2,80.3 692.9,75.9 707.5,71.6 722.1,67.7 736.8,64.2 751.4,60.8 766.0,57.9" fill="none" stroke="#1f6feb" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.9 93.2,299.1 107.9,297.1 122.5,293.6 137.1,288.8 151.8,283.0 166.4,276.6 181.0,269.8 195.6,262.8 210.2,255.8 224.9,249.0 239.5,242.4 254.1,236.1 268.8,230.2 283.4,224.6 298.0,219.4 312.6,214.6 327.2,210.1 341.9,206.0 356.5,202.2 371.1,198.8 385.8,195.7 400.4,192.8 415.0,190.2 429.6,187.7 444.2,184.8 458.9,180.8 473.5,175.5 488.1,169.1 502.8,161.8 517.4,154.1 532.0,146.0 546.6,137.9 561.2,129.9 575.9,122.1 590.5,114.6 605.1,107.5 619.8,100.8 634.4,94.5 649.0,88.6 663.6,83.2 678.2,78.1 692.9,73.6 707.5,69.3 722.1,65.4 736.8,61.7 751.4,58.4 766.0,55.5" fill="none" stroke="#2b8ae0" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.9 93.2,299.2 107.9,297.1 122.5,293.7 137.1,289.0 151.8,283.4 166.4,277.1 181.0,270.4 195.6,263.5 210.2,256.7 224.9,250.0 239.5,243.5 254.1,237.3 268.8,231.5 283.4,226.0 298.0,220.9 312.6,216.2 327.2,211.8 341.9,207.8 356.5,204.1 371.1,200.8 385.8,197.7 400.4,194.9 415.0,192.3 429.6,189.9 444.2,187.0 458.9,183.0 473.5,177.9 488.1,171.6 502.8,164.5 517.4,156.8 532.0,148.9 546.6,141.0 561.2,133.1 575.9,125.5 590.5,118.1 605.1,111.1 619.8,104.6 634.4,98.4 649.0,92.7 663.6,87.4 678.2,82.4 692.9,77.9 707.5,73.6 722.1,69.9 736.8,66.4 751.4,63.1 766.0,60.2" fill="none" stroke="#22a0c8" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.9 93.2,299.2 107.9,297.2 122.5,293.8 137.1,289.2 151.8,283.7 166.4,277.5 181.0,270.9 195.6,264.2 210.2,257.5 224.9,250.9 239.5,244.5 254.1,238.5 268.8,232.7 283.4,227.4 298.0,222.3 312.6,217.7 327.2,213.4 341.9,209.5 356.5,205.9 371.1,202.6 385.8,199.5 400.4,196.8 415.0,194.3 429.6,191.9 444.2,189.1 458.9,185.2 473.5,180.0 488.1,173.9 502.8,166.9 517.4,159.4 532.0,151.7 546.6,143.9 561.2,136.1 575.9,128.6 590.5,121.4 605.1,114.6 619.8,108.1 634.4,102.1 649.0,96.3 663.6,91.3 678.2,86.4 692.9,82.0 707.5,77.9 722.1,74.0 736.8,70.5 751.4,67.4 766.0,64.4" fill="none" stroke="#1fae9e" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.9 93.2,299.2 107.9,297.2 122.5,293.8 137.1,289.2 151.8,283.7 166.4,277.6 181.0,271.0 195.6,264.3 210.2,257.6 224.9,251.0 239.5,244.7 254.1,238.6 268.8,232.9 283.4,227.6 298.0,222.6 312.6,217.9 327.2,213.7 341.9,209.7 356.5,206.1 371.1,202.9 385.8,199.8 400.4,197.1 415.0,194.6 429.6,192.2 444.2,189.4 458.9,185.5 473.5,180.4 488.1,174.3 502.8,167.3 517.4,159.8 532.0,152.1 546.6,144.3 561.2,136.6 575.9,129.1 590.5,121.9 605.1,115.1 619.8,108.7 634.4,102.7 649.0,96.9 663.6,91.9 678.2,87.0 692.9,82.6 707.5,78.5 722.1,74.6 736.8,71.3 751.4,68.0 766.0,65.3" fill="none" stroke="#3fae63" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.9 93.2,299.2 107.9,297.3 122.5,294.1 137.1,289.8 151.8,284.5 166.4,278.7 181.0,272.5 195.6,266.1 210.2,259.7 224.9,253.5 239.5,247.5 254.1,241.7 268.8,236.3 283.4,231.2 298.0,226.5 312.6,222.1 327.2,218.0 341.9,214.3 356.5,210.9 371.1,207.8 385.8,204.9 400.4,202.3 415.0,199.9 429.6,197.6 444.2,195.0 458.9,191.3 473.5,186.5 488.1,180.6 502.8,174.0 517.4,166.9 532.0,159.6 546.6,152.2 561.2,144.9 575.9,137.8 590.5,130.9 605.1,124.4 619.8,118.3 634.4,112.6 649.0,107.3 663.6,102.3 678.2,97.7 692.9,93.5 707.5,89.7 722.1,86.0 736.8,82.7 751.4,79.8 766.0,77.1" fill="none" stroke="#8aa63a" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.9 93.2,299.3 107.9,297.5 122.5,294.5 137.1,290.3 151.8,285.4 166.4,279.9 181.0,274.0 195.6,268.0 210.2,262.0 224.9,256.1 239.5,250.4 254.1,245.0 268.8,239.9 283.4,235.1 298.0,230.6 312.6,226.4 327.2,222.6 341.9,219.1 356.5,215.9 371.1,212.9 385.8,210.2 400.4,207.7 415.0,205.5 429.6,203.4 444.2,200.8 458.9,197.4 473.5,192.8 488.1,187.3 502.8,181.1 517.4,174.4 532.0,167.4 546.6,160.4 561.2,153.5 575.9,146.8 590.5,140.4 605.1,134.3 619.8,128.5 634.4,123.1 649.0,118.0 663.6,113.4 678.2,109.0 692.9,105.1 707.5,101.4 722.1,98.0 736.8,94.9 751.4,92.1 766.0,89.6" fill="none" stroke="#c09428" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,299.9 93.2,299.4 107.9,298.0 122.5,295.6 137.1,292.4 151.8,288.5 166.4,284.2 181.0,279.5 195.6,274.8 210.2,270.1 224.9,265.4 239.5,260.9 254.1,256.7 268.8,252.7 283.4,248.9 298.0,245.3 312.6,242.1 327.2,239.1 341.9,236.3 356.5,233.7 371.1,231.4 385.8,229.3 400.4,227.3 415.0,225.6 429.6,223.9 444.2,221.9 458.9,219.2 473.5,215.6 488.1,211.2 502.8,206.3 517.4,201.0 532.0,195.6 546.6,190.1 561.2,184.6 575.9,179.3 590.5,174.3 605.1,169.5 619.8,164.9 634.4,160.6 649.0,156.7 663.6,153.0 678.2,149.6 692.9,146.5 707.5,143.6 722.1,140.9 736.8,138.5 751.4,136.2 766.0,134.2" fill="none" stroke="#cf6f24" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><polyline points="64.0,300.0 78.6,300.0 93.2,299.7 107.9,298.8 122.5,297.5 137.1,295.6 151.8,293.3 166.4,290.8 181.0,288.1 195.6,285.4 210.2,282.6 224.9,280.0 239.5,277.4 254.1,274.9 268.8,272.5 283.4,270.3 298.0,268.3 312.6,266.4 327.2,264.7 341.9,263.1 356.5,261.6 371.1,260.2 385.8,259.0 400.4,257.9 415.0,256.8 429.6,255.9 444.2,254.7 458.9,253.1 473.5,251.0 488.1,248.5 502.8,245.7 517.4,242.6 532.0,239.5 546.6,236.3 561.2,233.1 575.9,230.0 590.5,227.1 605.1,224.3 619.8,221.7 634.4,219.2 649.0,216.9 663.6,214.8 678.2,212.8 692.9,211.0 707.5,209.3 722.1,207.8 736.8,206.3 751.4,205.0 766.0,203.9" fill="none" stroke="#c0392b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></svg></div></div>
 </section>
 
-<section class="cols">
+<section class="cols pad">
   <div class="col coral">
-    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-      <path d="M26 5 L49 45 H3 Z" stroke="#E8543F" stroke-width="4.5" stroke-linejoin="round"/>
-      <path d="M26 20 V32" stroke="#E8543F" stroke-width="4.5" stroke-linecap="round"/>
-      <circle cx="26" cy="39" r="2.6" fill="#E8543F"/>
-    </svg>
     <h2>Problem</h2>
-    <p>Chemotherapy has to shrink the tumour without harming healthy organs — but the dose
-    is usually lowered only <b>after</b> the patient already has side effects.</p>
+    <p>Chemotherapy has to shrink the tumour without harming healthy organs — but the dose is
+    usually lowered only <b>after</b> the patient already has side effects.</p>
   </div>
-  <div class="col accent">
-    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-      <circle cx="26" cy="26" r="21" stroke="#1B4EE0" stroke-width="4.5"/>
-      <path d="M16 27 l7 7 l13 -15" stroke="#1B4EE0" stroke-width="4.5"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+  <div class="col blue">
     <h2>Solution</h2>
-    <p>Before a dose is given, the clinician can see what it is expected to do to the tumour
-    and to <b>each major organ</b> — and which organ is limiting it.</p>
+    <p>Before a dose is given, the clinician sees what it is expected to do to the tumour and to
+    <b>each major organ</b> — and which organ is limiting it.</p>
   </div>
   <div class="col">
-    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-      <path d="M5 40 L18 26 L29 34 L47 12" stroke="#16202B" stroke-width="4.5"
-            stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M35 12 H47 V24" stroke="#16202B" stroke-width="4.5"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
     <h2>Impact</h2>
-    <p>The full course can be reviewed and alternatives compared <b>before treatment starts</b>,
-    so the dose is decided in advance rather than in reaction.</p>
+    <p>The full course is reviewed and alternatives compared <b>before treatment starts</b>, so
+    the dose is decided in advance rather than in reaction.</p>
   </div>
 </section>
 
-<section class="process">
+<section class="why pad">
+  <h2>Why it matters for doctors</h2>
+  <div class="bgrid">
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M8.5 6.5h7M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M8.5 18h.01M12 18h.01"/><path d="M15 16.5l1.3 1.3 2.4-2.6"/></svg></div>
+      <div><h3>Fewer calculation mistakes</h3><p>Body size and every dose adjustment are worked out automatically, not by hand.</p></div></div>
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div><h3>See the impact first</h3><p>The tumour's response and the side effects are projected over the whole course.</p></div></div>
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8 3v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6l8-3z"/><path d="M8.5 12l2.4 2.4 4.6-4.9"/></svg></div>
+      <div><h3>13 organs checked</h3><p>A dose that would push any organ past its safe limit is lowered before it is given.</p></div></div>
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.5"/><circle cx="4.5" cy="12" r="1.5"/><circle cx="4.5" cy="18" r="1.5"/></svg></div>
+      <div><h3>Thinks the way a doctor does</h3><p>Mimics how an oncologist reasons, and explains every dose in plain words.</p></div></div>
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="4"/><path d="M4 21c.8-4.2 4-6.5 8-6.5s7.2 2.3 8 6.5"/></svg></div>
+      <div><h3>Personalised to each patient</h3><p>Adjusts for body size, tumour burden and organ tolerance.</p></div></div>
+    <div class="b"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="8" height="16" rx="2"/><rect x="13.5" y="4" width="8" height="16" rx="2"/><path d="M5.5 14l1.5-3 1.5 2M16.5 13l1.5 2 1.5-4"/></svg></div>
+      <div><h3>Compare before deciding</h3><p>Put schedules side by side and choose the best balance for the patient.</p></div></div>
+  </div>
+</section>
+
+<section class="process pad">
   <div class="step"><div class="n">1</div><div class="t">Enter the<br>patient's details</div></div>
-  <div class="arrow">
-    <svg width="60" height="30" viewBox="0 0 46 26" fill="none">
-      <path d="M2 13 H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/>
-      <path d="M31 4 L42 13 L31 22" stroke="#1B4EE0" stroke-width="4.5"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
-  <div class="step"><div class="n">2</div><div class="t">Review the<br>projected plan</div></div>
-  <div class="arrow">
-    <svg width="60" height="30" viewBox="0 0 46 26" fill="none">
-      <path d="M2 13 H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/>
-      <path d="M31 4 L42 13 L31 22" stroke="#1B4EE0" stroke-width="4.5"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
+  <div class="arrow"><svg width="76" height="38" viewBox="0 0 46 26" fill="none"><path d="M2 13H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/><path d="M31 4L42 13L31 22" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="step"><div class="n">2</div><div class="t">Review the<br>recommended plan</div></div>
+  <div class="arrow"><svg width="76" height="38" viewBox="0 0 46 26" fill="none"><path d="M2 13H40" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round"/><path d="M31 4L42 13L31 22" stroke="#1B4EE0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   <div class="step"><div class="n">3</div><div class="t">Compare options<br>and decide</div></div>
 </section>
 
-<section class="results">
-  <div class="kpi">
-    <div class="v">13</div>
-    <div class="c"><b>organs checked</b> before every single dose is given</div>
-  </div>
-  <div class="kpi">
-    <div class="v">4<small> of 9</small></div>
-    <div class="c">doses <b>lowered in advance</b>, before any side effect had appeared</div>
-  </div>
-  <div class="kpi">
-    <div class="v">28</div>
-    <div class="c"><b>alternative schedules</b> compared before treatment begins</div>
-  </div>
-</section>
-
-<footer>
+<footer class="pad">
   <div class="team">
-    <div class="lbl">Team &amp; Institution</div>
-    <div class="names">Author names — Institution / Department</div>
-    <div class="disclaim">
-      Simulation output, for research and evaluation. Not a medical device and not for
-      clinical decision-making. Organ safety limits shown are illustrative.
-    </div>
+    <div class="lbl">Team</div>
+    <div class="names">Dr Rahat Hossain Faisal · Md. Minhaj Ul Islam</div>
+    <div class="inst">University of Barishal</div>
+    <div class="status">Research prototype built on a peer-reviewed model. Organ safe limits are illustrative
+      and not yet validated against patient data.</div>
   </div>
-  <div class="slot">Institution<br>logo</div>
-  <div class="slot">QR code<br>to demo</div>
+  <div class="logo"><div class="slot">University<br>of Barishal<br>logo</div></div>
+  <div class="qr"><svg viewBox="0 0 41 41" shape-rendering="crispEdges" role="img" aria-label="QR code for https://moon1570.github.io/FES-tool/"><rect width="41" height="41" fill="#fff"/><path d="M4,4h1v1h-1zM5,4h1v1h-1zM6,4h1v1h-1zM7,4h1v1h-1zM8,4h1v1h-1zM9,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM13,4h1v1h-1zM15,4h1v1h-1zM16,4h1v1h-1zM17,4h1v1h-1zM18,4h1v1h-1zM21,4h1v1h-1zM23,4h1v1h-1zM24,4h1v1h-1zM26,4h1v1h-1zM27,4h1v1h-1zM28,4h1v1h-1zM30,4h1v1h-1zM31,4h1v1h-1zM32,4h1v1h-1zM33,4h1v1h-1zM34,4h1v1h-1zM35,4h1v1h-1zM36,4h1v1h-1zM4,5h1v1h-1zM10,5h1v1h-1zM16,5h1v1h-1zM18,5h1v1h-1zM19,5h1v1h-1zM21,5h1v1h-1zM26,5h1v1h-1zM30,5h1v1h-1zM36,5h1v1h-1zM4,6h1v1h-1zM6,6h1v1h-1zM7,6h1v1h-1zM8,6h1v1h-1zM10,6h1v1h-1zM17,6h1v1h-1zM19,6h1v1h-1zM21,6h1v1h-1zM22,6h1v1h-1zM28,6h1v1h-1zM30,6h1v1h-1zM32,6h1v1h-1zM33,6h1v1h-1zM34,6h1v1h-1zM36,6h1v1h-1zM4,7h1v1h-1zM6,7h1v1h-1zM7,7h1v1h-1zM8,7h1v1h-1zM10,7h1v1h-1zM13,7h1v1h-1zM15,7h1v1h-1zM17,7h1v1h-1zM23,7h1v1h-1zM24,7h1v1h-1zM25,7h1v1h-1zM26,7h1v1h-1zM28,7h1v1h-1zM30,7h1v1h-1zM32,7h1v1h-1zM33,7h1v1h-1zM34,7h1v1h-1zM36,7h1v1h-1zM4,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM10,8h1v1h-1zM12,8h1v1h-1zM13,8h1v1h-1zM14,8h1v1h-1zM16,8h1v1h-1zM17,8h1v1h-1zM18,8h1v1h-1zM19,8h1v1h-1zM22,8h1v1h-1zM25,8h1v1h-1zM28,8h1v1h-1zM30,8h1v1h-1zM32,8h1v1h-1zM33,8h1v1h-1zM34,8h1v1h-1zM36,8h1v1h-1zM4,9h1v1h-1zM10,9h1v1h-1zM12,9h1v1h-1zM13,9h1v1h-1zM15,9h1v1h-1zM17,9h1v1h-1zM18,9h1v1h-1zM24,9h1v1h-1zM25,9h1v1h-1zM26,9h1v1h-1zM30,9h1v1h-1zM36,9h1v1h-1zM4,10h1v1h-1zM5,10h1v1h-1zM6,10h1v1h-1zM7,10h1v1h-1zM8,10h1v1h-1zM9,10h1v1h-1zM10,10h1v1h-1zM12,10h1v1h-1zM14,10h1v1h-1zM16,10h1v1h-1zM18,10h1v1h-1zM20,10h1v1h-1zM22,10h1v1h-1zM24,10h1v1h-1zM26,10h1v1h-1zM28,10h1v1h-1zM30,10h1v1h-1zM31,10h1v1h-1zM32,10h1v1h-1zM33,10h1v1h-1zM34,10h1v1h-1zM35,10h1v1h-1zM36,10h1v1h-1zM15,11h1v1h-1zM19,11h1v1h-1zM25,11h1v1h-1zM26,11h1v1h-1zM27,11h1v1h-1zM5,12h1v1h-1zM6,12h1v1h-1zM7,12h1v1h-1zM8,12h1v1h-1zM9,12h1v1h-1zM10,12h1v1h-1zM11,12h1v1h-1zM13,12h1v1h-1zM18,12h1v1h-1zM19,12h1v1h-1zM20,12h1v1h-1zM21,12h1v1h-1zM27,12h1v1h-1zM31,12h1v1h-1zM32,12h1v1h-1zM36,12h1v1h-1zM5,13h1v1h-1zM6,13h1v1h-1zM13,13h1v1h-1zM14,13h1v1h-1zM15,13h1v1h-1zM19,13h1v1h-1zM22,13h1v1h-1zM23,13h1v1h-1zM24,13h1v1h-1zM25,13h1v1h-1zM26,13h1v1h-1zM27,13h1v1h-1zM28,13h1v1h-1zM30,13h1v1h-1zM31,13h1v1h-1zM33,13h1v1h-1zM34,13h1v1h-1zM36,13h1v1h-1zM5,14h1v1h-1zM6,14h1v1h-1zM8,14h1v1h-1zM10,14h1v1h-1zM12,14h1v1h-1zM13,14h1v1h-1zM16,14h1v1h-1zM18,14h1v1h-1zM20,14h1v1h-1zM22,14h1v1h-1zM25,14h1v1h-1zM28,14h1v1h-1zM29,14h1v1h-1zM30,14h1v1h-1zM32,14h1v1h-1zM34,14h1v1h-1zM35,14h1v1h-1zM5,15h1v1h-1zM11,15h1v1h-1zM12,15h1v1h-1zM14,15h1v1h-1zM15,15h1v1h-1zM17,15h1v1h-1zM24,15h1v1h-1zM25,15h1v1h-1zM26,15h1v1h-1zM27,15h1v1h-1zM29,15h1v1h-1zM32,15h1v1h-1zM33,15h1v1h-1zM34,15h1v1h-1zM35,15h1v1h-1zM5,16h1v1h-1zM7,16h1v1h-1zM9,16h1v1h-1zM10,16h1v1h-1zM14,16h1v1h-1zM18,16h1v1h-1zM20,16h1v1h-1zM22,16h1v1h-1zM25,16h1v1h-1zM27,16h1v1h-1zM28,16h1v1h-1zM29,16h1v1h-1zM31,16h1v1h-1zM32,16h1v1h-1zM33,16h1v1h-1zM36,16h1v1h-1zM4,17h1v1h-1zM5,17h1v1h-1zM6,17h1v1h-1zM7,17h1v1h-1zM9,17h1v1h-1zM11,17h1v1h-1zM12,17h1v1h-1zM15,17h1v1h-1zM19,17h1v1h-1zM20,17h1v1h-1zM21,17h1v1h-1zM24,17h1v1h-1zM25,17h1v1h-1zM26,17h1v1h-1zM27,17h1v1h-1zM28,17h1v1h-1zM29,17h1v1h-1zM30,17h1v1h-1zM31,17h1v1h-1zM33,17h1v1h-1zM35,17h1v1h-1zM36,17h1v1h-1zM4,18h1v1h-1zM5,18h1v1h-1zM8,18h1v1h-1zM10,18h1v1h-1zM11,18h1v1h-1zM12,18h1v1h-1zM13,18h1v1h-1zM15,18h1v1h-1zM17,18h1v1h-1zM20,18h1v1h-1zM21,18h1v1h-1zM22,18h1v1h-1zM23,18h1v1h-1zM26,18h1v1h-1zM28,18h1v1h-1zM29,18h1v1h-1zM30,18h1v1h-1zM32,18h1v1h-1zM33,18h1v1h-1zM35,18h1v1h-1zM6,19h1v1h-1zM7,19h1v1h-1zM8,19h1v1h-1zM9,19h1v1h-1zM12,19h1v1h-1zM13,19h1v1h-1zM19,19h1v1h-1zM21,19h1v1h-1zM22,19h1v1h-1zM23,19h1v1h-1zM24,19h1v1h-1zM25,19h1v1h-1zM26,19h1v1h-1zM29,19h1v1h-1zM30,19h1v1h-1zM31,19h1v1h-1zM34,19h1v1h-1zM6,20h1v1h-1zM7,20h1v1h-1zM10,20h1v1h-1zM16,20h1v1h-1zM17,20h1v1h-1zM18,20h1v1h-1zM20,20h1v1h-1zM23,20h1v1h-1zM24,20h1v1h-1zM27,20h1v1h-1zM28,20h1v1h-1zM29,20h1v1h-1zM31,20h1v1h-1zM32,20h1v1h-1zM36,20h1v1h-1zM4,21h1v1h-1zM5,21h1v1h-1zM6,21h1v1h-1zM9,21h1v1h-1zM11,21h1v1h-1zM18,21h1v1h-1zM19,21h1v1h-1zM22,21h1v1h-1zM23,21h1v1h-1zM24,21h1v1h-1zM26,21h1v1h-1zM27,21h1v1h-1zM30,21h1v1h-1zM31,21h1v1h-1zM33,21h1v1h-1zM34,21h1v1h-1zM36,21h1v1h-1zM8,22h1v1h-1zM9,22h1v1h-1zM10,22h1v1h-1zM11,22h1v1h-1zM12,22h1v1h-1zM13,22h1v1h-1zM14,22h1v1h-1zM16,22h1v1h-1zM17,22h1v1h-1zM19,22h1v1h-1zM24,22h1v1h-1zM26,22h1v1h-1zM29,22h1v1h-1zM31,22h1v1h-1zM32,22h1v1h-1zM34,22h1v1h-1zM35,22h1v1h-1zM5,23h1v1h-1zM8,23h1v1h-1zM9,23h1v1h-1zM15,23h1v1h-1zM17,23h1v1h-1zM20,23h1v1h-1zM27,23h1v1h-1zM31,23h1v1h-1zM32,23h1v1h-1zM33,23h1v1h-1zM34,23h1v1h-1zM36,23h1v1h-1zM4,24h1v1h-1zM6,24h1v1h-1zM7,24h1v1h-1zM9,24h1v1h-1zM10,24h1v1h-1zM12,24h1v1h-1zM13,24h1v1h-1zM14,24h1v1h-1zM17,24h1v1h-1zM18,24h1v1h-1zM19,24h1v1h-1zM20,24h1v1h-1zM23,24h1v1h-1zM24,24h1v1h-1zM25,24h1v1h-1zM26,24h1v1h-1zM27,24h1v1h-1zM28,24h1v1h-1zM29,24h1v1h-1zM33,24h1v1h-1zM35,24h1v1h-1zM36,24h1v1h-1zM4,25h1v1h-1zM5,25h1v1h-1zM6,25h1v1h-1zM14,25h1v1h-1zM15,25h1v1h-1zM16,25h1v1h-1zM19,25h1v1h-1zM20,25h1v1h-1zM21,25h1v1h-1zM25,25h1v1h-1zM27,25h1v1h-1zM30,25h1v1h-1zM33,25h1v1h-1zM36,25h1v1h-1zM4,26h1v1h-1zM7,26h1v1h-1zM8,26h1v1h-1zM10,26h1v1h-1zM11,26h1v1h-1zM12,26h1v1h-1zM15,26h1v1h-1zM18,26h1v1h-1zM20,26h1v1h-1zM21,26h1v1h-1zM24,26h1v1h-1zM25,26h1v1h-1zM29,26h1v1h-1zM30,26h1v1h-1zM33,26h1v1h-1zM35,26h1v1h-1zM4,27h1v1h-1zM7,27h1v1h-1zM9,27h1v1h-1zM12,27h1v1h-1zM16,27h1v1h-1zM18,27h1v1h-1zM20,27h1v1h-1zM21,27h1v1h-1zM25,27h1v1h-1zM27,27h1v1h-1zM29,27h1v1h-1zM33,27h1v1h-1zM34,27h1v1h-1zM4,28h1v1h-1zM8,28h1v1h-1zM9,28h1v1h-1zM10,28h1v1h-1zM12,28h1v1h-1zM14,28h1v1h-1zM15,28h1v1h-1zM16,28h1v1h-1zM17,28h1v1h-1zM18,28h1v1h-1zM20,28h1v1h-1zM21,28h1v1h-1zM27,28h1v1h-1zM28,28h1v1h-1zM29,28h1v1h-1zM30,28h1v1h-1zM31,28h1v1h-1zM32,28h1v1h-1zM34,28h1v1h-1zM35,28h1v1h-1zM12,29h1v1h-1zM13,29h1v1h-1zM16,29h1v1h-1zM17,29h1v1h-1zM18,29h1v1h-1zM19,29h1v1h-1zM20,29h1v1h-1zM21,29h1v1h-1zM22,29h1v1h-1zM23,29h1v1h-1zM24,29h1v1h-1zM25,29h1v1h-1zM28,29h1v1h-1zM32,29h1v1h-1zM34,29h1v1h-1zM36,29h1v1h-1zM4,30h1v1h-1zM5,30h1v1h-1zM6,30h1v1h-1zM7,30h1v1h-1zM8,30h1v1h-1zM9,30h1v1h-1zM10,30h1v1h-1zM12,30h1v1h-1zM14,30h1v1h-1zM19,30h1v1h-1zM24,30h1v1h-1zM25,30h1v1h-1zM27,30h1v1h-1zM28,30h1v1h-1zM30,30h1v1h-1zM32,30h1v1h-1zM34,30h1v1h-1zM4,31h1v1h-1zM10,31h1v1h-1zM12,31h1v1h-1zM16,31h1v1h-1zM17,31h1v1h-1zM19,31h1v1h-1zM23,31h1v1h-1zM24,31h1v1h-1zM25,31h1v1h-1zM26,31h1v1h-1zM27,31h1v1h-1zM28,31h1v1h-1zM32,31h1v1h-1zM33,31h1v1h-1zM34,31h1v1h-1zM36,31h1v1h-1zM4,32h1v1h-1zM6,32h1v1h-1zM7,32h1v1h-1zM8,32h1v1h-1zM10,32h1v1h-1zM12,32h1v1h-1zM14,32h1v1h-1zM16,32h1v1h-1zM17,32h1v1h-1zM19,32h1v1h-1zM21,32h1v1h-1zM22,32h1v1h-1zM25,32h1v1h-1zM28,32h1v1h-1zM29,32h1v1h-1zM30,32h1v1h-1zM31,32h1v1h-1zM32,32h1v1h-1zM33,32h1v1h-1zM4,33h1v1h-1zM6,33h1v1h-1zM7,33h1v1h-1zM8,33h1v1h-1zM10,33h1v1h-1zM12,33h1v1h-1zM14,33h1v1h-1zM16,33h1v1h-1zM17,33h1v1h-1zM18,33h1v1h-1zM19,33h1v1h-1zM22,33h1v1h-1zM24,33h1v1h-1zM26,33h1v1h-1zM27,33h1v1h-1zM29,33h1v1h-1zM32,33h1v1h-1zM33,33h1v1h-1zM34,33h1v1h-1zM36,33h1v1h-1zM4,34h1v1h-1zM6,34h1v1h-1zM7,34h1v1h-1zM8,34h1v1h-1zM10,34h1v1h-1zM12,34h1v1h-1zM14,34h1v1h-1zM15,34h1v1h-1zM20,34h1v1h-1zM21,34h1v1h-1zM22,34h1v1h-1zM23,34h1v1h-1zM26,34h1v1h-1zM27,34h1v1h-1zM30,34h1v1h-1zM31,34h1v1h-1zM4,35h1v1h-1zM10,35h1v1h-1zM12,35h1v1h-1zM14,35h1v1h-1zM15,35h1v1h-1zM16,35h1v1h-1zM17,35h1v1h-1zM18,35h1v1h-1zM20,35h1v1h-1zM21,35h1v1h-1zM22,35h1v1h-1zM23,35h1v1h-1zM24,35h1v1h-1zM25,35h1v1h-1zM29,35h1v1h-1zM30,35h1v1h-1zM32,35h1v1h-1zM33,35h1v1h-1zM34,35h1v1h-1zM4,36h1v1h-1zM5,36h1v1h-1zM6,36h1v1h-1zM7,36h1v1h-1zM8,36h1v1h-1zM9,36h1v1h-1zM10,36h1v1h-1zM13,36h1v1h-1zM14,36h1v1h-1zM15,36h1v1h-1zM16,36h1v1h-1zM17,36h1v1h-1zM19,36h1v1h-1zM22,36h1v1h-1zM23,36h1v1h-1zM26,36h1v1h-1zM27,36h1v1h-1zM28,36h1v1h-1zM29,36h1v1h-1zM30,36h1v1h-1zM31,36h1v1h-1zM34,36h1v1h-1zM35,36h1v1h-1z" fill="#000"/></svg><div class="qr-cap">Scan to try it<b>moon1570.github.io/FES-tool</b></div></div>
 </footer>
 
 </body>
