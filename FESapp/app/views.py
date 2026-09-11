@@ -14,7 +14,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET, require_POST
 
 from . import executor
+from functools import lru_cache
+
 from .engine import burden, runner, safety
+from .engine import tumor as tumor_engine
 from .engine import sweep as sweep_engine
 from .models import Run, Sweep
 
@@ -193,6 +196,59 @@ def result(request, run_id):
     })
 
 
+# Organs shown on the home page after the one(s) that limited the dose: the heart and
+# kidneys are the organs clinicians watch most closely for chemotherapy damage.
+CASE_STUDY_ORGANS = ["heart", "kidney", "liver", "brain"]
+
+
+@lru_cache(maxsize=32)
+def _untreated_log10(n0, interval_days, horizon_days, n_cycles):
+    """The same tumour with every dose set to zero: the model's untreated course."""
+    cfg = tumor_engine.TumorConfig(interval_days=interval_days, horizon_days=horizon_days, n0=n0)
+    result = tumor_engine.simulate_replay([0.0] * n_cycles, cfg)
+    return [round(float(v), 4) for v in result.log10N]
+
+
+def _case_study(run):
+    """Compact figures for the home page, all read from one stored demo run."""
+    d = run.result
+    by_key = {o["key"]: o for o in d["organs"]}
+    states = {o.key: o.states for o in safety.ORGANS}
+
+    picked = [o["key"] for o in d["organs"] if o["binding"]]
+    for key in CASE_STUDY_ORGANS:
+        if len(picked) >= 3:
+            break
+        if key not in picked:
+            picked.append(key)
+
+    organs = []
+    for key in picked[:3]:
+        o = by_key[key]
+        totals = [[round(sum(c["states"][n][k] for n in states[key]), 4)
+                   for k in range(len(d["pbpk"]["t_hours"]))]
+                  for c in d["pbpk"]["cycles"]]
+        organs.append({"key": key, "label": o["label"], "peak": o["peak"], "limit": o["limit"],
+                       "binding": o["binding"], "series": totals})
+
+    return {
+        "run_id": str(run.id),
+        "days": d["final"]["days"],
+        "untreated": _untreated_log10(float(run.n0), run.interval_days, run.horizon_days,
+                                      len(d["cycles"])),
+        "treated": d["final"]["log10N"],
+        "tox_planned": d["planned"]["toxicity"],
+        "tox_final": d["final"]["toxicity"],
+        "dose_planned": d["planned"]["dose_by_day"],
+        "dose_final": d["final"]["dose_by_day"],
+        "metrics": d["metrics"],
+        "peak_tox_planned": max(v for v in d["planned"]["toxicity"] if v is not None),
+        "hours": d["pbpk"]["t_hours"],
+        "doses": [c["index"] for c in d["pbpk"]["cycles"]],
+        "organs": organs,
+    }
+
+
 @require_GET
 def features(request):
     """Static 'Key features' page. Its example links point at the seeded demo cases
@@ -204,6 +260,7 @@ def features(request):
              or (demo.exclude(pk=example.pk).first() if example else None))
     return render(request, "features.html", {
         "example": example,
+        "case": _case_study(example) if example and example.result else None,
         "compare_pair": (example, other) if example and other else None,
         "demo_sweep": Sweep.objects.filter(is_demo=True, status="done").first(),
     })

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block nav_features %}active{% endblock %}
 {% block title %}Key features — Decision Support System{% endblock %}
 
@@ -28,6 +29,65 @@
   <div class="kf-stat"><div class="n">&lt;&nbsp;1&nbsp;s</div><div class="l">to plan a full 120-day course</div></div>
   <div class="kf-stat"><div class="n">28</div><div class="l">schedules compared on a single chart</div></div>
 </section>
+
+{% if case %}
+<section class="kf-case" id="case-study">
+  <div class="kf-case-head">
+    <div>
+      <div class="kf-kicker">Case study</div>
+      <h2 class="kf-section" style="margin:4px 0 6px">
+        A {{ example.weight_kg|floatformat:0 }} kg adult with {{ example.burden_label|lower }},
+        treated for {{ example.horizon_days }} days
+      </h2>
+      <p class="kf-case-lead">
+        About <span id="case-cells">10 billion</span> tumour cells at the start
+        ({{ example.result.patient.burden.mass }} of tumour), a dose every
+        {{ example.interval_days }} days, and {{ example.preset_label|lower }} organ limits.
+        Every figure below is the system's own output for this case.
+      </p>
+    </div>
+    <a class="btn btn-ghost" href="{% url 'result' example.id %}">Open the full case study</a>
+  </div>
+
+  <div class="kf-charts">
+    <article class="card kf-chart">
+      <header><span class="kf-kicker">Maximum effect on the tumour</span></header>
+      <div class="body">
+        <div class="kf-big good" id="big-tumour"></div>
+        <div class="kf-cap" id="cap-tumour"></div>
+        <div class="kf-plot" id="p-tumour"></div>
+      </div>
+    </article>
+    <article class="card kf-chart">
+      <header><span class="kf-kicker">Minimum harm to the patient</span></header>
+      <div class="body">
+        <div class="kf-big good" id="big-tox"></div>
+        <div class="kf-cap" id="cap-tox"></div>
+        <div class="kf-plot" id="p-tox"></div>
+      </div>
+    </article>
+    <article class="card kf-chart">
+      <header><span class="kf-kicker">Safer doses, chosen in advance</span></header>
+      <div class="body">
+        <div class="kf-big" id="big-dose"></div>
+        <div class="kf-cap" id="cap-dose"></div>
+        <div class="kf-plot" id="p-dose"></div>
+      </div>
+    </article>
+  </div>
+
+  <div class="kf-organs-head">
+    <h3>Drug level in key organs after each dose</h3>
+    <a href="{% url 'result' example.id %}#organ-grid">See all 13 organs &rarr;</a>
+  </div>
+  <p class="kf-cap" style="min-height:0;margin:0 0 8px">
+    The red dashed line is each organ's safe limit. Every dose stays below it for every organ.
+  </p>
+  <div class="dose-key" id="case-dose-key"></div>
+  <div class="organ-grid kf-organ-row" id="case-organs"></div>
+</section>
+{{ case|json_script:"case-data" }}
+{% endif %}
 
 <h2 class="kf-section">Why it matters for doctors</h2>
 
@@ -177,4 +237,123 @@
   <div>University of Barishal - Dr Rahat Hossain Faisal - Md. Minhaj Ul Islam</div>
   <a class="btn btn-primary" href="{{ new_run_url }}">Run a simulation</a>
 </section>
+{% endblock %}
+
+{% block scripts %}
+{% if case %}
+<script src="{% static 'js/charts.js' %}"></script>
+<script>
+const CASE = JSON.parse(document.getElementById('case-data').textContent);
+const { C, CYCLE_COLORS, draw } = FES;
+const m = CASE.metrics;
+
+function cellsInWords(log10) {
+  if (log10 === null || log10 === undefined) return '—';
+  if (log10 < 0) return 'fewer than 1';
+  const n = Math.pow(10, log10);
+  for (const [unit, word] of [[1e9, 'billion'], [1e6, 'million'], [1e3, 'thousand']]) {
+    if (n >= unit) {
+      const x = n / unit;
+      return (x >= 10 ? Math.round(x) : x.toFixed(1).replace(/\.0$/, '')) + ' ' + word;
+    }
+  }
+  return String(Math.round(n));
+}
+const words = arr => arr.map(cellsInWords);
+const last = arr => arr[arr.length - 1];
+const days = CASE.days;
+const header = id => document.getElementById(id).closest('.card').querySelector(':scope > header');
+const SMALL = { height: 240, margin: { l: 52, r: 14, t: 10, b: 40 },
+                legend: { orientation: 'h', x: 0, y: -0.2, font: { size: 11 } } };
+
+document.getElementById('case-cells').textContent = cellsInWords(m.log10_n_start);
+
+/* 1. tumour cells: no treatment against the recommended plan */
+document.getElementById('big-tumour').textContent =
+  cellsInWords(m.log10_n_start) + ' → ' + (m.log10_n_end < 0 ? 'fewer than 1' : cellsInWords(m.log10_n_end));
+document.getElementById('cap-tumour').textContent =
+  `tumour cells after ${last(days)} days with the recommended plan. Without treatment, ` +
+  `the same tumour grows to about ${cellsInWords(last(CASE.untreated))}.`;
+draw(document.getElementById('p-tumour'), [
+  { x: days, y: CASE.untreated, customdata: words(CASE.untreated), mode: 'lines', name: 'No treatment',
+    line: { color: C.danger, width: 2, dash: 'dash' }, hovertemplate: '%{customdata} cells<extra>no treatment</extra>' },
+  { x: days, y: CASE.treated, customdata: words(CASE.treated), mode: 'lines', name: 'Recommended plan',
+    line: { color: C.accent, width: 2.5 }, hovertemplate: '%{customdata} cells<extra>recommended</extra>' },
+], Object.assign({}, SMALL, { showlegend: true,
+  xaxis: { tickprefix: 'day ', gridcolor: C.grid, zeroline: false },
+  yaxis: { gridcolor: C.grid, automargin: true, zeroline: false, tickvals: [10, 6, 2, 0],
+           ticktext: ['10 billion', '1 million', '100', '1'] } }),
+  { mount: header('p-tumour'),
+    meta: () => ({ title: 'Case study — tumour cells', subtitle: 'No treatment against the recommended plan' }) });
+
+/* 2. side-effect load: first suggestion against the recommended plan */
+document.getElementById('big-tox').textContent =
+  Math.round(m.peak_toxicity) + ' instead of ' + Math.round(CASE.peak_tox_planned);
+document.getElementById('cap-tox').textContent =
+  `peak side-effect load with the recommended plan, against the first suggestion ` +
+  `(${m.toxicity_limit} is the model's reference maximum).`;
+draw(document.getElementById('p-tox'), [
+  { x: days, y: CASE.tox_planned, mode: 'lines', name: 'First suggestion',
+    line: { color: C.grey, width: 1.5, dash: 'dot' }, hovertemplate: '%{y:.0f}<extra>first suggestion</extra>' },
+  { x: days, y: CASE.tox_final, mode: 'lines', name: 'Recommended plan',
+    line: { color: C.warn, width: 2.2 }, fill: 'tozeroy', fillcolor: 'rgba(178,106,0,.10)',
+    hovertemplate: '%{y:.0f}<extra>recommended</extra>' },
+], Object.assign({}, SMALL, { showlegend: true,
+  xaxis: { tickprefix: 'day ', gridcolor: C.grid, zeroline: false },
+  yaxis: { gridcolor: C.grid, zeroline: false },
+  shapes: [{ type: 'line', x0: 0, x1: last(days), y0: m.toxicity_limit, y1: m.toxicity_limit,
+             line: { color: C.danger, width: 1, dash: 'dash' } }] }),
+  { mount: header('p-tox'),
+    meta: () => ({ title: 'Case study — side-effect load', subtitle: 'First suggestion against the recommended plan' }) });
+
+/* 3. doses: which ones were lowered */
+const lessPct = m.total_planned > m.total_delivered ? 100 * (1 - m.total_delivered / m.total_planned) : 0;
+document.getElementById('big-dose').textContent = `${m.cycles_adjusted} of ${m.cycles_total} doses lowered`;
+document.getElementById('cap-dose').textContent =
+  `before being given, to keep every organ within its safe limit` +
+  (lessPct ? ` — ${lessPct.toFixed(0)}% less drug in total.` : '.');
+draw(document.getElementById('p-dose'), [
+  { x: days, y: CASE.dose_planned, type: 'bar', name: 'First suggestion',
+    marker: { color: 'rgba(122,135,150,.35)' }, hovertemplate: '%{y:.1f}<extra>first suggestion</extra>' },
+  { x: days, y: CASE.dose_final, type: 'bar', name: 'Recommended plan',
+    marker: { color: C.accent }, hovertemplate: '%{y:.1f}<extra>recommended</extra>' },
+], Object.assign({}, SMALL, { showlegend: true, barmode: 'overlay', bargap: 0.4,
+  xaxis: { tickprefix: 'day ', gridcolor: C.grid, zeroline: false },
+  yaxis: { gridcolor: C.grid, zeroline: false } }),
+  { mount: header('p-dose'),
+    meta: () => ({ title: 'Case study — doses', subtitle: 'First suggestion against the recommended plan' }) });
+
+/* 4. three organs, same presentation as the full organ grid */
+const colour = i => CYCLE_COLORS[i % CYCLE_COLORS.length];
+const hours = CASE.hours, lastHour = last(hours);
+document.getElementById('case-dose-key').innerHTML = '<span>Each line is one dose:</span>' +
+  CASE.doses.map((n, i) => `<span><i style="background:${colour(i)}"></i>Dose ${n}</span>`).join('');
+const organBox = document.getElementById('case-organs');
+organBox.innerHTML = CASE.organs.map(o => `<div class="organ-cell${o.binding ? ' limiting' : ''}">
+    <div class="organ-cell-head"><strong>${o.label}</strong>${o.binding
+      ? '<span class="chip cut">Limited the dose</span>' : '<span class="chip ok">Within its limit</span>'}</div>
+    <div class="organ-cell-sub">Highest level ${o.peak.toFixed(1)} &middot; safe limit ${o.limit.toFixed(1)}</div>
+    <div class="mini" id="case-${o.key}"></div>
+  </div>`).join('');
+CASE.organs.forEach(o => {
+  const el = document.getElementById('case-' + o.key);
+  const top = Math.max(o.limit, ...o.series.map(y => Math.max(...y))) * 1.12;
+  Plotly.newPlot(el, o.series.map((y, i) => ({
+      x: hours, y, mode: 'lines', name: `Dose ${CASE.doses[i]}`, line: { color: colour(i), width: 1.6 },
+      hovertemplate: `Dose ${CASE.doses[i]}: %{y:.3g} at %{x:.0f} h<extra></extra>` })),
+    FES.layout({ height: 150, margin: { l: 34, r: 22, t: 6, b: 24 }, hovermode: 'closest',
+      font: Object.assign({}, FES.FONT, { size: 10 }),
+      xaxis: { range: [0, lastHour], tickvals: [0, 12, 24, 36, 48], ticktext: ['', '12', '24', '36', '48 h'],
+               gridcolor: C.grid, zeroline: false },
+      yaxis: { range: [0, top], nticks: 4, gridcolor: C.grid, zeroline: false },
+      shapes: [{ type: 'line', x0: 0, x1: lastHour, y0: o.limit, y1: o.limit,
+                 line: { color: C.danger, width: 1.5, dash: 'dash' } }] }),
+    { displayModeBar: false, responsive: true })
+  .then(() => FES.attachFullscreen(el, {
+    mount: el.parentElement.querySelector('.organ-cell-head'), unifiedHover: true,
+    meta: () => ({ title: 'Case study — ' + o.label,
+                   subtitle: `Drug level over the 48 hours after each dose · safe limit ${o.limit.toFixed(1)}` }) }));
+});
+</script>
+{% endif %}
 {% endblock %}
