@@ -27,7 +27,7 @@
   .event { font-size: 9mm; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,.85); }
   .pub { margin-left: auto; font-size: 9mm; font-weight: 700; color: var(--blue); background: #fff;
          border-radius: 99mm; padding: 4mm 11mm; }
-  h1 { font-size: 44mm; line-height: 1.03; font-weight: 800; letter-spacing: -0.022em; }
+  h1 { font-size: 46mm; line-height: 1.04; font-weight: 800; letter-spacing: -0.025em; white-space: nowrap; }  /* one line, with ~8% width to spare if a printer substitutes the font */
   .tagline { margin-top: 11mm; font-size: 20mm; font-weight: 300; line-height: 1.2; color: rgba(255,255,255,.95); }
 
   /* ---------------- case study ---------------- */
@@ -99,8 +99,10 @@
   .team .names { font-size: 13mm; font-weight: 800; line-height: 1.2; }
   .team .inst { font-size: 10mm; color: var(--grey); margin-top: 2mm; }
   .team .status { font-size: 6.6mm; color: var(--muted); margin-top: 6mm; line-height: 1.4; max-width: 420mm; }
-  .logo { flex: 0 0 auto; width: 80mm; height: 80mm; display: grid; place-items: center; }
+  .logo { flex: 0 0 auto; width: 86mm; height: 86mm; display: grid; place-items: center;
+          background: var(--blue); border-radius: 7mm; padding: 7mm; }
   .logo img { max-width: 100%; max-height: 100%; }
+  .logo:has(.slot) { background: none; padding: 0; }
   .logo .slot { width: 100%; height: 100%; border: 0.9mm dashed var(--line); border-radius: 4mm; display: grid;
                 place-items: center; text-align: center; font-size: 6.4mm; font-weight: 700; letter-spacing: 0.08em;
                 text-transform: uppercase; color: #A9B3C0; line-height: 1.4; }
@@ -118,7 +120,7 @@
     <div class="event">Innovation Fair BD 2026</div>
     <div class="pub">Published in Healthcare Analytics (Q1, IF=11.47)</div>
   </div>
-  <h1>Decision Support System<br>for Cancer Chemotherapy</h1>
+  <h1>Decision Support System for Chemo</h1>
   <div class="tagline">Maximum effect on the tumour, Minimum harm to the patient.</div>
 </header>
 
