@@ -16,9 +16,9 @@ rule bases or the feedback loop.
 
 ## Before you print
 
-- **Logo.** `poster/logo.png` (the University of Barishal logo) is embedded automatically.
-  It sits on a blue tile because the logo's motto text is white and would otherwise be
-  invisible on the white footer. Replace the file and rebuild to change it.
+- **Logo.** `poster/logo.png` (the University of Barishal logo) is embedded automatically;
+  replace the file and rebuild to change it. Note its motto text is white, so it does not
+  show against the white footer — only the emblem and the university name do.
 - **GitHub Pages must be on**, or the QR code leads to a 404:
   repository **Settings → Pages → Branch `master`, folder `/docs` → Save**.
   Then open `https://moon1570.github.io/FES-tool/` once to confirm.
