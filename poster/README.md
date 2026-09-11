@@ -19,9 +19,9 @@ rule bases or the feedback loop.
 - **Logo.** `poster/logo.png` (the University of Barishal logo) is embedded automatically;
   replace the file and rebuild to change it. Note its motto text is white, so it does not
   show against the white footer — only the emblem and the university name do.
-- **GitHub Pages must be on**, or the QR code leads to a 404:
-  repository **Settings → Pages → Branch `master`, folder `/docs` → Save**.
-  Then open `https://moon1570.github.io/FES-tool/` once to confirm.
+- **Check the live site answers** before printing: `https://moon1570.pythonanywhere.com/`
+  is what the QR code opens. On PythonAnywhere's free tier the web app expires after a
+  month unless extended (Web tab → *Run until …*), so confirm it on the day.
 
 ## Rebuilding
 
@@ -57,7 +57,7 @@ and the site always show the same numbers:
 - **4 of 9 doses lowered** before being given; 7% less drug in total.
 - Lung, heart and kidney drug levels after each dose, with each organ's safe limit.
 
-The QR code encodes `https://moon1570.github.io/FES-tool/` with error correction level Q
+The QR code encodes `https://moon1570.pythonanywhere.com/` with error correction level Q
 (still scans with roughly a quarter of it damaged), and the build is checked by reading the
 code back from the rendered poster.
 

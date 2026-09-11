@@ -40,7 +40,7 @@
   .pk { font-size: 7.4mm; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); }
   .big { font-size: 16.5mm; font-weight: 800; letter-spacing: -0.025em; line-height: 1.08; margin: 4mm 0 3mm; }
   .big.good { color: var(--ok); }
-  .cap { font-size: 8.4mm; line-height: 1.36; color: var(--grey); min-height: 34mm; }
+  .cap { font-size: 8.4mm; line-height: 1.36; color: var(--grey); min-height: 30mm; }
   .panel svg, .organ svg { display: block; width: 100%; height: auto; }
   .legend { display: flex; flex-wrap: wrap; gap: 2mm 9mm; font-size: 7.4mm; color: var(--grey); margin-top: 2mm; }
   .legend i { display: inline-block; width: 12mm; height: 1.8mm; border-radius: 1mm; margin-right: 3mm; vertical-align: middle; }
@@ -63,8 +63,16 @@
   .chip.ok  { background: #E3F5EC; color: var(--ok); }
   .organ-sub { font-size: 7.4mm; color: var(--grey); margin: 2mm 0 1mm; }
 
+  /* ---------------- what the numbers mean ---------------- */
+  .terms { background: var(--wash); padding-top: 11mm; padding-bottom: 11mm; }
+  .terms .kicker { margin-bottom: 6mm; }
+  .tgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14mm; }
+  .term h3 { font-size: 9mm; font-weight: 800; margin-bottom: 1.5mm; }
+  .term p { font-size: 7.8mm; line-height: 1.32; color: var(--grey); }
+  .term p b { color: var(--ink); }
+
   /* ---------------- problem / solution / impact ---------------- */
-  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16mm; padding-top: 20mm; padding-bottom: 18mm; }
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16mm; padding-top: 15mm; padding-bottom: 14mm; }
   .col { border-top: 2mm solid var(--ink); padding-top: 8mm; }
   .col.coral { border-top-color: var(--coral); }
   .col.blue  { border-top-color: var(--blue); }
@@ -73,9 +81,9 @@
   .col p b { color: var(--ink); }
 
   /* ---------------- why it matters ---------------- */
-  .why { background: var(--wash); padding-top: 18mm; padding-bottom: 18mm; }
-  .why h2 { font-size: 13mm; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 9mm; }
-  .bgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10mm 16mm; }
+  .why { background: var(--wash); padding-top: 14mm; padding-bottom: 14mm; }
+  .why h2 { font-size: 13mm; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 7mm; }
+  .bgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8mm 16mm; }
   .b { display: flex; gap: 7mm; align-items: flex-start; }
   .b .ic { flex: 0 0 auto; width: 22mm; height: 22mm; border-radius: 5mm; background: #E7EEFE; color: var(--blue);
            display: grid; place-items: center; }
@@ -84,7 +92,7 @@
   .b p { font-size: 9.2mm; line-height: 1.38; color: var(--grey); }
 
   /* ---------------- how it works ---------------- */
-  .process { display: flex; align-items: center; padding-top: 16mm; padding-bottom: 16mm; }
+  .process { display: flex; align-items: center; padding-top: 13mm; padding-bottom: 13mm; }
   .step { flex: 1; display: flex; align-items: center; gap: 7mm; }
   .step .n { flex: 0 0 auto; width: 26mm; height: 26mm; border-radius: 50%; background: var(--blue); color: #fff;
              display: grid; place-items: center; font-size: 12mm; font-weight: 800; }
@@ -156,6 +164,34 @@
   </div>
   <div class="dose-key">@@DOSE_KEY@@</div>
   <div class="organs">@@ORGANS@@</div>
+</section>
+
+<section class="terms pad">
+  <div class="kicker">What the numbers mean</div>
+  <div class="tgrid">
+    <div class="term">
+      <h3>Tumour cells</h3>
+      <p>How much cancer is left, counted on a logarithmic scale because treatment kills a
+      share of the cells, not a fixed number. This patient starts near <b>10 billion</b>
+      cells, about 10 g of tumour.</p>
+    </div>
+    <div class="term">
+      <h3>Side-effect load</h3>
+      <p>How much drug the body has had to cope with: it builds up after each dose and eases
+      between them. It is the <b>model's own scale, not a clinical grade</b> — 100 is the
+      reference maximum the plan is kept under.</p>
+    </div>
+    <div class="term">
+      <h3>Safe limit</h3>
+      <p>The most drug an organ should be exposed to in the 48 hours after a dose, set for
+      each of the <b>13 organs</b>. A dose that would cross a limit is lowered first.</p>
+    </div>
+    <div class="term">
+      <h3>Dose</h3>
+      <p>The amount given on the cycle day and the day after. Shown in the model's own units,
+      so the figures compare doses with each other rather than with a drug label.</p>
+    </div>
+  </div>
 </section>
 
 <section class="cols pad">

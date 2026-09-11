@@ -28,8 +28,8 @@ from app.models import Run  # noqa: E402
 from app.views import _case_study  # noqa: E402
 
 RUN_NAME = "Case 01 — standard"
-QR_URL = "https://moon1570.github.io/FES-tool/"
-QR_TEXT = "moon1570.github.io/FES-tool"
+QR_URL = "https://moon1570.pythonanywhere.com/"
+QR_TEXT = "moon1570.pythonanywhere.com"
 
 BLUE, CORAL, AMBER, INK = "#1B4EE0", "#E8543F", "#B26A00", "#16202B"
 GREY, MUTED, GRID = "#5A6675", "#8A94A3", "#DDE3EC"
@@ -127,7 +127,7 @@ class Chart:
 
 def tumour_chart(c):
     days = c["days"]
-    ch = Chart(800, 520, (170, 22, 18, 52), (days[0], days[-1]), (-1.5, 11.2))
+    ch = Chart(800, 470, (170, 22, 18, 52), (days[0], days[-1]), (-1.5, 11.2))
     ch.axes([(10, "10 billion"), (6, "1 million"), (2, "100"), (0, "1")],
             [(0, "day 0"), (60, "day 60"), (days[-1], f"day {days[-1]}")])
     ch.line(days, c["untreated"], CORAL, 6, dash="16 11")
@@ -137,7 +137,7 @@ def tumour_chart(c):
 
 def toxicity_chart(c):
     days, limit = c["days"], c["metrics"]["toxicity_limit"]
-    ch = Chart(800, 520, (82, 22, 18, 52), (days[0], days[-1]), (0, limit * 1.12))
+    ch = Chart(800, 470, (82, 22, 18, 52), (days[0], days[-1]), (0, limit * 1.12))
     ch.axes([(0, "0"), (50, "50"), (100, "100")],
             [(0, "day 0"), (60, "day 60"), (days[-1], f"day {days[-1]}")])
     ch.hline(limit, CORAL, 4)
@@ -149,7 +149,7 @@ def toxicity_chart(c):
 def dose_chart(c):
     days = c["days"]
     top = max(v for v in c["dose_planned"] if v is not None)
-    ch = Chart(800, 520, (82, 22, 18, 52), (days[0] - 2, days[-1] + 2), (0, top * 1.12))
+    ch = Chart(800, 470, (82, 22, 18, 52), (days[0] - 2, days[-1] + 2), (0, top * 1.12))
     ch.axes([(v, f"{v:g}") for v in nice_ticks(top * 1.05)],
             [(days[0] - 2, "day 0"), (60, "day 60"), (days[-1] + 2, f"day {days[-1]}")])
     ch.bars(days, c["dose_planned"], "rgba(122,135,150,0.40)", 3.0)
@@ -159,7 +159,7 @@ def dose_chart(c):
 
 def organ_chart(o, hours):
     top = max(o["limit"], max(max(s) for s in o["series"])) * 1.12
-    ch = Chart(800, 385, (64, 34, 14, 50), (0, hours[-1]), (0, top))
+    ch = Chart(800, 350, (64, 34, 14, 50), (0, hours[-1]), (0, top))
     ch.axes([(v, f"{v:g}") for v in nice_ticks(top * 0.98)],
             [(12, "12"), (24, "24"), (36, "36"), (hours[-1], "48 h")])
     ch.hline(o["limit"], CORAL, 4.5)
